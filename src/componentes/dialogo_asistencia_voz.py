@@ -3,7 +3,7 @@ import pandas as pd
 
 import time
 from datetime import datetime, timezone, timedelta
-IST = timezone(timedelta(hours=5, minutes=30))
+ZONA_COLOMBIA = timezone(timedelta(hours=-5), "COT")  # Colombia: UTC-5, sin horario de verano
 
 from src.canalizaciones.canalizacion_voz import procesar_audio_masivo
 
@@ -48,7 +48,7 @@ def dialogo_asistencia_voz(id_materia_seleccionada):
 
             resultados, asistencia_a_registrar = [], []
 
-            marca_tiempo_actual = datetime.now(IST).isoformat()
+            marca_tiempo_actual = datetime.now(ZONA_COLOMBIA).isoformat()
             for estudiante in estudiantes_matriculados:
                 puntaje = puntajes_detectados.get(estudiante["estudiante_id"], 0.0)
                 esta_presente = bool(puntaje > 0)

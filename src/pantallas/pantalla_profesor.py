@@ -4,7 +4,7 @@ import pandas as pd
 
 import time
 from datetime import datetime, timezone, timedelta
-IST = timezone(timedelta(hours=5, minutes=30))
+ZONA_COLOMBIA = timezone(timedelta(hours=-5), "COT")  # Colombia: UTC-5, sin horario de verano
 
 from src.interfaz.diseno_base import (
     estilo_fondo_panel,
@@ -192,7 +192,7 @@ def pestana_tomar_asistencia():
                 else:
                     resultados, asistencia_a_registrar = [], []
 
-                    marca_tiempo_actual = datetime.now(IST).isoformat()
+                    marca_tiempo_actual = datetime.now(ZONA_COLOMBIA).isoformat()
                     for estudiante in estudiantes_matriculados:
                         fuentes = ids_detectados.get(int(estudiante["estudiante_id"]), [])
                         esta_presente = len(fuentes) > 0
@@ -215,7 +215,7 @@ def pestana_tomar_asistencia():
                             }
                         )
 
-                dialogo_resultado_asistencia(pd.DataFrame(resultados), asistencia_a_registrar)
+                    dialogo_resultado_asistencia(pd.DataFrame(resultados), asistencia_a_registrar)
 
     with c3:
         if st.button("Usar Asistencia por Voz", type="secondary", width="stretch", icon=":material/mic:"):
@@ -277,9 +277,9 @@ def pestana_registros_asistencia():
         if fh:
             dt = datetime.fromisoformat(fh)
             if dt.tzinfo:
-                dt = dt.astimezone(IST)
+                dt = dt.astimezone(ZONA_COLOMBIA)
             else:
-                dt = dt.replace(tzinfo=timezone.utc).astimezone(IST)
+                dt = dt.replace(tzinfo=timezone.utc).astimezone(ZONA_COLOMBIA)
             hora_formateada = dt.strftime("%Y-%m-%d %I:%M %p")
             grupo_fh = dt.strftime("%Y-%m-%dT%H:%M:%S")
         else:
