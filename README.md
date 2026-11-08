@@ -1,960 +1,178 @@
-<h1 align="center">
-IntelliPresenceSync
-</h1>
+# Control De Asistencia UPC
 
-<p align="center">
+Aplicación web para tomar asistencia en clase con **reconocimiento facial** y **reconocimiento de voz**, con base de datos **Oracle XE** y **auditoría de cambios** para el profesor.
 
-<img src="static/banner.png" width="100%" alt="IntelliPresenceSync Banner">
+- **Estudiantes:** se registran con su rostro (y opcionalmente su voz), inician sesión con la cámara y se inscriben a materias con un código o un QR.
+- **Profesores:** crean materias, comparten el código/QR y toman asistencia con fotos del salón o con una grabación de voz.
+- **Auditor:** usuario Oracle de solo lectura que ve todos los datos y el historial de cambios (quién, cuándo, desde dónde, antes/después).
 
-</p>
-
-<h3 align="center">
-AI-Powered Smart Attendance Platform for Modern Classrooms
-</h3>
-
-<p align="center">
-Face Recognition • Voice Biometrics • QR Enrollment • Cloud Synchronization
-</p>
-
-<p align="center">
-
-<a href="https://intelli-presence-sync-landing-dashb.vercel.app/">
-<img src="https://img.shields.io/badge/🌐_Landing_Dashboard-Live-black?style=for-the-badge&logo=vercel">
-</a>
-
-<a href="https://intellipresencesync-mihirlegacy.streamlit.app/">
-<img src="https://img.shields.io/badge/🤖_AI_Attendance-Live-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white">
-</a>
-
-<a href="https://github.com/mihirgupta665/IntelliPresenceSync">
-<img src="https://img.shields.io/badge/🤖_AI_Repository-GitHub-181717?style=for-the-badge&logo=github">
-</a>
-
-<a href="https://github.com/mihirgupta665/IntelliPresenceSync_LandingDashboard">
-<img src="https://img.shields.io/badge/🌐_Landing_Repository-GitHub-181717?style=for-the-badge&logo=github">
-</a>
-
-<a href="static/IntelliPresenceSyncVideo.mp4">
-<img src="https://img.shields.io/badge/🎥_Full_Demo-View-red?style=for-the-badge&logo=video">
-</a>
-
-</p>
-
-<p align="center">
-
-<img src="https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white">
-
-<img src="https://img.shields.io/badge/Framework-Streamlit-FF4B4B?logo=streamlit&logoColor=white">
-
-<img src="https://img.shields.io/badge/Backend-Flask-000000?logo=flask">
-
-<img src="https://img.shields.io/badge/Database-Supabase-3ECF8E?logo=supabase&logoColor=white">
-
-<img src="https://img.shields.io/badge/Computer_Vision-dlib-blue">
-
-<img src="https://img.shields.io/badge/Machine_Learning-Scikit--Learn-orange">
-
-<img src="https://img.shields.io/badge/Voice_AI-Resemblyzer-purple">
-
-<img src="https://img.shields.io/badge/License-MIT-success">
-
-</p>
+Tecnologías: Python · Streamlit · Oracle XE 18c/21c (`python-oracledb`) · dlib · scikit-learn · Resemblyzer · librosa.
 
 ---
 
-<p align="center">
+## 1. Requisitos de cada PC
 
-<img src="static/IntelliPresenceSyncGif.gif" width="100%" alt="IntelliPresenceSync Project Demonstration">
+| Requisito | Detalle |
+|---|---|
+| **Windows 10/11** de 64 bits | También funciona en Linux/macOS (ver sección 7). |
+| **Python 3.11 a 3.13** (recomendado **3.11**, el probado) | [python.org/downloads](https://www.python.org/downloads/). Marcar **"Add python.exe to PATH"**. Python 3.14 todavía **no** sirve (dlib/torch). |
+| **Oracle Database XE 18c o 21c** | [oracle.com/database/technologies/xe-downloads.html](https://www.oracle.com/database/technologies/xe-downloads.html). Al instalar se define la contraseña de `SYSTEM`: **anótala**. |
+| **SQL Developer** (o `sqlplus`, incluido con Oracle XE) | Para ejecutar el script de la base de datos. |
+| **Internet** | Para instalar (~1 GB la primera vez) y al usar la app (logo, imágenes y fuentes se cargan de internet). |
+| **Cámara web** (y micrófono para la voz) | El navegador pedirá permiso. |
+| Git (opcional) | Solo para clonar; también se puede descargar el ZIP desde GitHub. |
 
-</p>
-
----
-
-## 📑 Table of Contents
-
-* [Overview](#-overview)
-* [Why IntelliPresenceSync?](#-why-intellipresencesync)
-* [Project Ecosystem](#-project-ecosystem)
-* [Project Highlights](#-project-highlights)
-* [Core Features](#-core-features)
-* [Live Demonstration](#-live-demonstration)
-* [Project Walkthrough](#-project-walkthrough)
-* [Screenshot Gallery](#-screenshot-gallery)
-* [System Architecture](#-system-architecture)
-* [AI Workflow](#-ai-attendance-workflow)
-* [Technology Stack](#-technology-stack)
-* [AI Pipeline](#-artificial-intelligence-pipeline)
-* [Repository Structure](#-repository-structure)
-* [Getting Started](#-getting-started)
-* [Deployment](#-deployment)
-* [Roadmap](#-roadmap)
-* [Key Learnings](#-key-learnings)
-* [Acknowledgements](#-acknowledgements)
-* [Author](#-author)
+> No se necesita Visual C++ ni Oracle Instant Client: `python-oracledb` funciona en modo *thin* (puro Python).
 
 ---
 
-# 📖 Overview
+## 2. Descargar el proyecto
 
-**IntelliPresenceSync** is an end-to-end AI-powered attendance management ecosystem designed to modernize classroom attendance through intelligent biometric verification.
+```powershell
+git clone https://github.com/rcamilorodriguez1/ControlAsistenciaUPC.git
+cd ControlAsistenciaUPC
+```
 
-Instead of relying on traditional roll calls, the platform combines **Computer Vision**, **Voice Biometrics**, **QR-Based Enrollment**, and **Cloud Synchronization** to create a streamlined attendance workflow for students and educators.
-
-The ecosystem consists of two integrated applications:
-
-### 🌐 Landing Dashboard
-
-A professional **Flask-based product website** that introduces IntelliPresenceSync, presents its features and technology, explains the user journey, and provides direct navigation to the AI attendance platform.
-
-### 🤖 AI Attendance System
-
-A **Streamlit-based AI application** where students register and enroll in subjects while teachers can manage classrooms, conduct attendance using facial or voice verification, and review attendance records.
-
-Both applications work together with **Supabase PostgreSQL** as the centralized cloud database.
+O en GitHub: **Code → Download ZIP**, descomprimir y abrir la carpeta en una terminal.
 
 ---
 
-# ❓ Why IntelliPresenceSync?
+## 3. Instalar dependencias (Windows)
 
-Traditional classroom attendance can introduce several practical challenges.
+```powershell
+powershell -ExecutionPolicy Bypass -File .\instalar_windows.ps1
+```
 
-| Traditional Approach          | IntelliPresenceSync         |
-| ----------------------------- | --------------------------- |
-| Manual roll calls             | AI-assisted attendance      |
-| Proxy attendance concerns     | Biometric verification      |
-| Time-consuming verification   | Automated recognition       |
-| Manual record management      | Centralized cloud storage   |
-| Repeated enrollment processes | QR-based subject enrollment |
-| Limited accessibility         | Web-based experience        |
-
-Students complete a one-time registration process using their **facial and voice information**.
-
-Teachers can subsequently verify attendance through:
-
-* 📸 Classroom photographs
-* 🎙️ Sequential voice recordings
-
-Verified attendance records are then synchronized with **Supabase PostgreSQL** for centralized management and retrieval.
+El script busca un Python compatible, crea el entorno virtual `.venv`, instala las versiones exactas de `requirements.txt` y comprueba que todo importe. Al final debe decir **"Dependencias OK"**.
 
 ---
 
-# 🚀 Project Ecosystem
+## 4. Crear la base de datos
 
-```text
-                         IntelliPresenceSync
-                                │
-                 ┌──────────────┴──────────────┐
-                 │                             │
-                 ▼                             ▼
-       Landing Dashboard             AI Attendance System
-             Flask                        Streamlit
-                 │                             │
-                 │                     ┌───────┴───────┐
-                 │                     │               │
-                 │                     ▼               ▼
-                 │              Face Recognition   Voice Biometrics
-                 │                     │               │
-                 │                     └───────┬───────┘
-                 │                             │
-                 └──────────────┬──────────────┘
-                                ▼
-                       Supabase PostgreSQL
-                                │
-                                ▼
-                  Attendance Records & Management
+> ⚠️ El script **borra y recrea** los usuarios `oscar` y `auditor`. Ciérralo todo (app incluida) antes de ejecutarlo.
+
+**Opción A – SQL Developer**
+1. Nueva conexión: usuario `SYSTEM`, la contraseña que pusiste al instalar Oracle, host `localhost`, puerto `1521`, **Nombre del servicio** `XEPDB1`.
+2. Abrir [`oracle_scripts.sql`](oracle_scripts.sql) y ejecutarlo como script con **F5** (*Run Script*, no *Run Statement*).
+
+**Opción B – consola**
+```powershell
+sqlplus system@localhost:1521/XEPDB1 "@oracle_scripts.sql"
+```
+(pide la contraseña de `SYSTEM`; al terminar escribe `exit`).
+
+Al final se muestran **6 tablas** y **6 triggers**, y la consulta de objetos inválidos no debe devolver filas.
+
+| Usuario Oracle | Contraseña | Uso |
+|---|---|---|
+| `oscar` | `Contrasena.123` *(contraseña estándar: cámbiala por la tuya)* | Lo usa la aplicación (dueño de las tablas) |
+| `auditor` | `Auditor.123` *(contraseña estándar: cámbiala por la tuya)* | Profesor/auditor, **solo lectura** |
+
+---
+
+## 5. Ejecutar la aplicación
+
+```powershell
+.\.venv\Scripts\streamlit.exe run principal.py
+```
+
+Se abre en el navegador en **http://localhost:8501**.
+
+### Configuración opcional
+
+Copia `.streamlit/secrets.toml.example` como `.streamlit/secrets.toml` (este archivo **no** se sube a GitHub) y ajusta:
+
+| Clave | Por defecto | Para qué |
+|---|---|---|
+| `ORACLE_USUARIO` | `oscar` | Usuario Oracle de la app |
+| `ORACLE_CONTRASENA` | `Contrasena.123` | Si la cambias, usa la misma en el `CREATE USER` del script SQL |
+| `ORACLE_DSN` | `localhost:1521/XEPDB1` | Otro host/puerto/servicio de Oracle |
+| `URL_APP` | `http://localhost:8501` | Dirección que va dentro del enlace y del QR de inscripción |
+
+Tras cambiar `secrets.toml` hay que reiniciar la app (Ctrl+C y volver a ejecutar).
+
+---
+
+## 6. Auditoría (para el profesor)
+
+Cada `INSERT`, `UPDATE` y `DELETE` en las tablas de la app queda registrado automáticamente por triggers en `oscar.auditoria`:
+
+| Columna | Contenido |
+|---|---|
+| `fecha` | Fecha y hora del cambio |
+| `tabla`, `operacion`, `registro_id` | Qué se cambió |
+| `usuario_app` | Usuario de la app, p. ej. `profesor:jperez` o `estudiante:5:Ana Díaz` |
+| `usuario_bd`, `usuario_so`, `equipo`, `ip`, `programa` | Desde dónde se hizo |
+| `datos_antes`, `datos_despues` | Valores en JSON (sin contraseñas ni vectores biométricos) |
+
+Los registros de auditoría **no se pueden modificar ni borrar** (un trigger lo impide).
+
+Conectado como `auditor` en SQL Developer (servicio `XEPDB1`):
+
+```sql
+-- Historial de cambios, lo más reciente primero
+SELECT fecha, tabla, operacion, registro_id, usuario_app, equipo, datos_antes, datos_despues
+FROM oscar.auditoria ORDER BY fecha DESC;
+
+-- Asistencia legible (nombres en vez de IDs)
+SELECT * FROM oscar.vista_asistencia_detallada ORDER BY fecha_hora DESC;
+
+-- Intentar modificar algo debe fallar con ORA-01031 (privilegios insuficientes)
+DELETE FROM oscar.estudiantes;
 ```
 
 ---
 
-# ✨ Project Highlights
-
-* Dual-biometric attendance verification
-* Face recognition for classroom photographs
-* Deep-learning speaker identification
-* Dynamic QR-based subject enrollment
-* Student and teacher dashboards
-* Attendance history and record management
-* Supabase cloud database integration
-* Responsive custom interface
-* Dedicated product landing dashboard
-* Modular AI pipeline architecture
-* Separate production deployments for both applications
-
----
-
-# ⭐ Core Features
-
-| Feature                      | Description                                                                                                                   |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| 📸 **Face Recognition**      | Recognizes multiple enrolled students from classroom photographs using facial embeddings and machine learning classification. |
-| 🎙️ **Voice Biometrics**     | Identifies registered speakers using deep-learning voice embeddings and similarity matching.                                  |
-| 📲 **QR Enrollment**         | Allows students to enroll into subjects through dynamically generated QR codes or invitation links.                           |
-| 👨‍🏫 **Teacher Dashboard**  | Provides subject management, attendance processing, and attendance record access.                                             |
-| 👨‍🎓 **Student Dashboard**  | Provides student registration, subject enrollment, and profile-related functionality.                                         |
-| ☁️ **Cloud Synchronization** | Stores student information, biometric embeddings, subjects, and attendance records through Supabase PostgreSQL.               |
-| 📱 **Responsive Interface**  | Designed to provide a consistent experience across different screen sizes.                                                    |
-| 🔐 **Authentication**        | Uses password hashing with `bcrypt` for credential protection.                                                                |
-
----
-
-# 🎥 Live Demonstration
-
-| Resource                        | Link                                                                                            |
-| ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| 🌐 Landing Dashboard            | [Open Live Dashboard](https://intelli-presence-sync-landing-dashb.vercel.app/)                  |
-| 🤖 AI Attendance Platform       | [Launch AI Application](https://intellipresencesync-mihirlegacy.streamlit.app/)                 |
-| 🎥 Full Project Demo            | [View Demo Video](static/IntelliPresenceSyncVideo.mp4)                                          |
-| 🤖 AI Application Repository    | [View GitHub Repository](https://github.com/mihirgupta665/IntelliPresenceSync)                  |
-| 🌐 Landing Dashboard Repository | [View GitHub Repository](https://github.com/mihirgupta665/IntelliPresenceSync_LandingDashboard) |
-
----
-
-# 🎬 Project Walkthrough
-
-The complete demonstration follows the IntelliPresenceSync workflow from platform introduction and student enrollment to AI-powered attendance verification and attendance record management.
-
-### Demonstration Flow
-
-**Landing Dashboard → Student Registration → Subject Enrollment → Teacher Dashboard → Face Attendance / Voice Attendance → Attendance Records**
-
-The project demonstration video is available here:
-
-<p align="center">
-
-<a href="static/IntelliPresenceSyncVideo.mp4">
-<img src="https://img.shields.io/badge/▶_Watch_Full_Project_Demonstration-IntelliPresenceSync-red?style=for-the-badge">
-</a>
-
-</p>
-
----
-
-# 📸 Screenshot Gallery
-
-The following gallery presents the complete user journey through IntelliPresenceSync.
-
-Each section contains a single full-width screenshot to preserve visual clarity and storytelling.
-
----
-
-# 🌐 Landing Dashboard
-
-The Landing Dashboard acts as the public-facing product experience.
-
-It introduces IntelliPresenceSync, explains the problem being addressed, presents the major features, walks through the user journey, and showcases the technology behind the system.
-
-## 🏠 Home
-
-<p align="center">
-
-<img src="static/img/demo/snap-landing-page-1-Home.png" width="100%" alt="IntelliPresenceSync Landing Dashboard Home">
-
-</p>
-
----
-
-## 📖 Application Overview
-
-<p align="center">
-
-<img src="static/img/demo/snap-landing-page-2-Application-Overview.png" width="100%" alt="IntelliPresenceSync Application Overview">
-
-</p>
-
----
-
-## ✨ Innovative Features
-
-<p align="center">
-
-<img src="static/img/demo/snap-landing-page-3-Innovative-Features.png" width="100%" alt="IntelliPresenceSync Innovative Features">
-
-</p>
-
----
-
-## 🚀 User Journey
-
-<p align="center">
-
-<img src="static/img/demo/snap-landing-page-4-Journey.png" width="100%" alt="IntelliPresenceSync User Journey">
-
-</p>
-
----
-
-## 🛠 Technology Stack
-
-<p align="center">
-
-<img src="static/img/demo/snap-landing-page-5-Tech-Stack.png" width="100%" alt="IntelliPresenceSync Technology Stack">
-
-</p>
-
----
-
-# 👨‍🎓 Student Workflow
-
-The student workflow focuses on one-time registration and subject enrollment.
-
-Students can create their profile, enroll into available subjects, and provide the biometric information required for future attendance verification.
-
-## Step 1 — Student Login
-
-<p align="center">
-
-<img src="static/img/demo/snap-student-flow-1-login.png" width="100%" alt="Student Login">
-
-</p>
-
----
-
-## Step 2 — Subject Enrollment
-
-<p align="center">
-
-<img src="static/img/demo/snap-student-flow-2-enroll.png" width="100%" alt="Student Subject Enrollment">
-
-</p>
-
----
-
-## Step 3 — Student Dashboard
-
-<p align="center">
-
-<img src="static/img/demo/snap-student-flow-3-dashboard.png" width="100%" alt="Student Dashboard">
-
-</p>
-
----
-
-# 👩‍🏫 Teacher Workflow
-
-The teacher workflow provides the tools required to create and manage subjects, enroll students, conduct AI-powered attendance, and review stored attendance records.
-
-## Step 1 — Teacher Login
-
-<p align="center">
-
-<img src="static/img/demo/snap-teacher-flow-1-login.png" width="100%" alt="Teacher Login">
-
-</p>
-
----
-
-## Step 2 — Teacher Dashboard
-
-<p align="center">
-
-<img src="static/img/demo/snap-teacher-flow-2-dashboard.png" width="100%" alt="Teacher Dashboard">
-
-</p>
-
----
-
-## Step 3 — Create Subject
-
-<p align="center">
-
-<img src="static/img/demo/snap-teacher-flow-3-create-course.png" width="100%" alt="Create Subject">
-
-</p>
-
----
-
-## Step 4 — Share QR Code / Invite Link
-
-<p align="center">
-
-<img src="static/img/demo/snap-teacher-flow-4-share_qr_or_link.png" width="100%" alt="Share QR Code or Invitation Link">
-
-</p>
-
----
-
-## Step 5 — Voice Attendance
-
-<p align="center">
-
-<img src="static/img/demo/snap-teacher-flow-5.1-voice_attendance.png" width="100%" alt="Voice Biometric Attendance">
-
-</p>
-
----
-
-## Step 6 — Face Recognition Attendance
-
-<p align="center">
-
-<img src="static/img/demo/snap-teacher-flow-5.2-photo-attendance.png" width="100%" alt="Face Recognition Attendance">
-
-</p>
-
----
-
-## Step 7 — Attendance Records
-
-<p align="center">
-
-<img src="static/img/demo/snap-teacher-flow-5-see-stored-records.png" width="100%" alt="Attendance Records">
-
-</p>
-
----
-
-# 🏗️ System Architecture
-
-IntelliPresenceSync uses two application layers connected through a centralized cloud database.
-
-The Flask dashboard acts as the product-facing entry point, while the Streamlit application handles student management, teacher workflows, biometric processing, and attendance operations.
-
-```mermaid
-flowchart TD
-
-A[Landing Dashboard<br>Flask]
-
-A --> B[AI Attendance Platform<br>Streamlit]
-
-B --> C1[Student Portal]
-
-B --> C2[Teacher Portal]
-
-C1 --> D1[Student Registration]
-
-C1 --> D2[Subject Enrollment]
-
-C2 --> D3[Face Recognition Attendance]
-
-C2 --> D4[Voice Biometric Attendance]
-
-C2 --> D5[Attendance Records]
-
-D1 --> E[(Supabase PostgreSQL)]
-
-D2 --> E
-
-D3 --> E
-
-D4 --> E
-
-D5 --> E
-
-E --> F[Student Profiles]
-
-E --> G[Subject Data]
-
-E --> H[Attendance Logs]
-```
-
----
-
-# 🤖 AI Attendance Workflow
-
-The attendance engine combines two biometric pipelines.
-
-Students provide biometric samples during registration. These representations are then used during teacher-initiated attendance verification.
-
-```mermaid
-flowchart LR
-
-A[Student Registration]
-
-A --> B[Face Image]
-
-A --> C[Voice Sample]
-
-B --> D[Face Embedding]
-
-C --> E[Voice Embedding]
-
-D --> F[(Supabase)]
-
-E --> F
-
-F --> G[Teacher Starts Attendance]
-
-G --> H[Classroom Photo]
-
-G --> I[Voice Recording]
-
-H --> J[Face Recognition Pipeline]
-
-I --> K[Voice Recognition Pipeline]
-
-J --> L[Attendance Verification]
-
-K --> L
-
-L --> M[Attendance Records]
-
-M --> N[Reports & History]
-```
-
----
-
-# 🧠 Artificial Intelligence Pipeline
-
-## 📸 Face Recognition
-
-The face pipeline uses facial embeddings and a machine-learning classifier to identify enrolled students.
-
-### Pipeline
-
-```text
-Classroom Image
-      ↓
-Face Detection
-      ↓
-Face Landmark Processing
-      ↓
-128-Dimensional Face Embedding
-      ↓
-SVM Classification
-      ↓
-Student Identification
-      ↓
-Attendance Record
-```
-
-### Components
-
-* Face detection
-* Facial landmark processing
-* 128-dimensional face embeddings
-* SVM-based classification
-* Multi-student recognition
-
----
-
-## 🎙️ Voice Biometrics
-
-The voice pipeline uses deep speaker embeddings to identify registered students from voice recordings.
-
-### Pipeline
-
-```text
-Voice Recording
-      ↓
-Audio Preprocessing
-      ↓
-Silence Detection
-      ↓
-Audio Segmentation
-      ↓
-256-Dimensional Speaker Embedding
-      ↓
-Cosine Similarity Matching
-      ↓
-Speaker Identification
-      ↓
-Attendance Record
-```
-
-### Components
-
-* Voice recording
-* Audio preprocessing
-* Silence-based segmentation
-* 256-dimensional speaker embeddings
-* Cosine similarity matching
-* Sequential speaker identification
-
----
-
-# 🛠️ Technology Stack
-
-| Category                 | Technologies                                |
-| ------------------------ | ------------------------------------------- |
-| **Programming Language** | Python                                      |
-| **Landing Dashboard**    | Flask, HTML5, CSS3, JavaScript              |
-| **AI Application**       | Streamlit                                   |
-| **Computer Vision**      | dlib, face_recognition_models, Scikit-Learn |
-| **Voice Biometrics**     | Resemblyzer, Librosa                        |
-| **Database**             | Supabase PostgreSQL                         |
-| **Authentication**       | bcrypt                                      |
-| **QR Generation**        | Segno                                       |
-| **Image Processing**     | Pillow                                      |
-| **Deployment**           | Vercel, Streamlit Community Cloud           |
-| **Version Control**      | Git & GitHub                                |
-
----
-
-# ☁️ Cloud Infrastructure
-
-Supabase PostgreSQL provides the centralized persistence layer for the attendance ecosystem.
-
-The application uses the database for managing:
-
-* Student profiles
-* Subject information
-* Enrollments
-* Biometric embeddings
-* Attendance records
-* Attendance history
-
-The deployed applications communicate with the cloud database to maintain synchronized application data.
-
----
-
-# 📌 System Modules
-
-| Module                           | Purpose                                            |
-| -------------------------------- | -------------------------------------------------- |
-| 🌐 **Landing Dashboard**         | Product presentation and application gateway       |
-| 👨‍🎓 **Student Portal**         | Student registration, enrollment, and dashboard    |
-| 👩‍🏫 **Teacher Portal**         | Subject management and attendance operations       |
-| 📸 **Face Recognition Engine**   | Classroom image-based student verification         |
-| 🎙️ **Voice Recognition Engine** | Speaker-based student verification                 |
-| ☁️ **Cloud Database**            | Centralized application persistence                |
-| 📊 **Attendance Records**        | Attendance history and stored verification results |
-
----
-
-# 📂 Repository Structure
-
-IntelliPresenceSync is organized as **two separate repositories** that together form one complete project ecosystem.
-
-### 🤖 AI Attendance System
-
-Repository:
-
-https://github.com/mihirgupta665/IntelliPresenceSync
-
-```text
-IntelliPresenceSync/
-│
-├── .streamlit/
-│   └── config.toml
-│
-├── src/
-│   ├── components/
-│   ├── database/
-│   ├── pipelines/
-│   ├── screens/
-│   └── ui/
-│
-├── app.py
-├── requirements.txt
-└── README.md
-```
-
-### 🌐 Landing Dashboard
-
-Repository:
-
-https://github.com/mihirgupta665/IntelliPresenceSync_LandingDashboard
-
-```text
-IntelliPresenceSync_LandingDashboard/
-│
-├── static/
-│   ├── css/
-│   ├── img/
-│   │   └── demo/
-│   ├── banner.png
-│   ├── IntelliPresenceSyncGif.gif
-│   └── IntelliPresenceSyncVideo.mp4
-│
-├── templates/
-│   ├── base.html
-│   ├── index.html
-│   ├── features.html
-│   ├── journey.html
-│   └── tech.html
-│
-├── app.py
-├── requirements.txt
-└── README.md
-```
-
----
-
-# 🚀 Getting Started
-
-IntelliPresenceSync contains two applications, so each application can be run independently during local development.
-
-## Prerequisites
-
-* Python 3.10+
-* Git
-* Supabase account
-* Virtual environment
-
----
-
-## 🤖 Run the AI Attendance System
-
-Clone the AI application:
+## 7. Linux / macOS
 
 ```bash
-git clone https://github.com/mihirgupta665/IntelliPresenceSync.git
-cd IntelliPresenceSync
-```
-
-Create a virtual environment:
-
-```bash
-python -m venv venv
-```
-
-### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-### macOS / Linux
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Configure the required environment variables according to the application configuration.
-
-Run Streamlit:
-
-```bash
-streamlit run app.py
+python3.11 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/streamlit run principal.py
 ```
 
 ---
 
-# 🌐 Run the Landing Dashboard
+## 8. Usar el QR desde celulares
 
-Clone the landing application separately:
+Con `URL_APP = http://localhost:8501` el QR **solo abre en el mismo PC**. Para celulares:
 
-```bash
-git clone https://github.com/mihirgupta665/IntelliPresenceSync_LandingDashboard.git
-cd IntelliPresenceSync_LandingDashboard
+- Los navegadores **solo permiten cámara y micrófono en HTTPS** (o en `localhost`). Con `http://<IP>:8501` la página abre, pero el estudiante **no podrá iniciar sesión con su rostro**.
+- Lo más práctico es un túnel HTTPS (p. ej. Cloudflare Tunnel o ngrok) y poner esa dirección `https://...` en `URL_APP`.
+- Las redes de la universidad suelen aislar a los dispositivos entre sí, así que la IP local normalmente no funciona allí.
+
+---
+
+## 9. Problemas frecuentes
+
+| Error | Causa / solución |
+|---|---|
+| `ORA-01017` usuario/contraseña no válidos | No se ejecutó `oracle_scripts.sql`, o la contraseña de `secrets.toml` no coincide con la del script. |
+| `ORA-12514` / `DPY-6005` no se puede conectar | Oracle no está iniciado (servicios `OracleServiceXE` y `OracleOraDB…TNSListener`) o el servicio no se llama `XEPDB1`. |
+| `ORA-01940` al ejecutar el script | La app sigue abierta y conectada como `oscar`: ciérrala y repite. |
+| `No se encontro Python 3.11-3.13` | Instala Python 3.11 y marca "Add to PATH". |
+| `Microsoft Visual C++ 14.0 is required` | Se instaló sin el script. Usa `instalar_windows.ps1`. |
+| La cámara no se activa | Permite la cámara en el navegador; fuera de `localhost` se requiere HTTPS. |
+
+---
+
+## 10. Estructura
+
+```
+principal.py                  Punto de entrada de Streamlit
+oracle_scripts.sql            Usuarios, tablas, auditoría, vista y permisos
+instalar_windows.ps1          Instalador para Windows
+requirements.txt              Dependencias con versiones fijas
+src/
+  base_datos/                 Conexión a Oracle y consultas
+  canalizaciones/             Reconocimiento facial (dlib + SVM) y de voz (Resemblyzer)
+  componentes/                Diálogos y elementos de la interfaz
+  pantallas/                  Pantallas de inicio, estudiante y profesor
+  interfaz/                   Estilos
 ```
 
-Create a virtual environment:
-
-```bash
-python -m venv venv
-```
-
-Activate the environment and install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Run Flask:
-
-```bash
-python app.py
-```
-
-The landing dashboard runs locally at:
-
-```text
-http://127.0.0.1:5002
-```
-
 ---
 
-# 🔐 Environment Configuration
+## Créditos
 
-The AI attendance application uses Supabase credentials for cloud database connectivity.
-
-Create the required environment configuration according to your local setup.
-
-```env
-SUPABASE_URL=YOUR_SUPABASE_URL
-SUPABASE_KEY=YOUR_SUPABASE_ANON_KEY
-```
-
-**Never commit real credentials or secret keys to GitHub.**
-
----
-
-# 🌍 Deployment
-
-The two applications are deployed independently while sharing the same project ecosystem.
-
-| Component               | Platform                  | Status |
-| ----------------------- | ------------------------- | ------ |
-| 🌐 Landing Dashboard    | Vercel                    | Live   |
-| 🤖 AI Attendance System | Streamlit Community Cloud | Live   |
-| ☁️ Database             | Supabase PostgreSQL       | Cloud  |
-
-### Live Applications
-
-**Landing Dashboard**
-
-https://intelli-presence-sync-landing-dashb.vercel.app/
-
-**AI Attendance System**
-
-https://intellipresencesync-mihirlegacy.streamlit.app/
-
----
-
-# 🛣️ Roadmap
-
-## Completed
-
-* Face Recognition Attendance
-* Voice Biometric Attendance
-* QR-Based Subject Enrollment
-* Student Dashboard
-* Teacher Dashboard
-* Attendance Records
-* Supabase Cloud Synchronization
-* Responsive Interface
-* Flask Landing Dashboard
-* Streamlit AI Application
-* Vercel Deployment
-* Streamlit Community Cloud Deployment
-* Professional Project Documentation
-
-## Planned
-
-* Face Anti-Spoofing
-* Liveness Detection
-* Multi-Camera Attendance
-* Mobile Application
-* REST API
-* Docker Support
-* CI/CD Pipeline
-* Advanced Classroom Analytics
-* Email Notifications
-* Parent Portal
-* Classroom Heatmaps
-* Multi-Institution Support
-
----
-
-# 💡 Key Learnings
-
-Building IntelliPresenceSync provided practical experience across the complete software development lifecycle.
-
-### Artificial Intelligence
-
-* Computer Vision
-* Facial Embeddings
-* Speaker Recognition
-* Machine Learning Classification
-* Audio Processing
-
-### Software Engineering
-
-* Modular Python Architecture
-* Flask Application Development
-* Streamlit Application Development
-* Database Integration
-* Authentication
-* Responsive UI Design
-
-### Deployment
-
-* Vercel Deployment
-* Streamlit Community Cloud
-* Supabase Cloud Database
-* Environment Configuration
-* Production Dependency Management
-
-### Product Development
-
-* System Architecture
-* User Experience Design
-* Technical Documentation
-* Project Demonstration
-* Portfolio Presentation
-
----
-
-# 🙏 Acknowledgements
-
-IntelliPresenceSync builds upon the work of the open-source community.
-
-Special thanks to:
-
-* [Streamlit](https://streamlit.io/)
-* [Flask](https://flask.palletsprojects.com/)
-* [Supabase](https://supabase.com/)
-* [Scikit-Learn](https://scikit-learn.org/)
-* [Dlib](http://dlib.net/)
-* [Resemblyzer](https://github.com/resemble-ai/Resemblyzer)
-* [Librosa](https://librosa.org/)
-* [Pillow](https://python-pillow.org/)
-* [Segno](https://github.com/heuer/segno)
-
----
-
-# 👨‍💻 Author
-
-<div align="center">
-
-<h2>Mihir Gupta</h2>
-
-<p>
-AI & Machine Learning Engineer • Full Stack Developer
-</p>
-
-<p>
-Building intelligent software solutions through Artificial Intelligence,
-Machine Learning, and modern software engineering.
-</p>
-
-</div>
-
-<p align="center">
-
-<a href="https://github.com/mihirgupta665">
-<img src="https://img.shields.io/badge/GitHub-mihirgupta665-181717?style=for-the-badge&logo=github">
-</a>
-
-<a href="https://www.linkedin.com/in/mihir-gupta-980173299/">
-<img src="https://img.shields.io/badge/LinkedIn-Connect-0077B5?style=for-the-badge&logo=linkedin">
-</a>
-
-<a href="mailto:mihirgupta665@gmail.com">
-<img src="https://img.shields.io/badge/Email-Contact-D14836?style=for-the-badge&logo=gmail&logoColor=white">
-</a>
-
-</p>
-
----
-
-# ⭐ Show Your Support
-
-If IntelliPresenceSync was useful, interesting, or inspiring, consider giving the project a ⭐ on GitHub.
-
-Your support helps the project reach more developers and encourages continued experimentation with AI-powered educational technology.
-
----
-
-# 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-<div align="center">
-
-<h2>IntelliPresenceSync</h2>
-
-<p>
-<strong>Reimagining Classroom Attendance with Artificial Intelligence</strong>
-</p>
-
-<p>
-Face Recognition • Voice Biometrics • QR Enrollment • Cloud Synchronization
-</p>
-
-<br>
-
-<p>
-Built with Python, Artificial Intelligence, and a passion for creating smarter educational technology.
-</p>
-
-</div>
+Basado en **IntelliPresenceSync** de Mihir Gupta ([github.com/mihirgupta665/IntelliPresenceSync](https://github.com/mihirgupta665/IntelliPresenceSync)), publicado con licencia MIT. Esta versión fue adaptada a Oracle XE, traducida al español y ampliada con auditoría para la UPC.

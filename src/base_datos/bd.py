@@ -12,6 +12,22 @@ from src.base_datos.configuracion import obtener_conexion, obtener_pool
 # Utilidades internas
 # ---------------------------------------------------------------------------
 
+def _identidad_usuario_app():
+    """Quien esta usando la app, para la columna usuario_app de AUDITORIA.
+    Ej.: 'profesor:jperez', 'estudiante:5:Ana Diaz', 'profesor:sin_sesion'."""
+    try:
+        import streamlit as st
+        estado = st.session_state
+        if "datos_profesor" in estado:
+            return f"profesor:{estado.datos_profesor.get('usuario')}"[:64]
+        if "datos_estudiante" in estado:
+            e = estado.datos_estudiante
+            return f"estudiante:{e.get('estudiante_id')}:{e.get('nombre')}"[:64]
+        return f"{estado.get('tipo_sesion') or 'inicio'}:sin_sesion"[:64]
+    except Exception:
+        return "app:sin_sesion"
+
+
 def ejecutar_con_reintentos(operacion, reintentos=5, espera=1):
     """Ejecuta `operacion(conexion)` reintentando ante errores transitorios
     de conexion a Oracle."""
@@ -20,6 +36,10 @@ def ejecutar_con_reintentos(operacion, reintentos=5, espera=1):
         conn = None
         try:
             conn = obtener_conexion()
+            # Se fija en cada uso porque las conexiones del pool se reutilizan
+            # entre usuarios; los triggers de auditoria leen estos valores.
+            conn.client_identifier = _identidad_usuario_app()
+            conn.module = "ControlAsistenciaUPC"
             resultado = operacion(conn)
             return resultado
         except (oracledb.OperationalError, oracledb.InterfaceError) as exc:
