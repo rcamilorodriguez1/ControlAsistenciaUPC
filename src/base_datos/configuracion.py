@@ -18,6 +18,9 @@ ORACLE_DSN = _obtener_configuracion("ORACLE_DSN", "localhost:1521/XEPDB1")
 ORACLE_POOL_MINIMO = int(_obtener_configuracion("ORACLE_POOL_MINIMO", 1))
 ORACLE_POOL_MAXIMO = int(_obtener_configuracion("ORACLE_POOL_MAXIMO", 10))
 
+# Direccion publica de la app; se usa para el enlace y el QR de inscripcion.
+URL_APP = str(_obtener_configuracion("URL_APP", "http://localhost:8501")).rstrip("/")
+
 # El modo "thin" de python-oracledb es puro Python y NO requiere tener
 # instalado el Oracle Instant Client en la maquina.
 oracledb.defaults.fetch_lobs = False  # Las columnas CLOB/BLOB se devuelven directo como str/bytes

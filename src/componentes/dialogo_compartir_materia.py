@@ -1,11 +1,13 @@
 import streamlit as st
 import segno
 import io
+from urllib.parse import quote
+
+from src.base_datos.configuracion import URL_APP
 
 @st.dialog("Compartir Enlace de la Clase")
 def dialogo_compartir_materia(nombre_materia, codigo_materia):
-    dominio_app = "intellipresencesync-mihirlegacy.streamlit.app"
-    url_union = f"{dominio_app}/?join-code={codigo_materia}"
+    url_union = f"{URL_APP}/?join-code={quote(str(codigo_materia))}"
 
     st.header("Escanear para Unirse")
 
