@@ -1,0 +1,177 @@
+--------------------------------------------------------------------------------
+-- ControlDeAsistencia - Script Oracle XE 18c (usuario: oscar)
+--------------------------------------------------------------------------------
+-- Ejecutar TODO este script de una sola vez en SQL Developer, conectado
+-- con una conexion SYSTEM o "SYS AS SYSDBA" contra el PDB XEPDB1.
+-- Ejecutar como Script (boton "Run Script" o tecla F5), NO como sentencia unica.
+-- Crea el usuario, le da permisos y crea todas las tablas en un solo paso.
+--------------------------------------------------------------------------------
+
+-- Elimina el usuario si ya existia de una ejecucion previa (evita conflictos)
+BEGIN
+    EXECUTE IMMEDIATE 'DROP USER oscar CASCADE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -1918 THEN -- ORA-01918: user does not exist
+            RAISE;
+        END IF;
+END;
+/
+
+CREATE USER oscar IDENTIFIED BY "Contrasena.123"; -- (contraseña estándar: cámbiala por la tuya)
+
+GRANT CONNECT, RESOURCE TO oscar;
+GRANT CREATE SESSION TO oscar;
+GRANT CREATE TABLE TO oscar;
+GRANT CREATE SEQUENCE TO oscar;
+GRANT CREATE VIEW TO oscar;
+GRANT UNLIMITED TABLESPACE TO oscar;
+
+COMMIT;
+
+-- A partir de aqui, todo lo que se cree quedara dentro del esquema de "oscar",
+-- aunque sigamos conectados como SYSTEM/SYSDBA.
+ALTER SESSION SET CURRENT_SCHEMA = oscar;
+
+-- ============================================================
+-- Eliminacion segura de objetos previos (respeta dependencias)
+-- ============================================================
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE registros_asistencia CASCADE CONSTRAINTS PURGE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN -- ORA-00942: table or view does not exist
+            RAISE;
+        END IF;
+END;
+/
+
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE materia_estudiantes CASCADE CONSTRAINTS PURGE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE materias CASCADE CONSTRAINTS PURGE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE estudiantes CASCADE CONSTRAINTS PURGE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE profesores CASCADE CONSTRAINTS PURGE';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -942 THEN
+            RAISE;
+        END IF;
+END;
+/
+
+-- ============================================================
+-- PROFESORES
+-- ============================================================
+CREATE TABLE profesores (
+    profesor_id   NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    usuario       VARCHAR2(100)  NOT NULL,
+    contrasena    VARCHAR2(255)  NOT NULL,
+    nombre        VARCHAR2(200)  NOT NULL,
+    creado_en     TIMESTAMP DEFAULT SYSTIMESTAMP,
+    CONSTRAINT uq_profesores_usuario UNIQUE (usuario)
+);
+
+-- ============================================================
+-- ESTUDIANTES
+-- ============================================================
+CREATE TABLE estudiantes (
+    estudiante_id     NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    nombre            VARCHAR2(200) NOT NULL,
+    embedding_facial  CLOB,
+    embedding_voz     CLOB,
+    creado_en         TIMESTAMP DEFAULT SYSTIMESTAMP,
+    CONSTRAINT ck_estudiantes_facial_json CHECK (embedding_facial IS JSON),
+    CONSTRAINT ck_estudiantes_voz_json    CHECK (embedding_voz    IS JSON)
+);
+
+-- ============================================================
+-- MATERIAS
+-- ============================================================
+CREATE TABLE materias (
+    materia_id       NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    codigo_materia   VARCHAR2(50)  NOT NULL,
+    nombre           VARCHAR2(200) NOT NULL,
+    seccion          VARCHAR2(100),
+    profesor_id      NUMBER NOT NULL,
+    creado_en        TIMESTAMP DEFAULT SYSTIMESTAMP,
+    CONSTRAINT uq_materias_codigo UNIQUE (codigo_materia),
+    CONSTRAINT fk_materias_profesor FOREIGN KEY (profesor_id)
+        REFERENCES profesores (profesor_id) ON DELETE CASCADE
+);
+
+CREATE INDEX ix_materias_profesor ON materias (profesor_id);
+
+-- ============================================================
+-- MATERIA_ESTUDIANTES (matriculas)
+-- ============================================================
+CREATE TABLE materia_estudiantes (
+    materia_id      NUMBER NOT NULL,
+    estudiante_id   NUMBER NOT NULL,
+    matriculado_en  TIMESTAMP DEFAULT SYSTIMESTAMP,
+    CONSTRAINT pk_materia_estudiantes PRIMARY KEY (materia_id, estudiante_id),
+    CONSTRAINT fk_me_materia FOREIGN KEY (materia_id)
+        REFERENCES materias (materia_id) ON DELETE CASCADE,
+    CONSTRAINT fk_me_estudiante FOREIGN KEY (estudiante_id)
+        REFERENCES estudiantes (estudiante_id) ON DELETE CASCADE
+);
+
+CREATE INDEX ix_me_estudiante ON materia_estudiantes (estudiante_id);
+
+-- ============================================================
+-- REGISTROS_ASISTENCIA
+-- ============================================================
+CREATE TABLE registros_asistencia (
+    asistencia_id     NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    materia_id        NUMBER NOT NULL,
+    estudiante_id     NUMBER NOT NULL,
+    fecha_hora        TIMESTAMP WITH TIME ZONE NOT NULL,
+    presente          NUMBER(1) DEFAULT 0 NOT NULL,
+    CONSTRAINT ck_asistencia_presente CHECK (presente IN (0,1)),
+    CONSTRAINT fk_ra_materia FOREIGN KEY (materia_id)
+        REFERENCES materias (materia_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ra_estudiante FOREIGN KEY (estudiante_id)
+        REFERENCES estudiantes (estudiante_id) ON DELETE CASCADE
+);
+
+CREATE INDEX ix_ra_materia    ON registros_asistencia (materia_id);
+CREATE INDEX ix_ra_estudiante ON registros_asistencia (estudiante_id);
+CREATE INDEX ix_ra_fecha      ON registros_asistencia (fecha_hora);
+
+COMMIT;
+
+-- Verificacion rapida
+SELECT table_name FROM all_tables WHERE owner = 'OSCAR' ORDER BY table_name;
+
+--------------------------------------------------------------------------------
+-- Conexion de la aplicacion (Python / Streamlit) - ya configurada por defecto:
+--     ORACLE_USUARIO    = oscar
+--     ORACLE_CONTRASENA = Contrasena.123   (contraseña estándar: cámbiala por la tuya)
+--     ORACLE_DSN        = localhost:1521/XEPDB1
+--------------------------------------------------------------------------------

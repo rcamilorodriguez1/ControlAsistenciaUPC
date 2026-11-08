@@ -1,0 +1,33 @@
+streamlit
+
+# utility
+numpy
+pandas
+
+# Face Recognition
+scikit-learn
+dlib-bin
+git+https://github.com/ageitgey/face_recognition_models
+
+# Required because webrtcvad currently depends on pkg_resources
+setuptools==80.10.2
+
+# database
+oracledb
+bcrypt
+
+# tools
+segno
+pillow
+
+
+# voice pipeline
+librosa
+torch
+scipy
+# Linux/macOS: se instalan normal.
+resemblyzer; sys_platform != "win32"
+webrtcvad==2.0.10; sys_platform != "win32"
+# Windows: webrtcvad no tiene binarios -> version precompilada.
+# resemblyzer se instala aparte con --no-deps (ver instalar_windows.ps1).
+webrtcvad-wheels; sys_platform == "win32"

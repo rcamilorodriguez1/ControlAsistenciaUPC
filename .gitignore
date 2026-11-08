@@ -1,0 +1,21 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+source/
+
+# Cache de Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Credenciales (nunca subir a GitHub)
+.streamlit/secrets.toml
+.env
+
+# Editor / sistema
+.idea/
+Thumbs.db
+.DS_Store
+desktop.ini
