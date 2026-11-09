@@ -12,8 +12,8 @@ def _obtener_configuracion(clave, valor_por_defecto=None):
     return os.environ.get(clave, valor_por_defecto)
 
 
-ORACLE_USUARIO = _obtener_configuracion("ORACLE_USUARIO", "oscar")
-ORACLE_CONTRASENA = _obtener_configuracion("ORACLE_CONTRASENA", "Contrasena.123")  # (contraseña estándar: cámbiala por la tuya)
+ORACLE_USUARIO = _obtener_configuracion("ORACLE_USUARIO", "Asistencia_UPC")
+ORACLE_CONTRASENA = _obtener_configuracion("ORACLE_CONTRASENA", "UPC123")  # (contraseña estándar: cámbiala por la tuya)
 ORACLE_DSN = _obtener_configuracion("ORACLE_DSN", "localhost:1521/XEPDB1")
 ORACLE_POOL_MINIMO = int(_obtener_configuracion("ORACLE_POOL_MINIMO", 1))
 ORACLE_POOL_MAXIMO = int(_obtener_configuracion("ORACLE_POOL_MAXIMO", 10))

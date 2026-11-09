@@ -49,24 +49,34 @@ El script busca un Python compatible, crea el entorno virtual `.venv`, instala l
 
 ## 4. Crear la base de datos
 
-> ⚠️ El script **borra y recrea** los usuarios `oscar` y `auditor`. Ciérralo todo (app incluida) antes de ejecutarlo.
+El script principal es [`oracle_scripts_solo_sql.sql`](oracle_scripts_solo_sql.sql): **solo SQL, sin PL/SQL**.
 
-**Opción A – SQL Developer**
-1. Nueva conexión: usuario `SYSTEM`, la contraseña que pusiste al instalar Oracle, host `localhost`, puerto `1521`, **Nombre del servicio** `XEPDB1`.
-2. Abrir [`oracle_scripts.sql`](oracle_scripts.sql) y ejecutarlo como script con **F5** (*Run Script*, no *Run Statement*).
+> ⚠️ El script **borra y recrea** los usuarios `Asistencia_UPC` y `auditor`. Cierra la app antes de ejecutarlo.
+> La primera vez, los `NOAUDIT`/`DROP` del inicio dan error porque no hay nada que borrar: es normal, el script continúa.
 
-**Opción B – consola**
+**Opción A – consola**
 ```powershell
-sqlplus system@localhost:1521/XEPDB1 "@oracle_scripts.sql"
+sqlplus system@localhost:1521/XEPDB1 "@oracle_scripts_solo_sql.sql"
 ```
 (pide la contraseña de `SYSTEM`; al terminar escribe `exit`).
 
-Al final se muestran **6 tablas** y **6 triggers**, y la consulta de objetos inválidos no debe devolver filas.
+**Opción B – SQL Developer**
+1. Nueva conexión: usuario `SYSTEM`, la contraseña que pusiste al instalar Oracle, host `localhost`, puerto `1521`, **Nombre del servicio** `XEPDB1`.
+2. Abrir `oracle_scripts_solo_sql.sql` y ejecutarlo como script con **F5** (*Run Script*, no *Run Statement*).
+
+Al final se muestran **5 tablas**, **1 vista** y la política de auditoría activa.
 
 | Usuario Oracle | Contraseña | Uso |
 |---|---|---|
-| `oscar` | `Contrasena.123` *(contraseña estándar: cámbiala por la tuya)* | Lo usa la aplicación (dueño de las tablas) |
+| `Asistencia_UPC` | `UPC123` *(contraseña estándar: cámbiala por la tuya)* | Lo usa la aplicación (dueño de las tablas) |
 | `auditor` | `Auditor.123` *(contraseña estándar: cámbiala por la tuya)* | Profesor/auditor, **solo lectura** |
+
+Comprobar la conexión:
+```powershell
+sqlplus Asistencia_UPC/UPC123@localhost:1521/XEPDB1
+```
+
+> Alternativa: [`oracle_scripts.sql`](oracle_scripts.sql) es una versión anterior con **PL/SQL** (triggers y tabla `auditoria` con datos antes/después) que usa el usuario `oscar`. Si la usas, pon `ORACLE_USUARIO = "oscar"` y su contraseña en `.streamlit/secrets.toml`.
 
 ---
 
@@ -84,8 +94,8 @@ Copia `.streamlit/secrets.toml.example` como `.streamlit/secrets.toml` (este arc
 
 | Clave | Por defecto | Para qué |
 |---|---|---|
-| `ORACLE_USUARIO` | `oscar` | Usuario Oracle de la app |
-| `ORACLE_CONTRASENA` | `Contrasena.123` | Si la cambias, usa la misma en el `CREATE USER` del script SQL |
+| `ORACLE_USUARIO` | `Asistencia_UPC` | Usuario Oracle de la app |
+| `ORACLE_CONTRASENA` | `UPC123` | Si la cambias, usa la misma en el `CREATE USER` del script SQL |
 | `ORACLE_DSN` | `localhost:1521/XEPDB1` | Otro host/puerto/servicio de Oracle |
 | `URL_APP` | `http://localhost:8501` | Dirección que va dentro del enlace y del QR de inscripción |
 
@@ -95,30 +105,33 @@ Tras cambiar `secrets.toml` hay que reiniciar la app (Ctrl+C y volver a ejecutar
 
 ## 6. Auditoría (para el profesor)
 
-Cada `INSERT`, `UPDATE` y `DELETE` en las tablas de la app queda registrado automáticamente por triggers en `oscar.auditoria`:
+Se usa la **auditoría unificada de Oracle** (política `pol_auditoria_asistencia`, creada solo con SQL). Cada `INSERT`, `UPDATE` y `DELETE` en las tablas de `Asistencia_UPC` queda en la vista del sistema `UNIFIED_AUDIT_TRAIL`, que **nadie puede modificar**. No aparece en el árbol de tablas de `Asistencia_UPC` porque pertenece a Oracle.
 
 | Columna | Contenido |
 |---|---|
-| `fecha` | Fecha y hora del cambio |
-| `tabla`, `operacion`, `registro_id` | Qué se cambió |
-| `usuario_app` | Usuario de la app, p. ej. `profesor:jperez` o `estudiante:5:Ana Díaz` |
-| `usuario_bd`, `usuario_so`, `equipo`, `ip`, `programa` | Desde dónde se hizo |
-| `datos_antes`, `datos_despues` | Valores en JSON (sin contraseñas ni vectores biométricos) |
+| `event_timestamp` | Fecha y hora del cambio |
+| `action_name`, `object_name` | Operación y tabla |
+| `client_identifier` | Usuario de la app, p. ej. `profesor:jperez` o `estudiante:5:Ana Díaz` |
+| `dbusername`, `os_username`, `userhost`, `client_program_name` | Desde dónde se hizo |
+| `sql_text`, `sql_binds` | Sentencia ejecutada y sus valores |
 
-Los registros de auditoría **no se pueden modificar ni borrar** (un trigger lo impide).
+No guarda los datos de "antes" de un `UPDATE`/`DELETE` (eso solo es posible con triggers PL/SQL, ver `oracle_scripts.sql`).
 
-Conectado como `auditor` en SQL Developer (servicio `XEPDB1`):
+Conectado como `auditor` (`sqlplus auditor/Auditor.123@localhost:1521/XEPDB1`):
 
 ```sql
--- Historial de cambios, lo más reciente primero
-SELECT fecha, tabla, operacion, registro_id, usuario_app, equipo, datos_antes, datos_despues
-FROM oscar.auditoria ORDER BY fecha DESC;
+-- Historial de cambios (puede tardar unos segundos en aparecer)
+SELECT event_timestamp, client_identifier AS usuario_app, dbusername, userhost AS equipo,
+       action_name AS operacion, object_name AS tabla, sql_text, sql_binds
+  FROM unified_audit_trail
+ WHERE object_schema = 'ASISTENCIA_UPC'
+ ORDER BY event_timestamp DESC;
 
 -- Asistencia legible (nombres en vez de IDs)
-SELECT * FROM oscar.vista_asistencia_detallada ORDER BY fecha_hora DESC;
+SELECT * FROM Asistencia_UPC.vista_asistencia_detallada ORDER BY fecha_hora DESC;
 
 -- Intentar modificar algo debe fallar con ORA-01031 (privilegios insuficientes)
-DELETE FROM oscar.estudiantes;
+DELETE FROM Asistencia_UPC.estudiantes;
 ```
 
 ---
@@ -147,9 +160,10 @@ Con `URL_APP = http://localhost:8501` el QR **solo abre en el mismo PC**. Para c
 
 | Error | Causa / solución |
 |---|---|
-| `ORA-01017` usuario/contraseña no válidos | No se ejecutó `oracle_scripts.sql`, o la contraseña de `secrets.toml` no coincide con la del script. |
+| `ORA-01017` usuario/contraseña no válidos | No se ejecutó el script SQL, se ejecutó en `XE` en vez de `XEPDB1`, o la contraseña de `secrets.toml` no coincide con la del script. |
+| `ORA-01031` en `CREATE AUDIT POLICY` | Ejecuta el script como `SYS AS SYSDBA` en vez de `SYSTEM`. |
 | `ORA-12514` / `DPY-6005` no se puede conectar | Oracle no está iniciado (servicios `OracleServiceXE` y `OracleOraDB…TNSListener`) o el servicio no se llama `XEPDB1`. |
-| `ORA-01940` al ejecutar el script | La app sigue abierta y conectada como `oscar`: ciérrala y repite. |
+| `ORA-01940` al ejecutar el script | La app sigue abierta y conectada como `Asistencia_UPC`: ciérrala y repite. |
 | `No se encontro Python 3.11-3.13` | Instala Python 3.11 y marca "Add to PATH". |
 | `Microsoft Visual C++ 14.0 is required` | Se instaló sin el script. Usa `instalar_windows.ps1`. |
 | La cámara no se activa | Permite la cámara en el navegador; fuera de `localhost` se requiere HTTPS. |
