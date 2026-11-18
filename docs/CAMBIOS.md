@@ -4,6 +4,14 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 17 de noviembre de 2026 — README de UPC | Aula
+
+Se sustituye la presentación heredada por un README en español centrado en UPC | Aula,
+con el logotipo institucional y una captura de su portada. Se reorganizan las funciones por
+rol, la tecnología, la puesta en marcha, las versiones de Oracle, la estructura, las pruebas
+y los pendientes, enlazando las guías del proyecto. Los medios y la presentación del proyecto
+de referencia dejan de utilizarse en el README.
+
 ## 17 de noviembre de 2026 — Versión local para ControlAsistenciaUPC
 
 Se vincula el proyecto con [rcamilorodriguez1/ControlAsistenciaUPC](https://github.com/rcamilorodriguez1/ControlAsistenciaUPC),
