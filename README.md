@@ -132,6 +132,9 @@ recuperarse por un canal privado su clave original de identidad. Los procedimien
 
 ## Oracle y PL/SQL
 
+La [guía detallada de la base de datos](docs/BASE_DE_DATOS.md) explica las tablas, columnas,
+relaciones, vistas, paquetes, disparadores, consultas y su visualización en SQL Developer.
+
 El esquema evoluciona mediante scripts de instalación y migraciones versionadas:
 
 | Versión | Alcance |
@@ -201,6 +204,8 @@ reales, la validación en otro PC y la presentación final con SQL Developer. El
 el detalle y distingue implementación, prueba automática y aceptación del usuario.
 
 - [Índice de documentación](docs/README.md)
+- [Memoria integral del proyecto en PDF](docs/UPC_Aula_Documentacion_Integral.pdf)
+- [Mockup navegable de pantallas](docs/mockup/index.html)
 - [Registro de cambios](docs/CAMBIOS.md)
 - [Roadmap y pendientes](docs/ROADMAP.md)
 - [Navegación y sesiones](docs/PORTAL_Y_SESIONES.md)

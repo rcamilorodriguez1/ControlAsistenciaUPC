@@ -1,0 +1,964 @@
+{
+  "proyecto": "UPC | Aula",
+  "edicion": "1.0",
+  "fecha": "18 de noviembre de 2026",
+  "tipo": "Mockup documental navegable de pantallas implementadas",
+  "pantallas": [
+    {
+      "id": "inicio",
+      "titulo": "Portada institucional",
+      "rol": "General",
+      "descripcion": "Presentación de UPC | Aula y acceso a los tres portales.",
+      "estado": "Identidad actual confirmada; revisión general abierta",
+      "nota": "",
+      "origen": {
+        "revision": "ff5df33f8cc6",
+        "tipo": "navegacion_anonima_sin_red_externa",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "principal.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/inicio-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "94f6f3dab9caa400d8af8186bc600508e823b758ca441fa30e35d49dadcc9602"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/inicio-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "2b5b65420ea7dd01714ccf9e6464565cb030f67de5763f51417fa4a3384050e4"
+          },
+          {
+            "archivo": "capturas/inicio-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "129032dc03ca90e0cbe73d3d9ef36f2d697ba632f3904be6ef80a1c80b770685"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Portal docente",
+          "destino": "docente-acceso"
+        },
+        {
+          "texto": "Portal estudiantil",
+          "destino": "estudiante-acceso"
+        },
+        {
+          "texto": "Gestión académica",
+          "destino": "admin-acceso"
+        }
+      ]
+    },
+    {
+      "id": "docente-acceso",
+      "titulo": "Acceso docente",
+      "rol": "Docente",
+      "descripcion": "Usuario, contraseña, registro y recuperación de acceso.",
+      "estado": "Revisión visual abierta",
+      "nota": "El acceso al portal en este recorrido solo cambia de captura; no comprueba credenciales.",
+      "origen": {
+        "revision": "ff5df33f8cc6",
+        "tipo": "navegacion_anonima_sin_red_externa",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "principal.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-acceso-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "656c3534a6f3ce5d3c22f6315ba16fbf2bb04b73a27ae4f321d6cd31f06071d5"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/docente-acceso-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "7c7483f18b64cbc60e5bae64e6423f9d0c64b492eadf7684afccdb70b2b8e764"
+          },
+          {
+            "archivo": "capturas/docente-acceso-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "5f4d4bde587d8e72f2eb71f94225935a982ea4fb959926d3e4154ebd6bd92f81"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Ver portal docente",
+          "destino": "docente-asistencia"
+        },
+        {
+          "texto": "Registro docente",
+          "destino": "docente-registro"
+        },
+        {
+          "texto": "Olvidé mi contraseña",
+          "destino": "docente-recuperacion"
+        },
+        {
+          "texto": "Volver a portada",
+          "destino": "inicio"
+        }
+      ]
+    },
+    {
+      "id": "docente-registro",
+      "titulo": "Registro docente",
+      "rol": "Docente",
+      "descripcion": "Alta con autorización docente y controles de contraseña.",
+      "estado": "Iconos y controles de contraseña confirmados",
+      "nota": "",
+      "origen": {
+        "revision": "ff5df33f8cc6",
+        "tipo": "navegacion_anonima_sin_red_externa",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "principal.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-registro-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "c66f59ccd14d697972f28334f37ded355e498868619d10ece97b96c8753d4df4"
+          },
+          {
+            "archivo": "capturas/docente-registro-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "89cdf0a4998a4cc1ced2844484b0b280b15c2379b03d9d5103e31e041e24e449"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/docente-registro-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "3a325e7c0208d17e9c3c93ecd2c903684c2de24f4dee893d85e2e16eb5633fd9"
+          },
+          {
+            "archivo": "capturas/docente-registro-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "e1c76d58a268d97e487dd52e24e9995e2ab0bcd91140b49060de37adc04881af"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Volver al acceso",
+          "destino": "docente-acceso"
+        }
+      ]
+    },
+    {
+      "id": "docente-recuperacion",
+      "titulo": "Recuperación de contraseña",
+      "rol": "Docente",
+      "descripcion": "Restablecimiento con autorización privada, fortaleza y confirmación.",
+      "estado": "Funcionamiento confirmado por el usuario",
+      "nota": "Capturas de la revisión de recuperación anterior a la entrega 008. Incluyen únicamente valores de prueba.",
+      "origen": {
+        "revision": "4a4c4d8ec524",
+        "tipo": "navegacion_anonima_sin_red_externa",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "principal.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-recuperacion-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "b015dece155fd59739b5951f3b6b0490dc75137ea92c12ea24fa4253bd2a6e9e"
+          },
+          {
+            "archivo": "capturas/docente-recuperacion-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "707b91b3910bae67a86cd7b40fb93e4146c3c5e3601aaf2d68b54953811853ad"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/docente-recuperacion-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "bfae1b69a7a9ea7d1e0f582abf09f475bd5d71dfa34ec14b911c0635da307eba"
+          },
+          {
+            "archivo": "capturas/docente-recuperacion-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "b5967b326a0a95851a5d55822555f7198254cf14bf633a0837ee4362fac21bdc"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Volver al acceso",
+          "destino": "docente-acceso"
+        }
+      ]
+    },
+    {
+      "id": "docente-asistencia",
+      "titulo": "Preparación de asistencia",
+      "rol": "Docente",
+      "descripcion": "Resumen, selección de materia y clase, captura y resultado pendiente.",
+      "estado": "Revisión visual abierta",
+      "nota": "",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-asistencia-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "add782ef035977cbd518ed3d10fd6fb8e4defbd423a5addc75b785cd034ccc73"
+          },
+          {
+            "archivo": "capturas/docente-asistencia-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "d228da0b97a4aff7b72e3a9f0233747a85daabe07ddcced0c74c4407314faa79"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/docente-asistencia-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "8d6fe4c92dc3de531d1c85e2adcc8ff53e8a40fbcc473acc0560664b337b95fe"
+          },
+          {
+            "archivo": "capturas/docente-asistencia-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "b9077205d431aae5f29e9a0074d58c127b2ffaab038d879cb7d7bd2ea2c0dff7"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Revisar propuesta",
+          "destino": "docente-revision"
+        },
+        {
+          "texto": "Gestionar materias",
+          "destino": "docente-materias"
+        },
+        {
+          "texto": "Registros de asistencia",
+          "destino": "docente-registros"
+        },
+        {
+          "texto": "Menú de cuenta",
+          "destino": "cuenta-docente"
+        }
+      ]
+    },
+    {
+      "id": "docente-revision",
+      "titulo": "Revisión de resultados",
+      "rol": "Docente",
+      "descripcion": "Propuesta de detección y decisión docente por estudiante, con tratamiento de la falta de muestra.",
+      "estado": "Revisión visual abierta",
+      "nota": "Se muestra el diálogo de revisión. La confirmación y la escritura en Oracle no se simulan.",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-revision-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "901d1ecb937c746b497501516a631019a24f1d42f5ddc976b6d4f1ef82de53cf"
+          },
+          {
+            "archivo": "capturas/docente-revision-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "1ca1065fd7eaeb6b7aea99c8b6b05903099fccd196f697ca95a9d40b0534595a"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Volver a la preparación",
+          "destino": "docente-asistencia"
+        }
+      ]
+    },
+    {
+      "id": "docente-materias",
+      "titulo": "Gestión de materias",
+      "rol": "Docente",
+      "descripcion": "Asignaturas del docente, grupos e indicadores de matrícula y clases.",
+      "estado": "Revisión visual abierta",
+      "nota": "",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-materias-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "5c40672aed62a029e81c0eb00d3d39ce62731b559a8cc9f4b59de27ec4e2aa96"
+          },
+          {
+            "archivo": "capturas/docente-materias-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "24b909fc0e916332d60901171ec041866c41f8ae904599746f9e395e8a116852"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/docente-materias-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "a6704fce3059dd23fd43ed019eefa8cebf2eb82f522f91cea8bfbd763985eae0"
+          },
+          {
+            "archivo": "capturas/docente-materias-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "bdb52598f0a4951733a5f8ef0804acbcea8aa460e807e66d6f908ecdf8577bbd"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Crear nueva materia",
+          "destino": "docente-crear"
+        },
+        {
+          "texto": "Compartir materia",
+          "destino": "docente-compartir"
+        },
+        {
+          "texto": "Preparar asistencia",
+          "destino": "docente-asistencia"
+        }
+      ]
+    },
+    {
+      "id": "docente-crear",
+      "titulo": "Nueva materia",
+      "rol": "Docente",
+      "descripcion": "Diálogo de creación con nombre, código y sección.",
+      "estado": "Revisión visual abierta",
+      "nota": "",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-crear-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "cb50cdb437f3c62d4baeb2d015a5ff80408d95a4dd94d85766233e2b7d972444"
+          },
+          {
+            "archivo": "capturas/docente-crear-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "f331cf55c61be57bca4786ae91267859f6ca7e18eeb3e02e67fb48167dc88d06"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Volver a materias",
+          "destino": "docente-materias"
+        }
+      ]
+    },
+    {
+      "id": "docente-compartir",
+      "titulo": "Código y QR de inscripción",
+      "rol": "Docente",
+      "descripcion": "Presentación del código y enlace de inscripción de una materia.",
+      "estado": "Revisión visual abierta",
+      "nota": "El QR corresponde a una materia sintética de la revisión local; no es una invitación operativa.",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-compartir-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "c4e8b28ef563a061e22df553069e0fee9c4f8aaf31dd58a823048ee8443d2263"
+          },
+          {
+            "archivo": "capturas/docente-compartir-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "226c0d8e52daa2e7af8f09783ceae786ad308a10ac02444fa6bf9e39c65c1c41"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Volver a materias",
+          "destino": "docente-materias"
+        }
+      ]
+    },
+    {
+      "id": "docente-registros",
+      "titulo": "Registros de asistencia",
+      "rol": "Docente",
+      "descripcion": "Consulta de resultados por materia y clase.",
+      "estado": "Revisión visual abierta",
+      "nota": "",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/docente-registros-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "ae4537e041327b0304b8555a505dd1b80b9b6cfaf07a8499d4b9ddd4362f6fd9"
+          },
+          {
+            "archivo": "capturas/docente-registros-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "c096e458fb54ecbf041e14776339546e54f5f082a7dd7fd77bcff661021c081c"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Preparar asistencia",
+          "destino": "docente-asistencia"
+        },
+        {
+          "texto": "Gestionar materias",
+          "destino": "docente-materias"
+        }
+      ]
+    },
+    {
+      "id": "estudiante-acceso",
+      "titulo": "Acceso del estudiante",
+      "rol": "Estudiante",
+      "descripcion": "Acceso facial y apartado alternativo con documento y contraseña.",
+      "estado": "Revisión visual abierta",
+      "nota": "El login institucional general del estudiante continúa pendiente. El apartado alternativo requiere autorización vigente en la aplicación.",
+      "origen": {
+        "revision": "6f17f011b384",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/estudiante-acceso-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "6d0133224c0676bfb2b9aa14608a7d372b0fc0f220cce9511af177ff7b2a6e8e"
+          },
+          {
+            "archivo": "capturas/estudiante-acceso-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "e22a8bc196a580dc0fc8a5871b0be472b7b4e40833b1b26ae8417e07bcda99b1"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/estudiante-acceso-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "9fb6eb63aa6f7ddf41887200b6505c7a018cf8b755e76a90cf0a735941c8ff25"
+          },
+          {
+            "archivo": "capturas/estudiante-acceso-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "186dcecd2d423e9eb2129d8e47e2aa1efae362fea2a14af8b9250ffccb60315e"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Ver portal estudiantil",
+          "destino": "estudiante-panel"
+        },
+        {
+          "texto": "Ver acceso excepcional",
+          "destino": "estudiante-excepcional"
+        },
+        {
+          "texto": "Volver a portada",
+          "destino": "inicio"
+        }
+      ]
+    },
+    {
+      "id": "estudiante-panel",
+      "titulo": "Portal del estudiante",
+      "rol": "Estudiante",
+      "descripcion": "Materias, inscripción y consulta de registros personales.",
+      "estado": "Revisión visual abierta",
+      "nota": "",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/estudiante-panel-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "f55897bb691319d477f75a6d8fa86efa387e56f6a04d155ab5f788886be1aeb0"
+          },
+          {
+            "archivo": "capturas/estudiante-panel-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "d706b09186909472e330875a4cca6eeb1bd6705874da45ef5f9ecf55cb5549bb"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/estudiante-panel-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "314d9e331976ffc660d589edfdfff6ed9670288d9b65c9f66407dd7142940d6e"
+          },
+          {
+            "archivo": "capturas/estudiante-panel-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "3707f8c18314e4aca1681aea07f63bc6ca7777cf5311f7329243ab29c838eada"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Mi perfil",
+          "destino": "estudiante-perfil"
+        },
+        {
+          "texto": "Volver a portada",
+          "destino": "inicio"
+        }
+      ]
+    },
+    {
+      "id": "estudiante-perfil",
+      "titulo": "Mi perfil académico",
+      "rol": "Estudiante",
+      "descripcion": "Indicadores acumulados, materias y calendario mensual de asistencia.",
+      "estado": "Revisión visual abierta",
+      "nota": "Las variantes muestran estados diferentes del mismo perfil sintético: el acordeón móvil ya está desplegado.",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/estudiante-perfil-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "f0e2b6fcd6a1d0f43faf8c10c1ef73fd8428db0b912677f9d06d57b7cc930bbe"
+          },
+          {
+            "archivo": "capturas/estudiante-perfil-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "bad66de295d7952e4402fa7eaa1ed98ebbef4a370d0f562d6a4726d4ad0de796"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/estudiante-perfil-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "a10716b92a4c324dd0f55ec50d051fe98c8cd44c477e0af946ff1c803bceaa76"
+          },
+          {
+            "archivo": "capturas/estudiante-perfil-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "b2094ebd84b38cf19f56938027fc06d182cb9593d4184dd057026ec0d958b507"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Detalle por materia",
+          "destino": "estudiante-materias"
+        },
+        {
+          "texto": "Volver a mi portal",
+          "destino": "estudiante-panel"
+        }
+      ]
+    },
+    {
+      "id": "estudiante-materias",
+      "titulo": "Detalle de materias",
+      "rol": "Estudiante",
+      "descripcion": "Perfil con una materia desplegada y sus indicadores individuales.",
+      "estado": "Revisión visual abierta",
+      "nota": "",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/estudiante-materias-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "a5fce036a7e2bd08691347d60a974d03fee10f3cee74d98fc82585cfe49db9e3"
+          },
+          {
+            "archivo": "capturas/estudiante-materias-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "1dfca9ab70d62445402fadaa110dd22341cc7dc18b3037503731cd6e7be141e0"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/estudiante-materias-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "a10716b92a4c324dd0f55ec50d051fe98c8cd44c477e0af946ff1c803bceaa76"
+          },
+          {
+            "archivo": "capturas/estudiante-materias-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "b2094ebd84b38cf19f56938027fc06d182cb9593d4184dd057026ec0d958b507"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Resumen del perfil",
+          "destino": "estudiante-perfil"
+        },
+        {
+          "texto": "Volver a mi portal",
+          "destino": "estudiante-panel"
+        }
+      ]
+    },
+    {
+      "id": "estudiante-excepcional",
+      "titulo": "Verificación excepcional",
+      "rol": "Estudiante",
+      "descripcion": "Portal identificado con el estado de validación alternativa y biometría incompleta.",
+      "estado": "Revisión visual abierta",
+      "nota": "El perfil de ejemplo del recorrido procede de otra captura sintética. No representa la continuidad de una cuenta o sesión real.",
+      "origen": {
+        "revision": "6f17f011b384",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/estudiante-excepcional-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "9a63546b566674d7b26ae49b7bfbf1b35393b085a960f5b0fb58bf058368fb93"
+          },
+          {
+            "archivo": "capturas/estudiante-excepcional-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "bcb1d240e2a71ce7ba753af99350e612db2affd6b3cba487bee0c182e419a22c"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/estudiante-excepcional-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "b446116f2f8f5e5c23f3039eb57b105299268996b37887ea7b8a14e21ed052a5"
+          },
+          {
+            "archivo": "capturas/estudiante-excepcional-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "481bf0e19906b2dc5b239c9aba7ff017933c08f31acc78a13dc2746a35e07d78"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Consultar perfil de ejemplo",
+          "destino": "estudiante-perfil"
+        },
+        {
+          "texto": "Volver al acceso",
+          "destino": "estudiante-acceso"
+        }
+      ]
+    },
+    {
+      "id": "admin-acceso",
+      "titulo": "Acceso administrativo",
+      "rol": "Administración",
+      "descripcion": "Entrada reservada a cuentas administrativas habilitadas.",
+      "estado": "Revisión visual abierta",
+      "nota": "",
+      "origen": {
+        "revision": "ff5df33f8cc6",
+        "tipo": "navegacion_anonima_sin_red_externa",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "principal.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/admin-acceso-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "8844fb98146b9309d65f540957261f9fe030c470638ebd0509731e18d036e35a"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Ver gestión de verificaciones",
+          "destino": "admin-verificaciones"
+        },
+        {
+          "texto": "Volver a portada",
+          "destino": "inicio"
+        }
+      ]
+    },
+    {
+      "id": "admin-verificaciones",
+      "titulo": "Gestión de verificaciones",
+      "rol": "Administración",
+      "descripcion": "Listado de estados y acciones de autorización excepcional desde el panel administrativo.",
+      "estado": "Revisión visual abierta",
+      "nota": "Este catálogo incluye la vista Verificación. Auditoría, Cuentas y Materias existen en la aplicación, pero sus pantallas administrativas no se representan en esta edición.",
+      "origen": {
+        "revision": "6f17f011b384",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/admin-verificaciones-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "1d3713fda3cc4b60ea94ea9964370c0219af0cc2b0f335110e78e5c735effda0"
+          },
+          {
+            "archivo": "capturas/admin-verificaciones-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1440,
+            "alto": 1080,
+            "sha256": "ae56f4302c0ee83d4516f4874da932f10308a59b2ffc6c2aa64db28813a61e33"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/admin-verificaciones-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "c6f5bffc2e1b58d5e41851486efba0e5ef9a6d21244cc94f2de111f710da8e5a"
+          },
+          {
+            "archivo": "capturas/admin-verificaciones-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "1ce4c59ae1de7a9dd3ff60cf9be2bb7cc14e7ea207f20a5d12aac04908f2e332"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Ver estado del estudiante",
+          "destino": "estudiante-excepcional"
+        },
+        {
+          "texto": "Volver al acceso administrativo",
+          "destino": "admin-acceso"
+        }
+      ]
+    },
+    {
+      "id": "cuenta-docente",
+      "titulo": "Menú de cuenta compartido",
+      "rol": "Docente",
+      "descripcion": "Inicio y menú compacto con Mi perfil, Configuración y Cerrar sesión.",
+      "estado": "Separador de Cerrar sesión aprobado; navegación pendiente de aceptación",
+      "nota": "Mi perfil docente y Configuración permanecen deshabilitados. El mockup no crea ni cierra sesiones.",
+      "origen": {
+        "revision": "69af3679e8ab",
+        "tipo": "vista_sintetica_oracle_bloqueado",
+        "herramienta": "scripts/verificar_frontend.py",
+        "vista": "tests/preview_frontend.py"
+      },
+      "versiones": {
+        "escritorio": [
+          {
+            "archivo": "capturas/cuenta-docente-escritorio-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "986c5eb5858a2ab6a6c04a9033292afce8773e7189e7a6397a55541e4cfb7d77"
+          },
+          {
+            "archivo": "capturas/cuenta-docente-escritorio-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 1424,
+            "alto": 985,
+            "sha256": "d228da0b97a4aff7b72e3a9f0233747a85daabe07ddcced0c74c4407314faa79"
+          }
+        ],
+        "movil": [
+          {
+            "archivo": "capturas/cuenta-docente-movil-1.png",
+            "etiqueta": "Vista principal",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "f5fe780a47c3dfb9a3ad92db60ea0330ff5a6e35665b2a5c7f7f5fe606e235ee"
+          },
+          {
+            "archivo": "capturas/cuenta-docente-movil-2.png",
+            "etiqueta": "Contenido inferior",
+            "ancho": 390,
+            "alto": 844,
+            "sha256": "bdb52598f0a4951733a5f8ef0804acbcea8aa460e807e66d6f908ecdf8577bbd"
+          }
+        ]
+      },
+      "acciones": [
+        {
+          "texto": "Volver al portal docente",
+          "destino": "docente-asistencia"
+        },
+        {
+          "texto": "Ver portada conservando contexto",
+          "destino": "inicio"
+        },
+        {
+          "texto": "Ver pantalla de salida",
+          "destino": "docente-acceso"
+        }
+      ]
+    }
+  ],
+  "alcance": "Capturas sin edición: navegación entre vistas; sin formularios operativos ni conexión a servicios."
+}

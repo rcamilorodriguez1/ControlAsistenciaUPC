@@ -4,6 +4,59 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 18 de noviembre de 2026 — Mockup navegable de pantallas
+
+Se añade [docs/mockup/index.html](mockup/index.html), un mockup documental retrospectivo
+de UPC | Aula con 18 pantallas o estados y 59 capturas originales. Reúne portada, accesos,
+registro/recuperación docente, materias, revisión, registros, portal y perfil estudiantil,
+verificación excepcional y acceso/consola administrativa. Incluye 13 variantes móviles,
+búsqueda, Anterior/Siguiente y 39 enlaces de recorrido. Funciona desde el archivo HTML.
+
+Las capturas proceden de revisiones anteriores correctas, anónimas o con datos sintéticos;
+su procedencia, limitaciones y huellas se conservan en
+[pantallas.json](mockup/pantallas.json) y en la [guía del mockup](mockup/README.md).
+El logotipo es una copia binaria del original institucional. Los archivos de imagen no se editan.
+La interfaz de referencia y la aceptación existente permanecen registradas por separado.
+
+**Validación del visor:** 59 imágenes decodificadas, integridad de recursos y revisión de las
+18 pantallas en 1440, 768, 390 y 320 px: 72 vistas sin desbordamiento horizontal. Comprobados
+los 39 destinos de recorrido, búsqueda con/sin tildes, variantes inexistentes, controles de
+dispositivo y navegación por teclado, incluido el salto al contenido conservando la pantalla.
+Sin coincidencias con las credenciales locales en los archivos de texto compartidos.
+Evidencias: `.local/mockup/validacion.json` y capturas del visor.
+
+No se inicia la aplicación, no se conecta a Oracle y no se cambian autenticación, sesiones,
+formularios o lógica de negocio. Este catálogo no sustituye el ensayo funcional pendiente.
+
+## 18 de noviembre de 2026 — Memoria integral en PDF
+
+Se prepara [UPC_Aula_Documentacion_Integral.pdf](UPC_Aula_Documentacion_Integral.pdf),
+edición 1.0, con 72 páginas de documentación académica y técnica. Incluye planteamiento,
+justificación, objetivos, alcance, requisitos, arquitectura, flujos por rol, seguridad,
+identidad visual, operación, evidencias, pendientes y la guía completa de Oracle como anexo.
+Se conservan fuentes editables en [INFORME_PROYECTO.md](INFORME_PROYECTO.md),
+[BASE_DE_DATOS.md](BASE_DE_DATOS.md) y [HTML maquetado](UPC_Aula_Documentacion_Integral.html).
+
+La plantilla A4 utiliza el logotipo original del manual UPC, verde institucional, índice
+numerado con enlaces, 165 marcadores, diagramas y páginas apaisadas para tablas extensas.
+La captura incluida pertenece a la aplicación actual. No se inventan nombres del equipo,
+mediciones biométricas ni aprobaciones pendientes.
+
+**Verificación:** inspección de las 72 páginas para detectar texto fuera de márgenes,
+comprobación de integridad de 2.284 unidades de contenido, enlaces de navegación y revisión
+visual de portada, índices, diagramas y tablas. Sin caracteres de reemplazo, credenciales
+locales ni rutas personales detectadas. La generación no modifica código de aplicación,
+dependencias de ejecución, datos ni objetos de Oracle.
+
+## 18 de noviembre de 2026 — Guía de funcionamiento de la base de datos
+
+Se añade [BASE_DE_DATOS.md](BASE_DE_DATOS.md), contrastada con el diccionario Oracle en modo de
+solo lectura: 14 tablas, 138 columnas, 9 relaciones por FK, 11 vistas, 7 paquetes y 10 disparadores.
+Incluye los flujos de aplicación, un catálogo de consultas de estudio, restricciones e índices,
+y las vías de visualización en SQL Developer. Se prepara localmente `exports/modelo_008.sql`
+con estructura, sin filas de usuarios y sin ejecutar sus sentencias DDL. La revisión no cambia
+datos, objetos ni permisos de la base.
+
 ## 17 de noviembre de 2026 — README de UPC | Aula
 
 Se sustituye la presentación heredada por un README en español centrado en UPC | Aula,

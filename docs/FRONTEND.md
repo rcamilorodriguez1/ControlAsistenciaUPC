@@ -1,5 +1,14 @@
 # Frontend: punto 2 de la revisión
 
+## Mockup de referencia
+
+El [mockup navegable](mockup/index.html), edición del 18/11/2026, organiza 18 pantallas o
+estados de la interfaz implementada y sus recorridos mediante capturas originales anónimas
+o sintéticas. Incluye versiones móviles donde están disponibles, navegación por teclado y
+un catálogo consultable. Funciona como referencia documental independiente de la aplicación.
+Su [guía](mockup/README.md) delimita el alcance y conserva la procedencia de las imágenes.
+La validación del visor no agrega nuevas aprobaciones a la tabla de aceptación siguiente.
+
 ## Confirmaciones del usuario
 
 La revisión del frontend continúa abierta. Estos estados reflejan la confirmación expresa del
