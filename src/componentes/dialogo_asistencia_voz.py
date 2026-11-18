@@ -1,79 +1,69 @@
 import streamlit as st
-import pandas as pd
 
-import time
-from datetime import datetime, timezone, timedelta
-ZONA_COLOMBIA = timezone(timedelta(hours=-5), "COT")  # Colombia: UTC-5, sin horario de verano
-
-from src.canalizaciones.canalizacion_voz import procesar_audio_masivo
-
+from src.servicios.biometria_diferida import procesar_audio_masivo
+from src.servicios.resultado_audio import ResultadoAudio
+from src.servicios.resultados_voz import construir_resultados_voz
 from src.base_datos.bd import obtener_estudiantes_matriculados
-
 from src.componentes.dialogo_resultado_asistencia import mostrar_resultado_asistencia
+from src.utilidades.fecha_hora import hora_actual_colombia
+from src.utilidades.sesiones import contexto_vigente, guardar_resultado, obtener_resultado, invalidar_resultado
 
-@st.dialog("Asistencia por Voz")
-def dialogo_asistencia_voz(id_materia_seleccionada):
-    st.write("Graba la voz de 'Estoy presente' de todos los estudiantes. Este audio completo será analizado por la IA para reconocer a cada estudiante y registrar su asistencia.")
+MAX_AUDIO_BYTES = 20 * 1024 * 1024
 
-    audio_grabado = None
 
-    audio_grabado = st.audio_input("Grabar Audio del Salón de Clases")
-
+@st.dialog("Asistencia por Voz", width='large')
+def dialogo_asistencia_voz(contexto):
+    if not contexto_vigente(contexto):
+        st.warning("La sesión o materia cambió. Abre nuevamente la asistencia de la materia actual.")
+        return
+    pendiente = obtener_resultado()
+    if pendiente and pendiente["origen"] != "voz":
+        invalidar_resultado()
+    estudiantes = obtener_estudiantes_matriculados(contexto["materia_id"])
+    if not estudiantes:
+        invalidar_resultado()
+        st.warning("No hay estudiantes matriculados en esta materia.")
+        return
+    st.write("Graba las intervenciones de los estudiantes para analizar la asistencia por voz.")
+    st.caption('Hasta 3 minutos y 20 MB. Cada intervención necesita al menos unos 0,5 segundos de voz clara.')
+    audio = st.audio_input("Grabar Audio del Salón de Clases", key=f"audio_asistencia_{contexto['toma_id']}",
+                           on_change=invalidar_resultado)
     if st.button("Analizar Audio", width="stretch", type="primary"):
+        invalidar_resultado()
+        candidatos = {e["estudiante_id"]: e["embedding_voz"] for e in estudiantes
+                      if e.get('embedding_voz') is not None and len(e['embedding_voz']) > 0}
+        if not audio:
+            st.warning("Graba primero el audio del salón de clases.")
+            return
+        datos = audio.getvalue()
+        if len(datos) > MAX_AUDIO_BYTES:
+            st.warning("El audio puede ocupar como máximo 20 MB.")
+            return
         with st.spinner("Procesando datos de audio"):
-            estudiantes_matriculados = obtener_estudiantes_matriculados(id_materia_seleccionada)
-
-            if not estudiantes_matriculados:
-                st.warning(f"No hay estudiantes matriculados en esta materia")
-                time.sleep(1)
-                return
-
-            diccionario_candidatos = {
-                e["estudiante_id"] : e["embedding_voz"]
-                for e in estudiantes_matriculados if e.get("embedding_voz")
-            }
-
-            if not diccionario_candidatos:
-                st.warning("Ningún estudiante matriculado tiene su voz registrada")
-                time.sleep(1)
-                return
-
-            if not audio_grabado:
-                st.error("Por favor graba primero el audio del salón de clases.")
-                return
-
-            audio_bytes = audio_grabado.read()
-
-            puntajes_detectados = procesar_audio_masivo(audio_bytes, diccionario_candidatos) 
-
-            resultados, asistencia_a_registrar = [], []
-
-            marca_tiempo_actual = datetime.now(ZONA_COLOMBIA).isoformat()
-            for estudiante in estudiantes_matriculados:
-                puntaje = puntajes_detectados.get(estudiante["estudiante_id"], 0.0)
-                esta_presente = bool(puntaje > 0)
-
-                resultados.append(
-                    {
-                        "Nombre": estudiante["nombre"],
-                        "ID": estudiante["estudiante_id"],
-                        "Puntaje": puntaje if esta_presente else "-",
-                        "Estado": "☑️ Presente" if esta_presente else "❌ Ausente",
-                    }
-                )
-
-                asistencia_a_registrar.append(
-                    {
-                        "fecha_hora" : marca_tiempo_actual,
-                        "materia_id" : id_materia_seleccionada,
-                        "estudiante_id" : estudiante["estudiante_id"],
-                        "presente" : bool(esta_presente)
-                    }
-                )
-            st.session_state.resultados_asistencia_voz = (pd.DataFrame(resultados), asistencia_a_registrar)
-
-    st.divider() 
-
-    if st.session_state.get("resultados_asistencia_voz"):
-        df_resultados, registros = st.session_state.resultados_asistencia_voz
-        mostrar_resultado_asistencia(df_resultados, registros)
+            try:
+                analisis = procesar_audio_masivo(datos, candidatos)
+            except Exception:
+                # Defensa del limite UI: nunca reutilizar la propuesta previa tras una excepcion.
+                analisis = ResultadoAudio.fallido('ERROR_PROCESAMIENTO')
+            if not isinstance(analisis, ResultadoAudio) or analisis.estado not in ('COMPLETADO', 'SIN_MUESTRAS', 'FALLIDO'):
+                analisis = ResultadoAudio.fallido('CONTRATO_INVALIDO')
+            filas, registros = construir_resultados_voz(estudiantes, contexto['materia_id'], analisis,
+                                                       hora_actual_colombia().isoformat())
+            if analisis.estado == 'FALLIDO':
+                consejos = {
+                    'DURACION_AUDIO': 'Usa una grabación de entre 0,5 y 180 segundos.',
+                    'SIN_SENAL': 'La grabación está en silencio o tiene un volumen demasiado bajo.',
+                    'AUDIO_SATURADO': 'El micrófono está saturado. Aléjalo y vuelve a grabar.',
+                    'FORMATO_AUDIO': 'No se pudo leer el audio. Graba nuevamente desde el micrófono.',
+                    'SIN_SEGMENTOS_ANALIZABLES': 'No se encontraron intervenciones con suficiente voz identificable.',
+                    'VECTOR_INVALIDO': 'No se pudo validar una muestra de voz. Usa otro método mientras se revisa la muestra.',
+                }
+                if analisis.codigo in consejos:
+                    st.warning(consejos[analisis.codigo])
+            if analisis.estado == 'SIN_MUESTRAS':
+                st.info('No hay muestras de voz registradas. Todas las decisiones quedan pendientes y requieren revisión manual con motivo.')
+            guardar_resultado(contexto, filas, registros, "voz")
+    st.divider()
+    pendiente = obtener_resultado()
+    if pendiente and pendiente["origen"] == "voz":
+        mostrar_resultado_asistencia(pendiente["id"])

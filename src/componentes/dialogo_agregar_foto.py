@@ -1,57 +1,41 @@
 import streamlit as st
-import time 
-import numpy as np
 
-from PIL import Image 
+from src.utilidades.imagenes import agregar_foto
+from src.utilidades.sesiones import contexto_vigente
 
+
+def _seleccionar_fuente(fuente):
+    st.session_state.pestana_foto = fuente
 
 
 @st.dialog("Capturar o Subir Fotos")
-def dialogo_agregar_foto():
+def dialogo_agregar_foto(contexto):
+    if not contexto_vigente(contexto):
+        st.warning("La sesión o materia cambió. Cierra este diálogo y abre una nueva captura.")
+        return
     st.write("Agrega fotos del salón de clases para escanear la asistencia")
-
-    if "pestana_foto" not in st.session_state:
-        st.session_state.pestana_foto = "camara"
-    if "claves_subidas_procesadas" not in st.session_state:
-        st.session_state.claves_subidas_procesadas = set()
-    if "clave_camara_procesada" not in st.session_state:
-        st.session_state.clave_camara_procesada = None
-
+    st.caption("Hasta 12 fotos JPEG/PNG: 10 MB y 20 megapíxeles por foto; 60 MB en total.")
+    fuente = st.session_state.setdefault("pestana_foto", "camara")
     t1, t2 = st.columns(2)
-
     with t1:
-        tipo_camara = "primary" if st.session_state.pestana_foto == "camara" else "tertiary"
-        if st.button("Cámara", type=tipo_camara, width="stretch"):
-            st.session_state.pestana_foto = "camara"
-            
+        st.button("Cámara", type="primary" if fuente == "camara" else "tertiary", width="stretch",
+                  on_click=_seleccionar_fuente, args=("camara",))
     with t2:
-        tipo_subir = "primary" if st.session_state.pestana_foto == "subir" else "tertiary"
-        if st.button("Subir Fotos", type=tipo_subir, width="stretch"):
-            st.session_state.pestana_foto = "subir"
-
-    if st.session_state.pestana_foto == "camara":
-        foto_camara = st.camera_input("Tomar Foto", key="dialog_cam")
-        if foto_camara:
-            clave_camara = f"{foto_camara.name}_{foto_camara.size}"
-            if st.session_state.clave_camara_procesada != clave_camara:
-                st.session_state.imagenes_asistencia.append(Image.open(foto_camara))
-                st.session_state.clave_camara_procesada = clave_camara
-                st.toast("Foto capturada")
-                time.sleep(1)
-
-    if st.session_state.pestana_foto == "subir":
-        archivos_subidos = st.file_uploader("elige archivos de imagen", type=["jpg", "png", "jpeg"], accept_multiple_files=True, key="dialog_upload")
-
-        if archivos_subidos: 
-            for archivo in archivos_subidos:
-                clave_archivo = f"{archivo.name}_{archivo.size}"
-                if clave_archivo not in st.session_state.claves_subidas_procesadas:
-                    st.session_state.imagenes_asistencia.append(Image.open(archivo))
-                    st.session_state.claves_subidas_procesadas.add(clave_archivo)
-                    st.toast("Foto subida exitosamente")
-                    time.sleep(1)
-
-    st.divider() 
-
+        st.button("Subir Fotos", type="primary" if fuente == "subir" else "tertiary", width="stretch",
+                  on_click=_seleccionar_fuente, args=("subir",))
+    toma_id = contexto["toma_id"]
+    if fuente == "camara":
+        foto = st.camera_input("Tomar Foto", key=f"captura_camara_{toma_id}")
+        archivos = [foto] if foto else []
+    else:
+        archivos = st.file_uploader("Elige archivos de imagen", type=["jpg", "png", "jpeg"],
+                                    accept_multiple_files=True, key=f"captura_archivos_{toma_id}") or []
+    for archivo in archivos:
+        try:
+            if agregar_foto(archivo, contexto):
+                st.toast("Foto agregada")
+        except (ValueError, PermissionError) as exc:
+            st.warning(str(exc))
+    st.divider()
     if st.button("Listo", type="secondary", width="stretch"):
         st.rerun()

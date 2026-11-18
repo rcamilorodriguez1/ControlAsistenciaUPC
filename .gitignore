@@ -1,21 +1,49 @@
-# Entornos virtuales
+# Entornos e intérpretes: se recrean en cada PC.
 .venv/
 venv/
-env/
 source/
-
-# Cache de Python
 __pycache__/
 *.py[cod]
-*.egg-info/
 .pytest_cache/
+.coverage
 
-# Credenciales (nunca subir a GitHub)
+# Configuración privada y certificados propios de cada equipo.
 .streamlit/secrets.toml
 .env
+.env.*
+!.env.example
+.certs/
+.local/
+*.log
 
-# Editor / sistema
-.idea/
+# Archivos generados durante la presentación.
+exports/
+
+# Herramientas y configuración personal del equipo.
+.agents/
+.claude/
+.codex/
+.aws/
+.mypy_cache/
+.ruff_cache/
 Thumbs.db
-.DS_Store
-desktop.ini
+Desktop.ini
+
+# Credenciales, claves y datos locales: no forman parte del código fuente.
+secrets.toml
+*.key
+*.pem
+*.p12
+*.pfx
+*.keystore
+*.sqlite
+*.sqlite3
+*.db
+*.dmp
+*.pkl
+*.pickle
+*.joblib
+*.npy
+*.npz
+ALTA_DOCENTE.md
+CREDENCIALES_LOCALES.md

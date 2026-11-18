@@ -1,61 +1,40 @@
+from src.componentes.gestion_cuenta import gestion_cuenta
 import streamlit as st
 
 from src.componentes.pie_pagina import pie_pagina_panel
-from src.componentes.encabezado import encabezado_panel
+from src.componentes.encabezado import encabezado_panel, introduccion
 from src.componentes.dialogo_inscripcion import dialogo_inscripcion
 from src.componentes.tarjeta_materia import tarjeta_materia
 
-from src.interfaz.diseno_base import (
-    estilo_fondo_panel,
-    estilo_diseno_base,
-    estilo_espaciado_compacto,
-)
+import logging
 
-import numpy as np
-import time
-from PIL import Image
+from src.base_datos.bd import obtener_todos_estudiantes, obtener_materias_estudiante, obtener_asistencia_estudiante, desmatricular_estudiante_de_materia, obtener_resumen_estudiante
 
-from src.base_datos.bd import obtener_todos_estudiantes, crear_estudiante, obtener_materias_estudiante, obtener_asistencia_estudiante, desmatricular_estudiante_de_materia, obtener_resumen_estudiante
+from src.servicios.biometria_diferida import predecir_asistencia
+from src.servicios.registro_estudiante import registrar_estudiante
+from src.utilidades.muestra_facial import leer_foto_registro
+from src.utilidades.biometria import MuestraInvalida
+from src.utilidades.sesiones import sesion_activa, iniciar_sesion, salir_al_portal
+from src.utilidades.sesiones import sesion_incompatible
+from src.componentes.conflicto_sesion import mostrar_conflicto_sesion
+from src.componentes.acceso_excepcional import acceso_excepcional
+from src.componentes.estado_verificacion import mostrar_estado_verificacion
+from src.servicios.verificacion_identidad import acreditar_biometria, registrar_fallo_biometrico
 
-from src.canalizaciones.canalizacion_facial import predecir_asistencia, obtener_embeddings_faciales, entrenar_clasificador
-from src.canalizaciones.canalizacion_voz import obtener_embedding_voz
+_logger = logging.getLogger(__name__)
 
-def panel_estudiante():
+def panel_estudiante(inscripcion_pendiente=False):
     datos_estudiante = st.session_state.datos_estudiante
     id_estudiante = datos_estudiante["estudiante_id"]
 
-    logo_url= "https://i.ibb.co/YTYGn5qV/logo.png"  
-
-    logo_col, spacer_col, action_col = st.columns([1.2, 2.2, 2.2], vertical_alignment="center")
-
-    with logo_col:
-        st.markdown(
-            f"""
-            <div style="display:flex; justify-content:flex-start;">
-                <img src="{logo_url}" style="height:100px;" />
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-    with action_col:
-        if st.button( "Cerrar sesión",  type="primary",  key="loginbackbtn", shortcut="Ctrl+Backspace", width="stretch"):
-            st.session_state["sesion_iniciada"] = False
-            del st.session_state.datos_estudiante
-            st.rerun()
-
-    st.markdown(
-        """
-        <h1 style="text-align:center; color:#1B2E10; margin-bottom:30px;">Control De Asistencia UPC</h1>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.header(f"""Bienvenido, {datos_estudiante['nombre']} """)
+    encabezado_panel('estudiante', autenticado=True)
+    introduccion('Portal del estudiante', f"Bienvenido, {datos_estudiante['nombre']}",
+                 'Consulta tus materias y sigue tu participación en cada clase.')
+    mostrar_estado_verificacion(datos_estudiante.get('estado_verificacion'))
 
     resumen = obtener_resumen_estudiante(id_estudiante)
 
-    with st.container(border=True):
+    with st.container(border=True, key='resumen_panel'):
         k1, k2, k3 = st.columns(3)
         k1.metric("Materias Inscritas", resumen["total_materias"])
         k2.metric("Clases Registradas", resumen["total_clases"])
@@ -68,14 +47,16 @@ def panel_estudiante():
         st.header("Tus Materias Inscritas")
     with c2:
         st.space()
-        if st.button("Inscribirse en una Materia", type="primary", width="stretch"):
-            dialogo_inscripcion()
+        if st.button("Inscribirse en una Materia", type="primary", width="stretch", disabled=inscripcion_pendiente):
+            dialogo_inscripcion(st.session_state.sesion_token)
 
     st.divider()
 
     with st.spinner("Cargando tus materias inscritas..."):
         materias = obtener_materias_estudiante(id_estudiante)
         registros = obtener_asistencia_estudiante(id_estudiante)
+        if not materias:
+            st.info('Todavía no tienes materias inscritas. Usa el código o el enlace que te comparta tu profesor.')
 
         mapa_estadisticas = {}
 
@@ -97,10 +78,9 @@ def panel_estudiante():
             estadisticas = mapa_estadisticas.get(id_materia, {"total": 0, "asistio": 0})
 
             def boton_retirar():
-                if st.button("Retirarse de esta materia", type="tertiary", width="stretch", icon=":material/delete_forever:", key=f"unenroll_{id_materia}"):
+                if st.button("Retirarse de esta materia", type="tertiary", width="stretch", icon=":material/delete_forever:", key=f"unenroll_{st.session_state.sesion_token}_{id_materia}"):
                     desmatricular_estudiante_de_materia(id_estudiante, id_materia)
                     st.toast(f"Te has retirado de {materia['nombre']} exitosamente")
-                    time.sleep(1)
                     st.rerun()
 
             with columnas[i%2]:
@@ -115,135 +95,122 @@ def panel_estudiante():
                     al_pie=boton_retirar  
                 )
 
+    gestion_cuenta()
     pie_pagina_panel()
 
 
-def pantalla_estudiante():
+def pantalla_estudiante(inscripcion_pendiente=False):
 
-    estilo_fondo_panel()
-    estilo_diseno_base()
-    estilo_espaciado_compacto()
-
-    if "datos_estudiante" in st.session_state:
-        panel_estudiante()
+    if sesion_activa("estudiante"):
+        panel_estudiante(inscripcion_pendiente)
         return
 
+    conflicto = bool(sesion_incompatible('estudiante'))
     if "mostrar_registro_estudiante" not in st.session_state:
         st.session_state.mostrar_registro_estudiante = False
 
     encabezado_panel()
 
-    st.markdown(
-        """
-        <style>
+    with st.container(key='acceso_estudiante'):
+        st.caption('PORTAL DEL ESTUDIANTE')
+        acceso_excepcional(deshabilitado=conflicto)
+        st.header("Inicia sesión con tu Rostro")
+        st.caption('Mira a la cámara con el rostro completo y buena iluminación. Si aún no tienes perfil, podrás registrarte después de la captura.')
 
-            [data-testid="stAppViewContainer"] .block-container {
-                padding-top: 10px !important;
-                margin-top: -50px !important;
-            }
-        
-            div[data-testid="stHeadingWithActionElements"] {
-                margin-top: -1rem !important;
-                margin-bottom: -0.45rem !important;
-            }
+        token = st.session_state.sesion_token
+        fuente_foto = st.camera_input("Ubica tu rostro en el centro", disabled=conflicto, key=f"auth_estudiante_camara_{token}")
+        if not fuente_foto:
+            st.session_state.mostrar_registro_estudiante = False
 
-            div[data-testid="stHeadingWithActionElements"] + div[data-testid="stWidgetLabel"] {
-                margin-top: -0.4rem !important;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+        if fuente_foto and not conflicto and not st.session_state.mostrar_registro_estudiante:
+            with st.spinner("La IA está escaneando..."):
+                try:
+                    imagen = leer_foto_registro(fuente_foto)
+                    detectado, todos_ids, num_rostros = predecir_asistencia(imagen, rostro_unico=True)
+                except MuestraInvalida as exc:
+                    registrar_fallo_biometrico('MUESTRA_INVALIDA')
+                    st.warning(str(exc))
+                    return
+                except Exception as exc:
+                    registrar_fallo_biometrico('ERROR_TECNICO')
+                    _logger.error('Fallo en acceso facial: tipo=%s', type(exc).__name__)
+                    st.error('No se pudo analizar el rostro. Intenta nuevamente; no se creó ningún perfil.')
+                    return
 
-    st.header("Inicia sesión con tu Rostro", text_alignment="center")
-
-    fuente_foto = st.camera_input("Ubica tu rostro en el centro")
-    if not fuente_foto:
-        st.session_state.mostrar_registro_estudiante = False
-
-    if fuente_foto and not st.session_state.mostrar_registro_estudiante:
-        imagen = np.array(Image.open(fuente_foto))
-
-        with st.spinner("La IA está escaneando..."):
-            detectado, todos_ids, num_rostros = predecir_asistencia(imagen)
-
-            if num_rostros == 0:
-                st.warning("¡No se encontró ningún rostro en la imagen!")
-            elif num_rostros>1:
-                st.warning("Se encontraron múltiples rostros en la imagen")
-            else:
-
-                if detectado:
-                    id_estudiante = list(detectado.keys())[0]
-                    todos_estudiantes = obtener_todos_estudiantes()
-                    estudiante = next((e for e in todos_estudiantes if e["estudiante_id"]==id_estudiante), None)
-
-                    if estudiante:
-                        st.session_state.sesion_iniciada = True 
-                        st.session_state.rol_usuario = "estudiante"
-                        st.session_state.datos_estudiante = estudiante
-                        st.toast(f"{estudiante['nombre']} - ¡Bienvenido de nuevo!")
-                        time.sleep(1)
-                        st.rerun()
-
-
-                else:    
-                    st.info("¡Rostro no reconocido! Puede que seas un nuevo estudiante")
-                    st.session_state.mostrar_registro_estudiante = True
-
-    if st.session_state.mostrar_registro_estudiante and fuente_foto:
-        with st.container(border=True):
-            st.header("Registrar nuevo perfil")
-            nuevo_nombre = st.text_input("Ingresa tu nombre", placeholder=" Ej. Mihir Gupta")
-
-            st.subheader("(Opcional): Inscripción de voz")
-            st.info("Inscribe tu voz para el registro de asistencia")
-
-            audio_grabado = None
-
-            try:
-                audio_grabado = st.audio_input(
-                    f"Graba una frase corta para capturar tu voz. Ejemplo: 'Estoy presente profesor, mi nombre es {nuevo_nombre}'"
-                )
-            except Exception:
-                st.error("Ocurrió un error al capturar la voz para la grabación")
-
-            if st.button("Crear Cuenta", type="primary"):
-                if nuevo_nombre:
-                    with st.spinner("Creando perfil..."):
-                        imagen = np.array(Image.open(fuente_foto))
-                        codificaciones = obtener_embeddings_faciales(imagen)
-                        if codificaciones:
-                            emb_facial = codificaciones[0].tolist()
-
-                            emb_voz = None
-                            if audio_grabado:
-                                audio_bytes = audio_grabado.getvalue()
-                                if audio_bytes:
-                                    emb_voz = obtener_embedding_voz(audio_bytes)
-
-                            datos_respuesta = crear_estudiante(
-                                nuevo_nombre,
-                                embedding_facial=emb_facial,
-                                embedding_voz=emb_voz,
-                            )
-
-                            if datos_respuesta:
-                                entrenar_clasificador()
-
-                                st.session_state.sesion_iniciada = True
-                                st.session_state.rol_usuario = "estudiante"
-                                st.session_state.datos_estudiante = datos_respuesta[0]
-                                st.session_state.mostrar_registro_estudiante = False
-                                st.toast(f"Bienvenido {nuevo_nombre} \n Perfil creado exitosamente")
-                                time.sleep(1)
-                                st.rerun()
-                        else:
-                            st.error("¡Ocurrió un error al capturar los rasgos faciales para el registro!")
+                if num_rostros == 0:
+                    registrar_fallo_biometrico('MUESTRA_INVALIDA')
+                    st.warning("¡No se encontró ningún rostro en la imagen!")
+                elif num_rostros>1:
+                    registrar_fallo_biometrico('MUESTRA_INVALIDA')
+                    st.warning("Se encontraron múltiples rostros en la imagen")
                 else:
-                    st.warning("¡Por favor ingresa tu nombre!")
+
+                    if detectado:
+                        id_estudiante = list(detectado.keys())[0]
+                        todos_estudiantes = obtener_todos_estudiantes()
+                        estudiante = next((e for e in todos_estudiantes if e["estudiante_id"]==id_estudiante), None)
+
+                        if estudiante:
+                            try:
+                                iniciar_sesion("estudiante", acreditar_biometria(estudiante))
+                            except (ValueError, PermissionError):
+                                st.warning('No se pudo acreditar el acceso. Repite la captura o consulta con Gestión académica.')
+                                return
+                            st.toast(f"{estudiante['nombre']} - ¡Bienvenido de nuevo!")
+                            st.rerun()
+                        else:
+                            registrar_fallo_biometrico('PRUEBA_RECHAZADA')
+                            st.warning('La cuenta detectada ya no está disponible. Consulta con Gestión académica.')
 
 
+                    else:    
+                        registrar_fallo_biometrico('NO_COINCIDE')
+                        st.info("¡Rostro no reconocido! Puede que seas un nuevo estudiante")
+                        st.session_state.mostrar_registro_estudiante = True
 
+        if not conflicto and st.session_state.mostrar_registro_estudiante and fuente_foto:
+            with st.container(border=True):
+                st.header("Registrar nuevo perfil")
+                nuevo_nombre = st.text_input("Ingresa tu nombre", placeholder=" Ej. Mihir Gupta", key=f"auth_estudiante_nombre_{token}")
+                codigo_institucional = st.text_input('Código institucional', key=f'auth_estudiante_codigo_{token}', max_chars=50)
 
+                st.subheader("(Opcional): Inscripción de voz")
+                st.info('La voz es opcional. Si la grabas, habla de 3 a 30 segundos, con al menos 1,6 segundos de voz clara. Una grabación inválida debe repetirse o eliminarse antes de continuar.')
+
+                audio_grabado = None
+
+                try:
+                    audio_grabado = st.audio_input(
+                        f"Graba una frase corta para capturar tu voz. Ejemplo: 'Estoy presente profesor, mi nombre es {nuevo_nombre}'",
+                        key=f"auth_estudiante_voz_{token}",
+                    )
+                except Exception:
+                    st.error("Ocurrió un error al capturar la voz para la grabación")
+
+                if st.button("Crear Cuenta", type="primary"):
+                    if nuevo_nombre:
+                        with st.spinner("Creando perfil..."):
+                            try:
+                                datos_respuesta = registrar_estudiante(nuevo_nombre, fuente_foto,
+                                    audio_grabado.getvalue() if audio_grabado is not None else None,
+                                    codigo_institucional=codigo_institucional)
+                            except (ValueError, PermissionError) as exc:
+                                st.warning(str(exc))
+                            except Exception as exc:
+                                _logger.error('Fallo de registro: tipo=%s', type(exc).__name__)
+                                st.error('No se pudo confirmar el registro. Intenta acceder con tu rostro antes de repetirlo.')
+                            else:
+                                if datos_respuesta:
+                                    try:
+                                        iniciar_sesion("estudiante", acreditar_biometria(datos_respuesta[0]))
+                                    except Exception as exc:
+                                        _logger.error('Fallo al acreditar el alta: tipo=%s', type(exc).__name__)
+                                        st.warning('El perfil se creó, pero no se pudo confirmar el acceso. Intenta iniciar sesión con tu rostro.')
+                                        return
+                                    st.toast(f"Bienvenido {nuevo_nombre} \n Perfil creado exitosamente")
+                                    st.rerun()
+                    else:
+                        st.warning("¡Por favor ingresa tu nombre!")
+
+    mostrar_conflicto_sesion('estudiante')
     pie_pagina_panel()
