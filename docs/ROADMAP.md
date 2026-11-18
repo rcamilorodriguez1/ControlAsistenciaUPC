@@ -21,6 +21,10 @@ auditoría, filtros y revocación. No se autoriza por documento solo. La políti
 comprueba un factor. Guía: [EXCEPCIONES_BIOMETRICAS.md](EXCEPCIONES_BIOMETRICAS.md).
 Pendiente de aceptación del usuario y ensayo institucional con personas reales.
 
+- [ ] **Entrega de la contraseña alternativa por el profesor:** el profesor la proporcionará
+  al estudiante mediante correo, con una dinámica similar a `ALTA_DOCENTE`. Requisito registrado
+  para una revisión posterior; el usuario indicó expresamente que todavía no se implemente.
+
 **Mi perfil del estudiante, 17 de noviembre de 2026:** implementados el resumen acumulado,
 el contador de matrículas, las materias desplegables y el calendario privado. Pendiente de
 confirmación visual del usuario. Los perfiles de otros roles y Configuración siguen aplazados.

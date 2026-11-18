@@ -25,6 +25,13 @@ gubernamental ni certifica automáticamente la autenticidad de la cédula presen
 La categoría puede ser física, médica, técnica o administrativa. No se solicitan diagnósticos,
 fotocopias ni informes médicos en este formulario.
 
+## Requisito futuro: entrega de la contraseña por el profesor
+
+El profesor deberá proporcionar al estudiante la contraseña de acceso alternativo mediante
+correo, siguiendo una dinámica similar a `ALTA_DOCENTE`. Se registra como requisito pendiente
+por indicación del usuario, **sin implementarlo todavía**. El flujo actual descrito a continuación
+continúa vigente; esta anotación no incorpora envío de correos ni cambia permisos o credenciales.
+
 ## Operación
 
 En **Gestión académica → Verificación**, el administrador puede consultar, filtrar y exportar
