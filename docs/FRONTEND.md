@@ -17,7 +17,7 @@ usuario; las pruebas automáticas y capturas se registran por separado.
 | Cambio | Estado confirmado por el usuario |
 | --- | --- |
 | Identidad actual UPC \| Aula | Le gusta el estado actual; habrá ajustes más adelante |
-| Iconos y controles de contraseñas | Funcionamiento normal y correcto confirmado |
+| Iconos y controles de contraseñas | Funcionamiento confirmado anteriormente; mejora visual del acceso docente e Inicio en Chrome confirmada con capturas el 21/11 |
 | Olvidé mi contraseña del docente | Funcionamiento confirmado |
 | Separador de Cerrar sesión: alineación, separación y estabilidad visual | Aprobado y cerrado; el usuario lo califica como «perfecto» |
 | Selectores docentes y Crear nueva materia | Pendiente de confirmación |
@@ -31,6 +31,58 @@ Esta aceptación es parcial: no cierra el frontend ni confirma otras pantallas, 
 que el usuario no haya revisado expresamente.
 El último ajuste del separador de Cerrar sesión queda tachado como listo. Esta confirmación
 visual no equivale a aprobar por separado todos los recorridos de navegación o cierre de sesión.
+
+## Chrome: nombres de iconos en lugar de símbolos, 21/11/2026
+
+El usuario informa de `visibility` y otros nombres visibles en Chrome. El recorrido normal en
+un perfil limpio funciona; al impedir la carga del WOFF2 nativo se reproduce el defecto:
+`visibility`, `visibility_off`, `passkey`, `login` y `home` aparecen como palabras. La causa
+reproducida es la sustitución de la fuente Material por una fuente de texto cuando el recurso
+no está disponible. El desencadenante específico del perfil habitual no quedó determinado;
+no se atribuye automáticamente a su configuración.
+
+Se utiliza el archivo Material que ya incorpora la versión instalada de Streamlit, bajo una
+familia local `UPC Material Symbols Rounded` y una URL con huella SHA-256 en el parámetro
+`upc_iconos`. Así, la carga no reutiliza la respuesta fallida de la URL nativa y se invalida
+cuando cambia el archivo instalado. Se respeta `server.baseUrlPath`; no se incorpora otro
+archivo de fuente al repositorio ni se añade un CDN o una dependencia.
+
+El CSS limita la familia, el peso y las ligaduras a `[data-testid="stIconMaterial"]`, también
+en el ojo y en los popovers. Los textos conservan Arial y los iconos conservan sus tamaños y
+colores existentes. La regla es compartida por los tres roles y no altera autenticación,
+sesiones, navegación ni el separador de Cerrar sesión aprobado anteriormente.
+
+El verificador anterior comprobaba la familia CSS, que puede seguir siendo Material aunque
+el archivo haya fallado. Ahora comprueba además la carga de la primera familia y el ancho
+real del glifo: un icono ocupa aproximadamente un em; el nombre completo ocupaba varios.
+Se capturan expresamente los dos estados del ojo. `--fallo-fuente-iconos` bloquea la URL
+nativa, fuerza su carga y exige comprobar el fallo antes de dar por válida la recuperación.
+
+Validación del cambio con la fuente nativa bloqueada:
+
+| Navegador / escenario | Vistas | Evidencia local |
+| --- | ---: | --- |
+| Chrome: accesos, registro, recuperación, contraseñas y cuatro anchos | 21 | `.local/frontend/06d2494b0584/resultado.json` |
+| Brave: accesos, registro y contraseñas | 17 | `.local/frontend/bf1c4c6cb3f7/resultado.json` |
+| Chrome: portales, perfil, menús y diálogos sintéticos | 52 | `.local/frontend/f9663905f34c/resultado.json` |
+| Chrome: instancia real `https://localhost:8501`, sin autenticarse | 21 | `.local/frontend/7df323c9096b/resultado.json` |
+| Chrome: acceso alternativo y gestión administrativa sintética | 12 | `.local/frontend/66b7c28ae794/resultado.json` |
+
+Las **123 vistas** terminan correctamente, sin fuentes externas ni nombres dibujados en lugar
+de iconos. Los escenarios móviles utilizan emulación a 768, 390 y 320 px según el recorrido.
+Las dos pruebas existentes de frontend y las ocho de navegación global también pasan.
+Una ejecución adicional de Chrome sobre HTTPS, en condiciones normales, comprueba **11 vistas**
+sin fallos: `.local/frontend/7fd9e74f9231/resultado.json`. Son **134 vistas correctas** en total.
+Las vistas autenticadas de esta revisión utilizan datos sintéticos con Oracle bloqueado;
+la revisión HTTPS real no autentica ni escribe datos. El 21/11 el usuario confirma «salen mejor»
+y aporta capturas de su Chrome: el ojo, los iconos de Iniciar Sesión/Registrarme y la casa de
+Inicio se muestran correctamente. Se registra la mejora visual de esos controles; los demás
+recorridos conservan su estado de aceptación. Esto no constituye una validación de Firefox,
+Safari o teléfonos físicos.
+
+Archivos: `src/interfaz/diseno_base.py`, `static/css/styles.css` y
+`scripts/verificar_frontend.py`. Referencia de comportamiento de sustitución al fallar la fuente:
+[MDN: font-display](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40font-face/font-display).
 
 ## Implementación y pruebas registradas
 

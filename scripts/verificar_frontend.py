@@ -342,6 +342,7 @@ def main():
     parser.add_argument('--identidad', action='store_true', help='Añadir revisión de identidad y presentación en anchos de 320, 390 y 768 px.')
     parser.add_argument('--zoom', type=int, choices=[25, 30, 33, 50, 100, 200], help='Zoom nativo del navegador en un perfil aislado, con escala del dispositivo fijada en 1.')
     parser.add_argument('--recuperacion-docente',action='store_true',help='Revisar recuperacion con datos sinteticos; no enviar ni cambiar contrasenas.')
+    parser.add_argument('--fallo-fuente-iconos', action='store_true', help='Simular el fallo de la fuente Material nativa y comprobar la recuperación local de los iconos.')
     args = parser.parse_args()
     if args.zoom is not None and (args.identidad or args.claves or args.paneles or args.registro_estudiante or args.administracion_real or args.recuperacion_docente or args.excepciones):
         parser.error('--zoom es un escenario independiente; no combinar con otras vistas.')
@@ -424,8 +425,13 @@ def main():
                         solicitud = respuesta['params']
                         recurso = solicitud['request']['url']
                         partes = urlsplit(recurso)
-                        bloquear = partes.scheme in ('http', 'https') and partes.hostname not in ('localhost', '127.0.0.1')
-                        if bloquear and recurso not in informe['externos']: informe['externos'].append(recurso)
+                        externo = partes.scheme in ('http', 'https') and partes.hostname not in ('localhost', '127.0.0.1')
+                        bloquear = externo
+                        if args.fallo_fuente_iconos and 'MaterialSymbols-Rounded.' in partes.path and not partes.query.startswith('upc_iconos='):
+                            bloquear = True
+                            if recurso not in informe.setdefault('fuentes_iconos_bloqueadas', []):
+                                informe['fuentes_iconos_bloqueadas'].append(recurso)
+                        if externo and recurso not in informe['externos']: informe['externos'].append(recurso)
                         secuencia += 1
                         ws.send(json.dumps({'id': secuencia, 'method': 'Fetch.failRequest' if bloquear else 'Fetch.continueRequest',
                             'params': {'requestId': solicitud['requestId'], **({'errorReason': 'BlockedByClient'} if bloquear else {})}}))
@@ -477,7 +483,7 @@ def main():
                     medidasInicio:(()=>{const a=document.querySelector('.st-key-navegacion_inicio a');if(!a)return null;const medir=e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return {tag:e.tagName,testid:e.dataset.testid,clase:e.className,ancho:r.width,alto:r.height,cliente:e.clientHeight,contenido:e.scrollHeight,overflowY:s.overflowY,display:s.display,height:s.height,maxHeight:s.maxHeight,padding:s.padding,lineHeight:s.lineHeight,alignItems:s.alignItems,boxSizing:s.boxSizing,estilo:e.getAttribute('style')}};const padres=[];for(let e=a;e&&!e.classList.contains('st-key-barra_panel');e=e.parentElement)padres.push(medir(e));return {padres,hijos:[...a.querySelectorAll('*')].map(medir)}})(),
                     errores:[...document.querySelectorAll('[data-testid="stException"]')].map(e=>e.innerText),
                     imagenesRotas:[...document.images].filter(e=>e.complete&&!e.naturalWidth).map(e=>e.alt),
-                    iconos:[...document.querySelectorAll('[data-testid="stIconMaterial"]')].map(e=>({nombre:e.textContent,fuente:getComputedStyle(e).fontFamily})),
+                    iconos:[...document.querySelectorAll('[data-testid="stIconMaterial"]')].filter(e=>e.getClientRects().length&&getComputedStyle(e).visibility==='visible').map(e=>{const s=getComputedStyle(e),r=document.createRange();r.selectNodeContents(e);return {nombre:e.textContent,fuente:s.fontFamily,cargada:document.fonts.check(s.fontSize+' '+s.fontFamily.split(',')[0],e.textContent),tamano:parseFloat(s.fontSize),anchoGlifo:r.getBoundingClientRect().width,ligaduras:s.fontFeatureSettings}}),
                     tipografia:[...document.querySelectorAll('h1,h2,h3,.upc-eyebrow,.upc-brand-title,.upc-role p,.stButton button p,[data-testid=stTextInput] input')].filter(e=>e.getClientRects().length).map(e=>({elemento:e.tagName,fuente:getComputedStyle(e).fontFamily,tamano:getComputedStyle(e).fontSize,peso:getComputedStyle(e).fontWeight})),
                     selectores:[...document.querySelectorAll('[role=combobox]')].filter(e=>e.getClientRects().length).map(e=>{let a=e;const r=[];for(let i=0;a&&i<5;i++,a=a.parentElement){const s=getComputedStyle(a);r.push({tag:a.tagName,testid:a.dataset.testid,baseweb:a.dataset.baseweb,alto:a.getBoundingClientRect().height,fondo:s.backgroundColor,fuente:s.fontSize})}return r}),
                     selectoresAcademicos:[...document.querySelectorAll('[class*=st-key-selector_academico_] input[role=combobox]')].filter(e=>e.getClientRects().length).map(e=>({alto:e.parentElement.getBoundingClientRect().height,fuente:getComputedStyle(e).fontSize,placeholder:e.placeholder})),
@@ -542,6 +548,8 @@ def main():
                     informe['fallos'].append(etiqueta + ': crear materia no tiene contraste primario')
                 for icono in dimensiones['iconos']:
                     if 'Material' not in icono['fuente']: informe['fallos'].append(etiqueta + ': fuente de icono incorrecta')
+                    if not icono['cargada'] or icono['anchoGlifo'] > icono['tamano']*1.25:
+                        informe['fallos'].append(etiqueta + ': nombre visible en lugar del icono ' + icono['nombre'])
                 if args.zoom is not None:
                     # El viewport físico se mantiene fijo; un clip con el ancho CSS a 25 %
                     # produciría un lienzo cuatro veces mayor que la ventana real.
@@ -558,6 +566,7 @@ def main():
                     (carpeta / (etiqueta + '_inferior.png')).write_bytes(base64.b64decode(abajo['data']))
                     js("document.querySelector('[data-testid=stMain]').scrollTop=0")
             cdp('Page.enable'); cdp('Runtime.enable'); cdp('Network.enable')
+            informe['navegador'] = cdp('Browser.getVersion')['product']
             # Bloquear recursos remotos prueba que el frontend funciona sin Google Fonts/ibb.
             cdp('Fetch.enable', {'patterns': [{'urlPattern': '*', 'requestStage': 'Request'}]})
             if args.lento:
@@ -581,6 +590,8 @@ def main():
                     "[...document.querySelectorAll('button')].some(b=>b.innerText.includes('Tomar Asistencia'))" if args.paneles else
                     "[...document.querySelectorAll('button')].some(b=>b.innerText.includes('Portal del Profesor'))")
             informe['segundos_inicio_frio'] = round(time.monotonic() - inicio, 3)
+            if args.fallo_fuente_iconos:
+                informe['fuente_nativa_disponible'] = js('document.fonts.load(\'24px "Material Symbols Rounded"\', "visibility").then(()=>true,()=>false)', True)
             if args.zoom is not None:
                 informe['modo'] = 'zoom_nativo_perfil_aislado'
                 informe['zoom'] = js("""({factor:devicePixelRatio,escalaPinch:visualViewport.scale,ventana:outerWidth,
@@ -652,9 +663,11 @@ def main():
                 js("document.querySelector('button[aria-label=\"Show password\"]').click()")
                 esperar("Boolean(document.querySelector('button[aria-label=\"Hide password\"]'))")
                 informe['mostrar_password'] = True
+                captura('docente_password_visible')
                 js("document.querySelector('button[aria-label=\"Hide password\"]').click()")
                 esperar("Boolean(document.querySelector('input[type=password]'))")
                 informe['ocultar_password'] = True
+                captura('docente_password_oculto')
                 if args.recuperacion_docente:
                     revisar_recuperacion_docente(cdp,js,esperar,pulsar,captura,informe)
                 cdp('Emulation.setDeviceMetricsOverride', {'width': 390, 'height': 844, 'deviceScaleFactor': 1, 'mobile': True})
@@ -669,6 +682,8 @@ def main():
                 esperar("Boolean(document.querySelector('[data-testid=stCameraInput]'))")
                 captura('estudiante_acceso_movil')
             if informe['externos']: informe['fallos'].append('Se solicitaron recursos externos.')
+            if args.fallo_fuente_iconos and (informe.get('fuente_nativa_disponible') or not informe.get('fuentes_iconos_bloqueadas')):
+                informe['fallos'].append('No se reprodujo el fallo de la fuente nativa de iconos.')
             informe['estado'] = 'CORRECTO' if not informe['fallos'] else 'FALLIDO'
     except Exception as exc:
         informe['estado'] = 'FALLIDO'

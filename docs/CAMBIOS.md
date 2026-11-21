@@ -4,6 +4,28 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 21 de noviembre de 2026 — Compatibilidad de iconos en Chrome
+
+Se reproduce el defecto de nombres como `visibility` y `passkey` al bloquear la fuente
+Material nativa. Se reutiliza el WOFF2 de Streamlit mediante una familia local y una URL
+con huella de contenido, aislando sus ligaduras de la tipografía de texto. La corrección
+se aplica a los tres roles, los menús y los dos estados de mostrar/ocultar contraseña.
+No se añaden dependencias, fuentes remotas ni copias de la fuente al proyecto.
+
+El verificador ahora comprueba que la fuente esté cargada y que el glifo se dibuje con ancho
+de icono; añade el escenario `--fallo-fuente-iconos` y registra el motor del navegador.
+Antes solo comprobaba el nombre de familia CSS, insuficiente para detectar esta condición.
+
+**Validación:** 134 vistas correctas en Chrome y Brave, incluidas vistas móviles, menús,
+perfil, administración y la instancia HTTPS real: 123 con fallo de fuente nativa simulado
+y 11 en Chrome con las condiciones normales. Dos pruebas de frontend y ocho de
+navegación aprobadas. Los recorridos autenticados son sintéticos y tienen Oracle bloqueado.
+El usuario confirma «salen mejor» y aporta capturas de Chrome con el ojo, los iconos de los
+botones del acceso docente y la casa de Inicio correctamente dibujados. Se registra esa mejora
+visual; los demás recorridos conservan su estado de aceptación, incluido el separador aprobado.
+
+Detalle y evidencias: [FRONTEND.md](FRONTEND.md#chrome-nombres-de-iconos-en-lugar-de-símbolos-21112026).
+
 ## 18 de noviembre de 2026 — Mockup navegable de pantallas
 
 Se añade [docs/mockup/index.html](mockup/index.html), un mockup documental retrospectivo
