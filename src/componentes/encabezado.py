@@ -16,7 +16,8 @@ def _imagen_logo():
 
 @lru_cache(maxsize=1)
 def _foco_cuenta():
-    return '<script>' + (RAIZ / 'static/js/cuenta.js').read_text(encoding='utf-8') + '</script>'
+    scripts = ('cuenta.js', 'diseno.js')
+    return '<script>' + '\n'.join((RAIZ / 'static/js' / nombre).read_text(encoding='utf-8') for nombre in scripts) + '</script>'
 
 
 def _marca():

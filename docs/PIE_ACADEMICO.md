@@ -35,9 +35,12 @@ El título académico añade su punto final de presentación automáticamente.
 
 Los estilos se limitan a `upc-academic-footer` y sus descendientes, salvo dos ajustes de su
 área de página: se reserva el espacio del scroll vertical y se elimina el padding inferior
-blanco después del cierre. Las unidades de consulta de contenedor permiten ocupar el ancho
-útil real, sin incluir la barra de desplazamiento ni añadir scroll horizontal. El pie está
-en el flujo normal, no fijo en la pantalla, y no necesita JavaScript adicional.
+blanco después del cierre. Desde la revisión del 21/11, un `ResizeObserver` compartido en
+`static/js/diseno.js` publica el ancho útil real de `stMain` en `--upc-ancho-contenido`.
+El pie utiliza esa medida para ancho y centrado, con `100cqi` como alternativa inicial.
+Así se evita incluir la reserva de la barra de desplazamiento, que producía un desborde
+de 4 px en Firefox en el equipo verificado. El observador se actualiza al redimensionar;
+no oculta barras ni cambia el flujo normal del pie.
 
 En escritorio conserva 53/47 y las áreas internas horizontales. En tablet reorganiza las
 áreas internas; en móvil apila desarrolladores y referencia académica y usa divisores
@@ -55,11 +58,18 @@ no se añadieron bibliotecas, imágenes de texto ni peticiones externas.
 - `src/interfaz/creditos_academicos.py`: datos editables centralizados.
 - `src/interfaz/navegacion.py`: cierre visual después de la vista; rutas intactas.
 - `static/css/styles.css`: composición, variables y reglas responsive del pie.
+- `static/js/diseno.js` y `src/componentes/encabezado.py`: observación y carga compartida del ancho útil.
 - `scripts/verificar_frontend.py`: mediciones de ancho, tipografía, proporciones y recortes.
+- `scripts/_frontend_mediciones.py` y `scripts/verificar_firefox.py`: criterios comunes y revisión con Gecko.
 - `tests/preview_frontend.py`: ajuste del fixture aislado para terminar la vista y conservar sus enlaces.
 - `docs/FRONTEND.md` y este documento: estado y guía de edición.
 
 ## Validación
+
+La revisión del 21/11 confirma el ancho y centrado del pie en Firefox, Edge, Chrome y Brave,
+con 173 vistas correctas en la matriz final. El detalle y los límites de automatización están
+en [FRONTEND.md](FRONTEND.md#firefox-y-edge-revisión-entre-navegadores-21112026).
+Los registros siguientes corresponden a la implementación inicial.
 
 - 123 pruebas aprobadas; 50 pruebas de integración Oracle omitidas deliberadamente.
   Registro: `.local/pruebas_pie_academico_final.log`.

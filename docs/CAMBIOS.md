@@ -4,6 +4,29 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 21 de noviembre de 2026 — Revisión de Firefox y Edge
+
+Se añade `scripts/verificar_firefox.py`, que automatiza el Firefox instalado mediante
+WebDriver BiDi y perfiles temporales, reutilizando las mediciones y criterios extraídos a
+`scripts/_frontend_mediciones.py`. El verificador de Chromium sigue utilizando los mismos
+criterios. Se ajusta la detección de recortes de texto inline y la serialización de alineación
+del menú para evitar falsos positivos entre motores.
+
+Se corrige un desborde del pie en Firefox: `static/js/diseno.js` mide el ancho útil de `stMain`
+con `ResizeObserver`, y el CSS lo utiliza para el ancho y centrado del pie. El encabezado
+compartido carga el observador junto al complemento de foco existente. No se modifica el
+separador aprobado, la identidad, las rutas, las sesiones ni la base de datos.
+
+**Validación final:** 173 vistas correctas: Firefox 67, Edge 73, Chrome 21 y Brave 12.
+Incluye tamaños de 1440/768/390/320 px según el recorrido, iconos, ambos estados de contraseña,
+menús, materias, perfil, calendario y administración. Se reproduce también el fallo de la
+fuente nativa. Diez pruebas existentes de frontend y navegación aprobadas. La instancia HTTPS
+se reinicia con el código actual; los escenarios autenticados son sintéticos y tienen Oracle
+bloqueado. La comprobación visual de foco de Firefox en dos formularios queda explícitamente
+omitida porque la ventana automatizada no está activa; no se presenta como validada.
+
+Archivos, límites y evidencias: [FRONTEND.md](FRONTEND.md#firefox-y-edge-revisión-entre-navegadores-21112026).
+
 ## 21 de noviembre de 2026 — Compatibilidad de iconos en Chrome
 
 Se reproduce el defecto de nombres como `visibility` y `passkey` al bloquear la fuente

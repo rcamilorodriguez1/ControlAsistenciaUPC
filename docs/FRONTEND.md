@@ -26,11 +26,74 @@ usuario; las pruebas automáticas y capturas se registran por separado.
 | Pie académico editorial compartido | Implementado y probado; pendiente de confirmación visual |
 | Mi perfil del estudiante: resumen, materias y calendario | Implementado el 17/11/2026; pendiente de confirmación visual |
 | Acceso excepcional estudiantil y gestión administrativa de verificaciones | Implementado el 17/11/2026; pendiente de confirmación del usuario |
+| Compatibilidad visual con Firefox y Edge | Revisada el 21/11 mediante pruebas; pendiente de confirmación del usuario |
 
 Esta aceptación es parcial: no cierra el frontend ni confirma otras pantallas, roles o casos
 que el usuario no haya revisado expresamente.
 El último ajuste del separador de Cerrar sesión queda tachado como listo. Esta confirmación
 visual no equivale a aprobar por separado todos los recorridos de navegación o cierre de sesión.
+
+## Firefox y Edge: revisión entre navegadores, 21/11/2026
+
+Se comprueban los cuatro navegadores instalados en Windows: Firefox, Microsoft Edge,
+Google Chrome y Brave. Firefox se ejecuta mediante WebDriver BiDi con su binario instalado;
+los otros tres usan CDP. Se crean perfiles temporales y se conservan los perfiles personales.
+No se instala otro navegador, WebDriver ni dependencia de ejecución.
+
+Los iconos se dibujan correctamente en Firefox y Edge, también con la fuente Material nativa
+bloqueada. Se revisan los dos estados del ojo, fortaleza/coincidencia de contraseñas, enlaces,
+menús, separador aprobado, materias, diálogos, perfil y calendario según el recorrido.
+Las versiones pequeñas son viewports de escritorio a 768, 390 y 320 px, no teléfonos físicos.
+
+**Ajuste de aplicación.** En Firefox, el pie basado únicamente en `100cqi` medía 1440 px
+cuando el contenido útil era de 1432 px, con 4 px de desborde a cada lado de su centrado.
+Un `ResizeObserver` compartido publica `stMain.clientWidth` en `--upc-ancho-contenido`.
+El pie utiliza esa medida y conserva `100cqi` como alternativa inicial. El mismo observador
+se actualiza al redimensionar; no oculta barras ni altera proporciones, colores o el menú.
+La instancia HTTPS se reinicia para cargar los complementos compartidos actualizados.
+
+**Comprobadores.** `scripts/_frontend_mediciones.py` centraliza los criterios para ambos
+protocolos. El recorte de botones se comprueba con el rectángulo real de sus líneas de texto:
+el `clientWidth` de un párrafo inline puede ser cero en Firefox sin que exista recorte.
+El menú acepta las serializaciones `flex-start` y `flow-start` de su alineación inicial,
+conservando las comprobaciones geométricas. Los controles lazy del encabezado se esperan
+antes de medir. Estos ajustes evitan presentar diferencias de medición como errores visuales.
+
+| Navegador / escenario final | Vistas | Evidencia local |
+| --- | ---: | --- |
+| Firefox 160.0.1: accesos, contraseñas y recuperación sobre HTTPS | 20 | `.local/frontend/73b958e8846a/resultado.json` |
+| Firefox: portales, menús, materias, diálogos y perfil; fuente nativa bloqueada | 31 | `.local/frontend/ff3d26028039/resultado.json` |
+| Firefox: excepciones y administración; fuente nativa bloqueada | 16 | `.local/frontend/8897e29600aa/resultado.json` |
+| Edge 158.0.4370.33: accesos y contraseñas sobre HTTPS; fuente nativa bloqueada | 21 | `.local/frontend/6eb24016a829/resultado.json` |
+| Edge: portales, menús, diálogos y perfil; fuente nativa bloqueada | 52 | `.local/frontend/9ccc953e18a6/resultado.json` |
+| Chrome 157.0.8103.79: regresión de accesos y contraseñas sobre HTTPS | 21 | `.local/frontend/86950e009ce2/resultado.json` |
+| Brave, Chromium 158.0.8127.42: excepciones y administración | 12 | `.local/frontend/0345776e3df5/resultado.json` |
+
+Total final: **173 vistas correctas**, sin desbordamientos ni nombres dibujados como iconos.
+Las dos pruebas de frontend y las ocho de navegación pasan; logs locales
+`.local/pruebas_navegadores_frontend.log` y `.local/pruebas_navegadores_sesiones.log`.
+Los recorridos autenticados usan fixtures con Oracle bloqueado. Los recorridos HTTPS reales
+son anónimos y Firefox mantiene `acceptInsecureCerts=false`.
+
+**Límite de foco en Firefox.** En este entorno de automatización su ventana se informa
+inactiva (`document.hasFocus() == false`), aunque cambia el elemento activo. La evaluación
+del indicador visual de foco en recuperación y acceso alternativo queda registrada como
+omitida en `comprobaciones_omitidas`, no como aprobada ni como defecto de la aplicación.
+Las acciones nativas de Tab y Escape, y sus resultados de navegación, sí se comprobaron.
+La revisión no certifica accesibilidad completa, cámara/micrófono físicos, Safari ni otro SO.
+La aceptación visual por el usuario permanece separada de estos resultados.
+
+Para reproducir:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\verificar_firefox.py --url https://localhost:8501
+.\.venv\Scripts\python.exe scripts\verificar_firefox.py --paneles --fallo-fuente-iconos
+.\.venv\Scripts\python.exe scripts\verificar_firefox.py --excepciones --fallo-fuente-iconos
+.\.venv\Scripts\python.exe scripts\verificar_frontend.py --navegador "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --paneles --fallo-fuente-iconos
+```
+
+Referencias: [Mozilla: protocolos remotos](https://firefox-source-docs.mozilla.org/remote/index.html)
+y [MDN: alineación de contenido](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/justify-content).
 
 ## Chrome: nombres de iconos en lugar de símbolos, 21/11/2026
 
@@ -77,8 +140,8 @@ Las vistas autenticadas de esta revisión utilizan datos sintéticos con Oracle 
 la revisión HTTPS real no autentica ni escribe datos. El 21/11 el usuario confirma «salen mejor»
 y aporta capturas de su Chrome: el ojo, los iconos de Iniciar Sesión/Registrarme y la casa de
 Inicio se muestran correctamente. Se registra la mejora visual de esos controles; los demás
-recorridos conservan su estado de aceptación. Esto no constituye una validación de Firefox,
-Safari o teléfonos físicos.
+recorridos conservan su estado de aceptación. Esa entrega comprobaba Chrome y Brave;
+la revisión posterior de Firefox y Edge se documenta en la sección anterior.
 
 Archivos: `src/interfaz/diseno_base.py`, `static/css/styles.css` y
 `scripts/verificar_frontend.py`. Referencia de comportamiento de sustitución al fallar la fuente:

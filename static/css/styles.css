@@ -311,8 +311,8 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
   --academic-decoration: #6bc49d14;
   --academic-serif: Georgia, 'Times New Roman', serif;
   --academic-sans: Arial, Helvetica, sans-serif;
-  width: 100cqi;
-  margin-inline: calc((100% - 100cqi) / 2);
+  width: var(--upc-ancho-contenido, 100cqi);
+  margin-inline: calc((100% - var(--upc-ancho-contenido, 100cqi)) / 2);
   color: var(--academic-text);
   position: relative;
   isolation: isolate;
