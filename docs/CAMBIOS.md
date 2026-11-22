@@ -4,6 +4,20 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 22 de noviembre de 2026 — Preparación alternativa para Render
+
+Se prepara la configuración privada para un Web Service Docker en Render, manteniendo
+Oracle Autonomous como base. La clave de identidad original puede leerse desde un archivo
+Base64 con `IDENTIDAD_CLAVE_FORMATO=base64`; se conserva el formato binario por defecto,
+las huellas existentes y el rechazo de archivos inválidos o ausentes, sin generar otra clave.
+Los archivos privados de importación permanecen fuera de Git y de la imagen.
+
+Doce pruebas de despliegue y seis de verificación de identidad aprobadas, incluida
+equivalencia de huellas entre formatos. El primer intento en Render construyó la imagen
+de `b775e9a`; se detuvo al arrancar por configuración y por falta del lector Base64.
+Publicación y construcción de la versión actual, conectividad y ensayo completo pendientes.
+Configuración y límites: [despliegue](DESPLIEGUE.md#alternativa-preparada-render-y-oracle-autonomous).
+
 ## 22 de noviembre de 2026 — Cuenta de ejecución cloud verificada; punto 4 cerrado
 
 El usuario completó el preparador y comunicó su resultado correcto. Se contrastó la

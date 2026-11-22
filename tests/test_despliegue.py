@@ -1,3 +1,4 @@
+import base64
 import os
 from pathlib import Path
 import tempfile
@@ -61,6 +62,43 @@ class DespliegueTest(unittest.TestCase):
         for usuario in ('ADMIN', 'SYS', 'SYSTEM', 'UPC_AULA_APP', 'UPC_ASISTENCIA'):
             with self.subTest(usuario=usuario), patch.dict(self.config, {'ORACLE_ADMIN_USUARIO': usuario}), self.assertRaises(ValueError):
                 validar_configuracion()
+
+    def test_clave_base64_conserva_huella_y_validacion_del_arranque(self):
+        from src.servicios.verificacion_identidad import huella_documento
+        original = bytes(range(32))
+        self.clave.write_bytes(original)
+        esperado = huella_documento('CC', '12345678')
+        texto = self.ruta / 'identidad.key.b64'
+        texto.write_bytes(base64.b64encode(original) + b'\r\n')
+        with patch.dict(self.config, {'IDENTIDAD_CLAVE_RUTA': str(texto), 'IDENTIDAD_CLAVE_FORMATO': 'base64'}):
+            self.assertEqual(validar_configuracion(), 'aula.example.com')
+            self.assertEqual(huella_documento('CC', '12345678'), esperado)
+        self.assertEqual(self.clave.read_bytes(), original)
+
+    def test_clave_base64_invalida_bloquea_el_arranque_sin_exponerla(self):
+        from src.servicios.verificacion_identidad import huella_documento
+        texto = self.ruta / 'identidad.key.b64'
+        for contenido in (b'privado-fixture-no-base64!', base64.b64encode(b'x' * 31)):
+            texto.write_bytes(contenido)
+            with self.subTest(contenido=contenido), patch.dict(self.config, {
+                    'IDENTIDAD_CLAVE_RUTA': str(texto), 'IDENTIDAD_CLAVE_FORMATO': 'base64'}):
+                with self.assertRaises(ValueError) as salida:
+                    validar_configuracion()
+                self.assertNotIn(contenido.decode('ascii'), str(salida.exception))
+                with self.assertRaises(ValueError):
+                    huella_documento('CC', '12345678')
+        with patch.dict(self.config, {'IDENTIDAD_CLAVE_FORMATO': 'desconocido'}), self.assertRaises(ValueError):
+            validar_configuracion()
+
+    def test_clave_base64_ausente_no_se_regenera(self):
+        from src.servicios.verificacion_identidad import preparar_clave
+        ausente = self.ruta / 'no-crear.key.b64'
+        with patch.dict(self.config, {'IDENTIDAD_CLAVE_RUTA': str(ausente), 'IDENTIDAD_CLAVE_FORMATO': 'base64'}), \
+                patch('src.servicios.verificacion_identidad.obtener_conexion') as conectar, \
+                self.assertRaisesRegex(ValueError, 'original'):
+            preparar_clave()
+        conectar.assert_not_called()
+        self.assertFalse(ausente.exists())
 
     def test_no_inventa_clave_ni_admite_pool_invalido(self):
         self.clave.unlink()

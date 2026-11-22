@@ -9,6 +9,7 @@ from src.base_datos.transporte import parametros_transporte
 from src.base_datos.consultas import cargar_sql, sql_con_identificadores
 from src.base_datos.esquema import esquema_propietario
 from src.base_datos.permisos_ejecucion import comprobar_permisos
+from src.utilidades.claves_identidad import leer_clave
 
 
 def validar_configuracion():
@@ -50,8 +51,9 @@ def validar_configuracion():
     # Leer la clave original; el arranque nunca genera ni reemplaza una clave.
     try:
         ruta = Path(obtener_configuracion('IDENTIDAD_CLAVE_RUTA'))
-        if not ruta.is_absolute() or len(ruta.read_bytes()) != 32:
+        if not ruta.is_absolute():
             raise ValueError
+        leer_clave(ruta, obtener_configuracion('IDENTIDAD_CLAVE_FORMATO', 'binario'))
     except (OSError, ValueError):
         raise ValueError('Falta la clave de identidad original de 32 bytes en una ruta absoluta legible.') from None
     return host

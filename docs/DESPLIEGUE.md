@@ -1,5 +1,52 @@
 # Despliegue de UPC Aula con Docker y Oracle Cloud
 
+## Alternativa preparada: Render y Oracle Autonomous
+
+El 22/11 se prepara Render como alojamiento alternativo a la VM de OCI. Autonomous
+conserva la base de datos y sus cuentas técnicas. La importación de variables y el soporte
+de la clave en texto no equivalen a un despliegue publicado ni a una construcción Linux
+verificada. La configuración local conserva su destino y su clave binaria.
+
+Primer intento en Render con `b775e9a`: la imagen se construyó y exportó correctamente.
+El arranque se detuvo primero por APP_BASE_URL ausente y luego por la clave Base64,
+que esa versión anterior solo podía leer como bytes binarios. La URL asignada es
+`https://controlasistenciaupc.onrender.com`. Este resultado todavía no valida el
+arranque de la versión actual, los permisos cloud ni los recorridos de los portales.
+
+Crear un **Web Service**, región **Virginia**, repositorio del proyecto, rama `main`,
+runtime **Docker**, Root Directory vacío y Dockerfile `./Dockerfile`. Mantener el comando
+de arranque de la imagen; Render termina HTTPS, sin ejecutar el Compose de Caddy.
+
+- Importar las variables privadas con **Add from .env**. El archivo preparado en este PC
+  está en `.local/render/.env`, excluido de Git y del contexto Docker; contiene el perfil
+  de ejecución cloud y la autorización docente, sin la contraseña de ADMIN ni del propietario.
+- Definir `PORT=8501` y Health Check Path `/_stcore/health`. Registry Credential queda
+  en **No credential** para construir el Dockerfile actual.
+- En **Secret Files**, crear `identidad.key.b64` y pegar el contenido de
+  `.local/render/identidad.key.b64`. Es Base64 de la clave original de 32 bytes,
+  no una clave nueva ni un cifrado. Tratarlo como el mismo secreto.
+- Añadir `IDENTIDAD_CLAVE_RUTA=/etc/secrets/identidad.key.b64` e
+  `IDENTIDAD_CLAVE_FORMATO=base64`. El arranque y la verificación estudiantil decodifican
+  el archivo directamente en memoria, conservando las huellas HMAC. Sin la opción de
+  formato se sigue leyendo la clave binaria habitual. No se regeneran claves de texto ausentes.
+- Completar `APP_BASE_URL` con la URL HTTPS real asignada al servicio. Autorizar en
+  Autonomous los rangos de salida mostrados en **Connect > Outbound** para ese servicio.
+- Publicar en GitHub los cambios de código que el servicio deba construir. Un commit
+  únicamente local no está disponible para Render. Las credenciales permanecen privadas.
+
+Pendientes: confirmar plan y memoria para los motores biométricos, construir y arrancar
+la imagen, verificar Oracle desde Render, revisar archivos que necesiten persistencia y
+ensayar los portales, HTTPS, cámara y micrófono. No se considera validado el servicio Free
+para la aplicación completa. El endpoint de salud comprueba Streamlit; Oracle se valida
+durante el arranque y no se consulta en cada petición de salud.
+
+Referencias: [Docker en Render](https://render.com/docs/docker),
+[variables y archivos secretos](https://render.com/docs/configure-environment-variables),
+[salud](https://render.com/docs/health-checks) e
+[IP de salida](https://render.com/docs/outbound-ip-addresses).
+
+## Plan de VM OCI registrado
+
 Estado del 22 de noviembre de 2026: Autonomous UPCAULA ya tiene usuarios y esquema
 001–008 instalados, con TLS y permisos administrativos verificados. El usuario confirma
 que todavía no tiene una VM Compute. La aplicación se ejecutará con Docker en esa VM.

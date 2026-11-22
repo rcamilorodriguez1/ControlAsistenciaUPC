@@ -22,6 +22,7 @@ from src.configuracion import obtener_configuracion
 from src.servicios.autenticacion import exigir_acceso_disponible
 from src.base_datos.consultas import cargar_sql
 from src.base_datos.esquema import esquema_propietario
+from src.utilidades.claves_identidad import leer_clave
 
 _logger = logging.getLogger(__name__)
 TIPOS_DOCUMENTO = ('CC', 'TI', 'CE', 'PA')
@@ -44,6 +45,8 @@ def preparar_clave():
     from src.base_datos.recuperacion import clave_local
     ruta = ruta_clave()
     if not ruta.exists():
+        if obtener_configuracion('IDENTIDAD_CLAVE_FORMATO', 'binario') != 'binario':
+            raise ValueError('Falta el archivo de la clave de identidad original; restaura su copia privada.')
         with obtener_conexion() as conn, conn.cursor() as cur:
             cur.execute(cargar_sql('servicios/verificacion_identidad/preparar_clave_01'), esquema=esquema_propietario())
             if cur.fetchone()[0]:
@@ -58,9 +61,8 @@ def preparar_clave():
 
 
 def _clave():
-    from src.base_datos.recuperacion import clave_local
     try:
-        return clave_local(ruta_clave())
+        return leer_clave(ruta_clave(), obtener_configuracion('IDENTIDAD_CLAVE_FORMATO', 'binario'))
     except (OSError, ValueError):
         raise ValueError('No está preparada la clave de identidad. Ejecuta scripts/preparar_identidad.py o restaura la copia original.') from None
 
