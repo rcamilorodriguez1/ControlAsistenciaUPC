@@ -391,3 +391,7 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* Los títulos conservan su semántica; se oculta solo el control de enlace al ancla. */
+[data-testid="stHeaderActionElements"] { display: none !important; }
+.academic-footer-credits li, .academic-footer-record dd { overflow-wrap: anywhere; }

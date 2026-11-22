@@ -1,0 +1,25 @@
+# Rama: frontend y backend
+
+Depende del [roadmap general](ROADMAP.md). Solicitudes del 22/11/2026.
+
+| ID | Tarea y criterio de cierre | Estado |
+| --- | --- | --- |
+| FB1 | Retirar #ID del selector; separar selección por docente/materia; conservar clases e historial | En ejecución |
+| FB2 | Mover archivo de cuenta/materias a Configuración del docente; exigir su sesión | Pendiente |
+| FB3 | Publicar los tres estudiantes y el docente indicados en el pie, con ajuste móvil | En ejecución |
+| FB4 | Perfil docente privado: todas sus materias, agenda mensual y próximas clases persistidas | Pendiente |
+| FB5 | Diferenciar portal de operaciones, perfil académico y configuración; acceso desde el menú de cuenta | Pendiente |
+| FB6 | Autorizar/renovar/revocar contraseña alternativa por docente para alumnos de sus materias, con vigencia, auditoría y entrega manual | Pendiente |
+| FB7 | Quitar iconos de ancla de encabezados manteniendo títulos y enlaces de navegación | En ejecución |
+
+## Criterios transversales
+
+- Separación de datos por identidad validada en servidor y pertenencia comprobada
+  en Oracle; una URL o un selector no otorgan acceso a otra cuenta.
+- El calendario refleja clases creadas. Un horario pendiente no confirma asistencia
+  ni genera automáticamente clases semanales.
+- Excepciones: contraseña protegida mediante hash, documento comprobado, caducidad,
+  control de versiones, invalidación de sesiones y revocación. Sin correo automático.
+- Pruebas de cambios de materia/rol, navegación, calendario vacío, meses sin clases,
+  contenido escapado y permisos. Revisar escritorio y móvil con datos sintéticos.
+- Implementación verificada no implica aceptación del usuario en producción.

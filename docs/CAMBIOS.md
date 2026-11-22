@@ -1,5 +1,19 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Roadmap general, créditos y encabezados
+
+- Se conserva el plan anterior como ROADMAP_HISTORICO y se enlazan dos ramas:
+  frontend/backend y base de datos/aporte académico. La arquitectura futura mantiene
+  su rama. Goodwill se refiere a valor, beneficios y aporte académico.
+- Se sustituyen los nombres provisionales del pie por Rafael Camilo Rodriguez Ayala,
+  Harold Steven Torres Diaz, Oscar William Rivero Ordoñez y el docente Amilkat Sierra Romano.
+- Se oculta el control de ancla de los títulos nativos; los enlaces de navegación
+  y la semántica de los encabezados permanecen disponibles.
+- La entrega manual de la clave sustituye la propuesta anterior de correo.
+- Verificación: pruebas de frontend y revisión de enlaces documentales; la revisión
+  visual con nombres largos se realiza junto al perfil docente.
+
+
 Este archivo resume las entregas y enlaza su documentación. Para localizar todas las guías,
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
