@@ -3,13 +3,15 @@ import unittest
 from unittest.mock import patch
 
 from PIL import Image
+from PIL import ImageOps
+import numpy as np
 
 from src.utilidades.sesiones import (
     cerrar_sesion, iniciar_sesion, inicializar_sesion, obtener_actor, sesion_activa,
     misma_sesion, preparar_toma, contexto_vigente, reiniciar_toma,
     guardar_resultado, obtener_resultado, seleccionar_portal,
 )
-from src.utilidades.imagenes import agregar_foto
+from src.utilidades.imagenes import agregar_foto, abrir_foto, vista_previa_foto, FotoAsistencia
 from src.servicios.asistencia import confirmar_resultado
 
 
@@ -193,6 +195,41 @@ class FotosPorTomaTest(unittest.TestCase):
         preparar_toma(20, self.estado)
         with self.assertRaises(PermissionError):
             agregar_foto(self.roja, self.contexto, self.estado)
+
+    def test_conserva_pixeles_originales_y_resolucion_sin_guardar_imagen_decodificada(self):
+        pixeles = np.random.default_rng(12).integers(0, 256, (700, 1100, 3), dtype=np.uint8)
+        fuente = BytesIO()
+        Image.fromarray(pixeles).save(fuente, format='PNG')
+        agregar_foto(fuente, self.contexto, self.estado)
+        foto = self.estado['imagenes_asistencia'][0]
+        self.assertIsInstance(foto, FotoAsistencia)
+        self.assertEqual(foto.datos, fuente.getvalue())
+        with abrir_foto(foto) as original:
+            self.assertEqual(original.size, (1100, 700))
+            np.testing.assert_array_equal(np.asarray(original), pixeles)
+        with Image.open(BytesIO(vista_previa_foto(foto))) as previa:
+            self.assertLessEqual(max(previa.size), 480)
+
+    def test_jpeg_con_exif_se_analiza_igual_que_antes_de_la_optimizacion(self):
+        fuente = BytesIO()
+        imagen = Image.new('RGB', (600, 400), 'white')
+        imagen.paste('red', (0, 0, 200, 100))
+        exif = Image.Exif()
+        exif[274] = 6
+        imagen.save(fuente, format='JPEG', exif=exif)
+        with Image.open(BytesIO(fuente.getvalue())) as original:
+            esperado = np.array(ImageOps.exif_transpose(original).convert('RGB'))
+        agregar_foto(fuente, self.contexto, self.estado)
+        with abrir_foto(self.estado['imagenes_asistencia'][0]) as original:
+            np.testing.assert_array_equal(np.asarray(original), esperado)
+
+    def test_lectura_cierra_su_imagen_y_no_cierra_la_captura_de_una_sesion_anterior(self):
+        antigua = Image.new('RGB', (8, 8), 'red')
+        with abrir_foto(antigua) as temporal:
+            self.assertEqual(temporal.getpixel((0, 0)), (255, 0, 0))
+        with self.assertRaises(ValueError):
+            temporal.getpixel((0, 0))
+        self.assertEqual(antigua.getpixel((0, 0)), (255, 0, 0))
 
 
 if __name__ == "__main__":

@@ -25,12 +25,29 @@ gubernamental ni certifica automáticamente la autenticidad de la cédula presen
 La categoría puede ser física, médica, técnica o administrativa. No se solicitan diagnósticos,
 fotocopias ni informes médicos en este formulario.
 
-## Requisito futuro: entrega de la contraseña por el profesor
+## Requisito retomado: autorización docente y correo
 
-El profesor deberá proporcionar al estudiante la contraseña de acceso alternativo mediante
-correo, siguiendo una dinámica similar a `ALTA_DOCENTE`. Se registra como requisito pendiente
-por indicación del usuario, **sin implementarlo todavía**. El flujo actual descrito a continuación
-continúa vigente; esta anotación no incorpora envío de correos ni cambia permisos o credenciales.
+El usuario retoma este requisito el 22/11: incorporar en el portal de profesores un apartado
+para autorizar el acceso excepcional y enviar la contraseña al correo del estudiante que
+la solicita. El correo debe recogerse al registrar alumnos nuevos y poder añadirse o
+cambiarse desde el perfil de los ya registrados, con persistencia en Oracle.
+
+Diseño en revisión: confirmar la propiedad del correo antes de enviar credenciales,
+limitar cada profesor a sus estudiantes matriculados y registrar aprobador, vigencia y
+revocación. La solicitud no debe permitir sustituir el destinatario guardado para otra cuenta.
+La excepción habilita el acceso al portal; no registra asistencia. La identidad del aprobador
+debe adaptarse mediante una migración nueva: la versión 008 solo admite administradores.
+
+El usuario dispone de un buzón institucional como estudiante para pruebas y presentación;
+la aplicación y sus mensajes deben identificar el uso como demostración académica, sin
+atribuir carácter oficial a la universidad. Se estudia Brevo por API HTTPS, que permite
+verificar un remitente por código. No se ha creado/configurado ese proveedor, enviado
+correos ni modificado el esquema. El acceso al buzón no implica administrar el dominio.
+
+El flujo administrativo descrito a continuación continúa siendo la implementación actual.
+Referencias: [verificación de remitente](https://help.brevo.com/hc/en-us/articles/208836149-Create-a-new-sender-From-name-and-From-email?source=search),
+[API de correo](https://developers.brevo.com/reference/send-transac-email) y
+[SMTP bloqueado en Render Free](https://render.com/docs/free).
 
 ## Operación
 

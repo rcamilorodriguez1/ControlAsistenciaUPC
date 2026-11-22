@@ -60,14 +60,14 @@ Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
   explícita de commit o push puede adelantar el paso. Si una comprobación falla, corregirla
   antes de publicar y registrar el bloqueo; no marcar un punto como completo sin su evidencia.
 
-Último lote preparado, contado desde `20ed6be`:
+Último lote preparado, contado desde `2c3baaf`:
 
 | Referencia | Estado |
 | --- | --- |
-| Base del lote | `20ed6be`, rama `main` |
-| Cambios del lote | 3: cadencia; diagnóstico Oracle desde el PC; registro de ACL y Render Live |
-| Commit | Corresponde agrupar los tres cambios documentales |
-| Push | Corresponde por el cierre comprobado del punto 6 del roadmap |
+| Base del lote | `2c3baaf`, rama `main` |
+| Cambios del lote | 3: requisitos de excepción/correo y alternativa Vercel; revisión de recursos; fotos comprimidas |
+| Commit | Corresponde agrupar los tres cambios menores comprobados |
+| Push | Pendiente: 3 de 5 cambios, sin otro punto del roadmap cerrado |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el

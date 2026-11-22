@@ -29,6 +29,26 @@ de la matrícula y se aplican umbral y margen; debe medirse especialmente la con
 externas en el ensayo final. El acceso facial del estudiante sigue siendo una identificación
 biométrica sin prueba de presencia real: una fotografía podría engañarla.
 
+## Uso de memoria de las capturas en Render
+
+El 22/11 se optimiza el almacenamiento temporal de fotos de asistencia. La sesión conserva
+el original JPEG/PNG comprimido y una miniatura de hasta 480 píxeles por lado. La galería
+usa la miniatura; el análisis abre una foto cada vez a resolución original, aplica la misma
+orientación EXIF y conversión RGB y libera la imagen al terminar. No se reescala la entrada
+al reconocimiento ni se modifican los modelos, los umbrales o los permisos de matrícula.
+Se mantienen 12 fotos, 10 MB/20 MP por foto y 60 MB de originales por toma.
+
+Una comparación local con un JPEG sintético de 2048 × 1536 pasó de 9.437.184 bytes RGB
+a 2.428.600 bytes de original y miniatura: 74,27 % menos almacenamiento de esa captura.
+Los píxeles analizados resultaron idénticos. Es una muestra de almacenamiento, no una
+medición de RSS ni una promesa de reducción del proceso Render. Evidencia privada:
+`.local/hosting/optimizacion_fotos.json`. No se guardaron fotografías de personas.
+
+Verificación: 22 pruebas de sesiones y 19 de interfaz, incluido un caso que distingue
+miniatura y original para garantizar que la IA recibe la imagen completa. Faltan mediciones
+en Render con varias capturas y usuarios; las pruebas iniciales que el usuario hizo con
+un familiar se comunican como satisfactorias, sin convertirlas en una tasa de precisión.
+
 ## Evaluar y proponer umbrales
 
 ```powershell

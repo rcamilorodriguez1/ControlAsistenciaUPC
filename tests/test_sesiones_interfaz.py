@@ -6,9 +6,11 @@ import wave
 from unittest.mock import patch
 
 from PIL import Image
+import numpy as np
 from streamlit.testing.v1 import AppTest
 
 from src.utilidades.sesiones import iniciar_sesion, preparar_toma, guardar_resultado
+from src.utilidades.imagenes import FotoAsistencia
 
 
 class SesionesInterfazTest(unittest.TestCase):
@@ -234,6 +236,25 @@ class SesionesInterfazTest(unittest.TestCase):
         self.assertNotIn('resultado_asistencia', self.at.session_state)
         self.assertEqual(len(self.at.dataframe), 0)
         self.assertFalse(any(b.label == 'Confirmar y Aprobar' for b in self.at.button))
+
+    def test_foto_comprimida_muestra_miniatura_y_analiza_el_original(self):
+        self.profesor()
+        datos, previa = BytesIO(), BytesIO()
+        Image.new('RGB', (800, 600), 'red').save(datos, format='PNG')
+        Image.new('RGB', (80, 60), 'blue').save(previa, format='JPEG')
+        self.at.session_state['imagenes_asistencia'] = [FotoAsistencia(datos.getvalue(), previa.getvalue())]
+        with patch('src.pantallas.pantalla_profesor.obtener_estudiantes_matriculados', return_value=[
+                {'estudiante_id': 7, 'nombre': 'Alumno', 'embedding_facial': [0.1] * 128}]), \
+                patch('src.pantallas.pantalla_profesor.predecir_asistencia', return_value=({7: True}, [7], 1)) as analizar:
+            self.at.run()
+            self.comprobar()
+            self.boton('Ejecutar Análisis Facial').click().run()
+        self.comprobar()
+        recibida = analizar.call_args.args[0]
+        self.assertEqual(recibida.shape, (600, 800, 3))
+        np.testing.assert_array_equal(recibida[0, 0], [255, 0, 0])
+        self.assertEqual(analizar.call_args.kwargs['permitidos'], {7})
+        self.assertTrue(self.at.session_state['resultado_asistencia']['registros'][0]['presente'])
 
     def grabar_audio_de_prueba(self):
         archivo = BytesIO()

@@ -115,8 +115,10 @@ comprueba un factor. Guía: [EXCEPCIONES_BIOMETRICAS.md](EXCEPCIONES_BIOMETRICAS
 Pendiente de aceptación del usuario y ensayo institucional con personas reales.
 
 - [ ] **Entrega de la contraseña alternativa por el profesor:** el profesor la proporcionará
-  al estudiante mediante correo, con una dinámica similar a `ALTA_DOCENTE`. Requisito registrado
-  para una revisión posterior; el usuario indicó expresamente que todavía no se implemente.
+  al estudiante mediante correo. Requisito retomado expresamente el 22/11: apartado docente
+  para autorizar excepciones, correo en registro y perfil estudiantil, persistencia en Oracle
+  y envío de demostración académica. En revisión de diseño y proveedor; todavía sin implementar.
+  [Alcance actualizado](EXCEPCIONES_BIOMETRICAS.md#requisito-retomado-autorización-docente-y-correo).
 
 **Mi perfil del estudiante, 17 de noviembre de 2026:** implementados el resumen acumulado,
 el contador de matrículas, las materias desplegables y el calendario privado. Pendiente de

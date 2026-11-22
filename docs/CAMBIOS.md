@@ -4,6 +4,54 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 22 de noviembre de 2026 — Fotos comprimidas y miniaturas para reducir memoria
+
+La sesión docente conserva los originales JPEG/PNG comprimidos y miniaturas, en lugar
+de mantener todas las fotografías RGB descomprimidas. La galería utiliza las miniaturas;
+la IA abre cada original a su resolución completa con la misma orientación y conversión
+RGB. Se mantienen los límites de captura, los modelos, umbrales y validaciones de matrícula.
+
+Pruebas: 22 de sesiones y 19 de interfaz aprobadas, con igualdad de píxeles, orientación
+EXIF, liberación de imágenes y uso del original en el análisis. Una muestra JPEG sintética
+de 2048 × 1536 reduce su almacenamiento de 9.437.184 a 2.428.600 bytes (74,27 %); no se
+presenta como medida de memoria total en Render. [Detalle](RECONOCIMIENTO.md#uso-de-memoria-de-las-capturas-en-render).
+
+Este es el tercer cambio menor desde 2c3baaf, tras el registro de requisitos y la revisión
+de recursos. Corresponde commit local; el umbral de push aún no se alcanza.
+
+## 22 de noviembre de 2026 — Prioridad de recursos para biometría
+
+El usuario precisa que el límite relevante para la presentación es memoria/CPU del
+reconocimiento facial y de voz. La revisión del código confirma carga diferida y caché
+de modelos ya implementadas; no se presentan como mejoras nuevas ni como mediciones.
+Quedan por medir RAM, CPU y latencia en el servicio con rostro y voz cargados, capturas
+grandes y concurrencia. Los logs disponibles no demuestran todavía un fallo por memoria.
+
+Se registra en el segundo roadmap que trasladar únicamente las pantallas a Vercel
+mantendría la carga de inferencia donde se ejecute el backend. Se evaluará optimizar o
+aislar el motor biométrico antes de decidir un rediseño de interfaz. No se cambia el
+alojamiento, los modelos ni el código en esta revisión. Es el segundo cambio menor
+documental desde el último push; no corresponde commit o push todavía.
+
+## 22 de noviembre de 2026 — Requisitos de excepción docente, correo y alternativa Vercel
+
+Se retoma por petición del usuario el apartado docente para autorizar acceso excepcional
+y enviar la contraseña al correo del estudiante. Se acuerda recoger el correo en el registro
+y permitir su gestión desde el perfil de alumnos existentes, guardándolo en Oracle. El
+remitente institucional del usuario se plantea para pruebas y presentación académica,
+sin carácter oficial; el proveedor y su configuración siguen pendientes.
+
+Se registra la alternativa de interfaz en Vercel y backend en Render, además de evaluar
+otros alojamientos frente a los límites de recursos. La aplicación actual usa Streamlit
+en un proceso; separar interfaz y backend requiere adaptación y no se presenta como un
+despliegue ya realizado. Tampoco se han cambiado aún contraseñas, permisos, esquema o
+formularios, ni enviado correos. Se mantienen las funciones del servicio publicado.
+
+Alcance y fuentes: [excepciones](EXCEPCIONES_BIOMETRICAS.md#requisito-retomado-autorización-docente-y-correo)
+y [alternativa de alojamiento](ROADMAP_2.md#alternativa-de-alojamiento-vercel-y-render).
+Esta actualización de requisitos cuenta como un cambio menor desde el último push,
+pendiente de agruparse según la cadencia acordada.
+
 ## 22 de noviembre de 2026 — Render Live y punto 6 completado
 
 Tras añadir los rangos `74.220.49.0/24` y `74.220.57.0/24` a la ACL de Autonomous,

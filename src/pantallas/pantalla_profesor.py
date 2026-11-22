@@ -15,6 +15,7 @@ from src.componentes.dialogo_agregar_foto import dialogo_agregar_foto
 from src.componentes.dialogo_resultado_asistencia import dialogo_resultado_asistencia
 from src.componentes.dialogo_asistencia_voz import dialogo_asistencia_voz
 from src.componentes.selector_clase import selector_clase
+from src.utilidades.imagenes import abrir_foto, vista_previa_foto
 from src.componentes.seguridad_claves import mostrar_fortaleza, mostrar_coincidencia
 from src.componentes.conflicto_sesion import mostrar_conflicto_sesion
 from src.utilidades.sesiones import sesion_incompatible
@@ -157,7 +158,7 @@ def pestana_tomar_asistencia():
 
         for idx, img in enumerate(st.session_state.imagenes_asistencia):
             with columnas_galeria[idx % 4]:
-                st.image(img, width="stretch", caption=f"Foto {idx+1}")
+                st.image(vista_previa_foto(img), width="stretch", caption=f"Foto {idx+1}")
 
     hay_fotos = bool(st.session_state.imagenes_asistencia)
     c1, c2, c3 = st.columns(3)
@@ -181,9 +182,11 @@ def pestana_tomar_asistencia():
 
                 try:
                     for idx, img in enumerate(st.session_state.imagenes_asistencia):
-                        img_np = np.array(img.convert("RGB"))
-                        detectado, ids_modelo, _ = predecir_asistencia(img_np,
-                            permitidos={e['estudiante_id'] for e in estudiantes_matriculados})
+                        with abrir_foto(img) as imagen:
+                            img_np = np.asarray(imagen)
+                            detectado, ids_modelo, _ = predecir_asistencia(img_np,
+                                permitidos={e['estudiante_id'] for e in estudiantes_matriculados})
+                            del img_np
                         if not ids_modelo and any(e.get('embedding_facial') for e in estudiantes_matriculados):
                             raise RuntimeError('Modelo facial no disponible para perfiles con muestra.')
                         if detectado:
