@@ -15,6 +15,7 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 | Distinguir lo probado de lo aprobado por el usuario | [Seguimiento del frontend](FRONTEND.md) |
 | Instalar, ejecutar y comprobar HTTPS | [Instalación](INSTALACION.md) |
 | Preparar Linux, HTTPS público y Oracle Cloud | [Despliegue en la nube](DESPLIEGUE.md) |
+| Separar la cuenta de ejecución del propietario Oracle | [Cuenta de ejecución, permisos y preparación cloud](CUENTA_EJECUCION.md) |
 | Entender cada tabla, relación, consulta y disparador actual | [Funcionamiento de la base de datos](BASE_DE_DATOS.md) |
 | Utilizar la última entrega de excepciones biométricas | [Excepciones biométricas](EXCEPCIONES_BIOMETRICAS.md) |
 

@@ -108,9 +108,12 @@ Navegador HTTPS → Streamlit → servicios de aplicación → repositorios Pyth
 y puede reutilizarse. La segunda está representada por `SESIONES_USUARIO` y el token del navegador.
 Las variables de `PKG_AUDITORIA` pertenecen a la conexión Oracle; no son una tabla persistente.
 
-Profesores y estudiantes todavía utilizan el propietario del esquema desde el backend. La
-administración tiene una conexión técnica separada y limitada. Los estudiantes no reciben
-directamente una cuenta Oracle: su rol se valida en la aplicación y los procedimientos.
+La instalación local todavía conecta como propietario. Para producción se implementó
+`ORACLE_ESQUEMA` independiente del usuario de ejecución y el preparador de `UPC_AULA_APP`;
+la cuenta definitiva cloud se creó y verificó el 22/11. La separación se ensayó con una cuenta
+temporal limitada en XE. La administración mantiene su conexión técnica separada.
+Los estudiantes no reciben directamente una cuenta Oracle: su rol se valida en la
+aplicación y los procedimientos. Permisos y límites: [cuenta de ejecución](CUENTA_EJECUCION.md).
 
 ## 3. Modelo y relaciones
 

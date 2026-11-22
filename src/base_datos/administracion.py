@@ -14,15 +14,14 @@ from src.configuracion import obtener_configuracion
 from src.base_datos.transporte import parametros_transporte
 from src.servicios.validaciones import texto, codigo, usuario as validar_usuario
 from src.base_datos.consultas import cargar_sql, sql_con_identificadores
+from src.base_datos.esquema import esquema_propietario
 
 _pool = None
 _lock = Lock()
 
 
 def propietario():
-    valor = str(obtener_configuracion('ORACLE_USUARIO', 'UPC_ASISTENCIA')).upper()
-    if not re.fullmatch(r'[A-Z][A-Z0-9_]{0,29}', valor): raise ValueError('Esquema Oracle no válido.')
-    return '"' + valor + '"'
+    return '"' + esquema_propietario() + '"'
 
 
 def obtener_pool_admin():

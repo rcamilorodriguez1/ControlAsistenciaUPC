@@ -70,7 +70,10 @@ Los paquetes se ejecutan con derechos de su propietario y comprueban el contexto
 Ese contexto es una declaración del servidor de confianza, no un mecanismo para dar las
 credenciales técnicas a usuarios humanos. Las claves técnicas permanecen en
 `.streamlit/secrets.toml`. Profesor y estudiante todavía utilizan el pool original del propietario;
-la separación general entre ejecución y despliegue sigue pendiente en el roadmap.
+la conexión local conserva esa configuración. Para cloud ya está implementado el runtime
+`UPC_AULA_APP` con `ORACLE_ESQUEMA` explícito y permisos de columna; su creación y
+verificación cloud se completaron el 22/11. La cuenta administrativa sigue separada. Ver
+[cuenta de ejecución](CUENTA_EJECUCION.md).
 
 ## Preparación en otro equipo
 

@@ -2,6 +2,12 @@
 
 Punto 4 de la revisión, implementado el 11 de noviembre de 2026.
 
+Actualización del 21/11: al separar propietario y ejecución, las funciones de respaldo y
+restauración exigen que SESSION_USER coincida con CURRENT_SCHEMA. Una conexión runtime
+no puede usarse para mantenimiento ni producir una copia vacía de sus objetos propios.
+El operador debe ejecutar estas herramientas con el perfil del propietario; no conceder
+DDL o acceso adicional al runtime para eludir ese control. Ver [cuenta de ejecución](CUENTA_EJECUCION.md).
+
 Ampliación 008, 17 de noviembre de 2026: las autorizaciones y estados de verificación se incluyen
 en la copia Oracle. Su clave HMAC `.local/claves/identidad.key` se conserva y restaura **por separado**,
 además de la clave de cifrado de respaldos. No generar otra para una base que ya tiene documentos.

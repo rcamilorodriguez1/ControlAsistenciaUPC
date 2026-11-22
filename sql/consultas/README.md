@@ -19,5 +19,10 @@ La organización inicial extrae 104 apariciones de SQL de nueve módulos, agrupa
 de paquetes, formularios ni COMMIT/ROLLBACK. El código que genera DDL a partir de metadatos
 de respaldos sigue identificado como herramienta técnica y conserva sus validaciones.
 
+La preparación de la cuenta de ejecución añade consultas de identidad, permisos y
+metadatos por propietario. El control de mantenimiento rechaza respaldos/restauraciones
+con usuario distinto del esquema para evitar confundir el runtime vacío con los datos.
+Los recuentos anteriores describen la extracción inicial, no el total tras estas adiciones.
+
 La decisión de trasladar más reglas a procedimientos, funciones, paquetes, vistas o
 disparadores se revisará en el [segundo roadmap](../../docs/ROADMAP_2.md).

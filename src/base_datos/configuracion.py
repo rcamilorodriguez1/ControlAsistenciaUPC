@@ -4,6 +4,7 @@ import oracledb
 
 from src.configuracion import obtener_configuracion as _obtener_configuracion
 from src.base_datos.transporte import parametros_transporte
+from src.base_datos.esquema import esquema_propietario, iniciar_sesion
 
 
 ORACLE_USUARIO = _obtener_configuracion("ORACLE_USUARIO", "UPC_ASISTENCIA")
@@ -32,6 +33,7 @@ def obtener_pool():
         raise ValueError("El pool requiere 0 <= ORACLE_POOL_MINIMO <= ORACLE_POOL_MAXIMO y máximo >= 1.")
     with _bloqueo_pool:
         if _grupo_conexiones is None:
+            esquema_propietario()  # Validar antes de crear conexiones.
             _grupo_conexiones = oracledb.create_pool(
                 user=ORACLE_USUARIO,
                 password=ORACLE_CONTRASENA,
@@ -39,6 +41,7 @@ def obtener_pool():
                 min=ORACLE_POOL_MINIMO,
                 max=ORACLE_POOL_MAXIMO,
                 increment=1,
+                session_callback=iniciar_sesion,
                 **parametros_transporte(),
             )
     return _grupo_conexiones
@@ -46,4 +49,10 @@ def obtener_pool():
 
 def obtener_conexion():
     """Obtiene una conexión del pool Oracle configurado, local o remoto."""
-    return obtener_pool().acquire()
+    conexion = obtener_pool().acquire()
+    try:
+        iniciar_sesion(conexion)
+    except Exception:
+        obtener_pool().drop(conexion)
+        raise
+    return conexion

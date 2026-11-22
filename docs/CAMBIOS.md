@@ -4,6 +4,75 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 22 de noviembre de 2026 — Cuenta de ejecución cloud verificada; punto 4 cerrado
+
+El usuario completó el preparador y comunicó su resultado correcto. Se contrastó la
+evidencia privada local: UPC_AULA_APP sobre el esquema UPC_ASISTENCIA, 53 permisos
+verificados, 55 sentencias analizadas sin ejecutar sus operaciones, cero objetos propios
+y verificado=true. Existe `.local/oracle_cloud/credenciales_ejecucion.toml`; ADMIN no se
+guardó y la configuración local de Streamlit no cambió.
+
+Se cierra el entregable 4 del primer roadmap y se actualizan las guías de ejecución,
+despliegue, base de datos y administración. El punto 5 debe preparar la configuración
+web cloud y la integración del perfil; VM, Docker real, dominio y ensayo público siguen
+pendientes. No se repite el aprovisionamiento ni se presentan los portales como publicados.
+
+## 22 de noviembre de 2026 — Diagnóstico de autenticación en preparación cloud
+
+Tras el ORA-01017 comunicado, se comprueba que no existe el perfil de ejecución: en la
+preparación normal el rechazo ocurre en el acceso de ADMIN, antes de generar credenciales
+o crear usuarios. El preparador identifica ahora la fase de autenticación/creación/permisos
+y ofrece un mensaje específico para ADMIN, conservando claves y sin reintentos automáticos.
+No se intenta iniciar sesión como ADMIN desde el agente ni se restablecen contraseñas.
+
+**Verificación:** 16 pruebas de cuenta de ejecución aprobadas, incluidas dos nuevas que
+comprueban el diagnóstico, ausencia de credenciales en mensajes, conservación de archivos
+y rechazo antes de conceder permisos. La activación definitiva sigue pendiente.
+
+## 21 de noviembre de 2026 — Cuenta de ejecución preparada y ensayada
+
+Se implementa `ORACLE_ESQUEMA` separado de `ORACLE_USUARIO`, con callback del pool y
+restauración del esquema al adquirir conexiones. La administración resuelve el propietario
+explícito. Las comprobaciones de producción/HMAC consultan metadatos por propietario;
+respaldo y restauración rechazan conexiones runtime antes de operar sobre un esquema vacío.
+
+Los scripts cloud 06–08 preparan `UPC_AULA_APP` con CREATE SESSION y un contrato de
+28 GRANT, equivalente a 17 permisos de objeto y 36 de columna. No recibe roles, cuota,
+objetos propios, DDL, GRANT OPTION ni los paquetes administrativos. El preflight comprueba
+el contrato exacto. El alta web administrativa exige el propietario; su herramienta acepta
+un perfil privado explícito con `--config-oracle`. La plantilla productiva usa el runtime,
+sin guardar la contraseña propietaria en el contenedor normal.
+
+`scripts/preparar_ejecucion_cloud.py` solicita ADMIN sin eco ni almacenamiento, conserva
+la clave nueva antes del DDL, rechaza cuentas existentes y ofrece plan offline, verificación
+y continuación autenticada sin cambiar claves. No modifica los secretos ni Oracle local.
+La creación definitiva cloud todavía requiere ejecutar el preparador en la terminal.
+
+**Verificación:** regresión completa con Oracle habilitado: 265 pruebas, 260 aprobadas y
+cinco del perfil temporal omitidas en esa ejecución. Las cinco se ejecutaron por separado
+y pasaron con un usuario XE temporal limitado: catálogo, permisos y denegaciones, clase,
+matrícula, sesiones, perfil, preflight y reutilización del pool. Sus filas se revirtieron y
+la cuenta sin objetos se retiró sin CASCADE. Una consulta TLS de solo lectura confirmó que
+UPC_AULA_APP todavía no existe en Autonomous; nueve consultas nuevas de metadatos se
+analizaron correctamente allí. No se presenta el punto 4 como cerrado en cloud.
+
+Guía: [CUENTA_EJECUCION.md](CUENTA_EJECUCION.md). Evidencias privadas:
+`.local/ejecucion/pruebas_completas.log`, `pruebas_oracle.log` y `cloud_preparacion.json`.
+No se cambian tablas, disparadores ni paquetes de negocio ni se inicia el segundo roadmap.
+
+## 21 de noviembre de 2026 — Preparación de red OCI confirmada en consola
+
+El usuario creó `upc-aula-igw` y confirmó la ruta `0.0.0.0/0` hacia esa puerta en la tabla
+de la subred pública. Las capturas muestran la puerta Available y reglas de entrada
+con estado: SSH TCP 22 desde la IP administrativa `/32`, HTTP 80 y HTTPS 443 públicos;
+se conservan las reglas ICMP y la salida general. La IP administrativa real no se copia
+a esta documentación. El usuario volvió a recibir falta de capacidad en los tres AD.
+
+Se actualizan roadmap y guía de despliegue. La configuración de red está preparada según
+las evidencias de consola; habilitación, asociación de ruta y conectividad efectiva
+permanecen pendientes de ensayo con la VM. No se modifican la aplicación ni Oracle.
+El PDF 1.1 conserva el corte anterior a esta preparación, conforme a su carácter de edición.
+
 ## 21 de noviembre de 2026 — Memoria integral actualizada a edición 1.1
 
 Se revisa la edición del 18/11 y se actualizan la memoria principal, la guía de base de

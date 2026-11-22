@@ -21,6 +21,7 @@ from src.base_datos.configuracion import obtener_conexion
 from src.configuracion import obtener_configuracion
 from src.servicios.autenticacion import exigir_acceso_disponible
 from src.base_datos.consultas import cargar_sql
+from src.base_datos.esquema import esquema_propietario
 
 _logger = logging.getLogger(__name__)
 TIPOS_DOCUMENTO = ('CC', 'TI', 'CE', 'PA')
@@ -44,7 +45,7 @@ def preparar_clave():
     ruta = ruta_clave()
     if not ruta.exists():
         with obtener_conexion() as conn, conn.cursor() as cur:
-            cur.execute(cargar_sql('servicios/verificacion_identidad/preparar_clave_01'))
+            cur.execute(cargar_sql('servicios/verificacion_identidad/preparar_clave_01'), esquema=esquema_propietario())
             if cur.fetchone()[0]:
                 cur.execute(cargar_sql('servicios/verificacion_identidad/preparar_clave_02'))
                 if cur.fetchone()[0]:

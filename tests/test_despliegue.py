@@ -17,7 +17,8 @@ class DespliegueTest(unittest.TestCase):
         self.clave = self.ruta / 'identidad.key'
         self.clave.write_bytes(b'x' * 32)
         self.config = {
-            'APP_BASE_URL': 'https://aula.example.com', 'ORACLE_USUARIO': 'UPC_ASISTENCIA',
+            'APP_BASE_URL': 'https://aula.example.com', 'ORACLE_USUARIO': 'UPC_AULA_APP',
+            'ORACLE_ESQUEMA': 'UPC_ASISTENCIA',
             'ORACLE_CONTRASENA': 'solo-fixture-no-utilizable',
             'ORACLE_DSN': 'tcps://db.example.com:1522/servicio_low', 'ORACLE_TLS_MODO': 'tls',
             'ORACLE_ADMIN_USUARIO': 'UPC_ADMIN_APP', 'ORACLE_ADMIN_CONTRASENA': 'otro-fixture',
@@ -57,7 +58,7 @@ class DespliegueTest(unittest.TestCase):
                     'https://aula.example.com:99999', 'https://aula.local'):
             with self.subTest(url=url), patch.dict(self.config, {'APP_BASE_URL': url}), self.assertRaises(ValueError):
                 validar_configuracion()
-        for usuario in ('ADMIN', 'SYS', 'SYSTEM', 'UPC_ASISTENCIA'):
+        for usuario in ('ADMIN', 'SYS', 'SYSTEM', 'UPC_AULA_APP', 'UPC_ASISTENCIA'):
             with self.subTest(usuario=usuario), patch.dict(self.config, {'ORACLE_ADMIN_USUARIO': usuario}), self.assertRaises(ValueError):
                 validar_configuracion()
 
@@ -118,7 +119,12 @@ class DespliegueTest(unittest.TestCase):
         propietario = MagicMock()
         consulta = propietario.__enter__.return_value.cursor.return_value.__enter__.return_value
         consulta.__iter__.return_value = iter([(f'{n:03d}',) for n in range(1, 9)])
-        consulta.fetchone.side_effect = [(0,), (0,)]
+        consulta.fetchone.side_effect = [('UPC_AULA_APP', 'UPC_ASISTENCIA'), (0,), (0,)]
+        from src.base_datos.permisos_ejecucion import contrato_permisos
+        contrato = contrato_permisos()
+        consulta.fetchall.side_effect = [[], [],
+            [(o, p, 'NO') for o, p, c in contrato if c is None],
+            [(o, c, p, 'NO') for o, p, c in contrato if c is not None]]
         limitada = MagicMock()
         limitada.acquire.return_value.__enter__.return_value.cursor.return_value.__enter__.return_value.fetchone.return_value = (4,)
         with patch('src.base_datos.configuracion.obtener_conexion', return_value=propietario), \
@@ -137,7 +143,8 @@ class DespliegueTest(unittest.TestCase):
         conexion = MagicMock()
         cur = conexion.__enter__.return_value.cursor.return_value.__enter__.return_value
         cur.fetchone.return_value = (1,)
-        with patch('src.base_datos.configuracion.obtener_conexion', return_value=conexion), \
+        with patch.dict(self.config, {'ORACLE_USUARIO': 'UPC_ASISTENCIA'}), \
+                patch('src.base_datos.configuracion.obtener_conexion', return_value=conexion), \
                 patch('src.servicios.seguridad_claves.evaluar_clave', return_value=MagicMock(puntuacion=4)):
             with self.assertRaisesRegex(ValueError, 'Ya existe'):
                 herramienta.crear_cuenta('admin.fixture', 'Cuenta de prueba', 'credencial-de-fixture-no-utilizable')

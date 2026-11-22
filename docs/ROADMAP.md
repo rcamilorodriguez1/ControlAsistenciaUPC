@@ -2,7 +2,7 @@
 
 Documentación: [índice de guías](README.md) y [registro de cambios](CAMBIOS.md).
 
-Actualización: 21 de noviembre de 2026. Objetivo vigente: completar la organización y el
+Actualización: 22 de noviembre de 2026. Objetivo vigente: completar la organización y el
 despliegue de la versión actual antes de iniciar el [segundo roadmap](ROADMAP_2.md).
 El usuario confirma que tiene Autonomous Database y **todavía no tiene una VM Compute**.
 La decisión vigente es ejecutar la aplicación **con Docker** en Oracle Cloud.
@@ -18,10 +18,10 @@ SQL*Plus y SQL Developer son clientes de la misma base Oracle; pasar al segundo 
 | 1 | Autonomous, TLS, usuarios y esquema 001–008 | Completado: 14 tablas, 11 vistas, 10 disparadores y 7 paquetes válidos. |
 | 2 | Organizar las consultas y el acceso a datos existente | Completado: catálogo SQL compartido, sin cambiar reglas ni transacciones. |
 | 3 | Comprobar la reorganización | Completado: 182 pruebas aprobadas, 64 de integración omitidas y 65 consultas de lectura analizadas en Oracle Cloud. |
-| 4 | Separar ejecución y administración del esquema | Cuenta administrativa limitada lista; cuenta de ejecución distinta del propietario pendiente. |
+| 4 | Separar ejecución y administración del esquema | Completado: UPC_AULA_APP creado y verificado en Autonomous, propietario separado, 53 permisos comprobados, 55 sentencias analizadas y cero objetos propios. |
 | 5 | Preparar la configuración de la aplicación para cloud | Pendiente: cuentas web iniciales, autorización docente, claves y traslado de datos si corresponde. |
 | 6 | Crear VM Compute y construir/ejecutar Docker | Creación detenida por falta de capacidad A1.Flex en AD-1, AD-2 y AD-3 de Ashburn; imagen preparada, sin construcción Linux real validada. |
-| 7 | Dominio, HTTPS, QR y persistencia del servidor | Pendiente. |
+| 7 | Dominio, HTTPS, QR y persistencia del servidor | Red preparada según capturas y confirmaciones; conectividad, dominio, HTTPS, QR y persistencia pendientes de ensayo con la VM. |
 | 8 | Ensayo completo, recuperación y presentación en SQL Developer | Pendiente. |
 
 Guías: [despliegue](DESPLIEGUE.md), [instalación](INSTALACION.md) y
@@ -43,18 +43,24 @@ realizados; no permite conocer cuándo habrá capacidad. Se conserva la propuest
 La VCN `upc-aula-vcn` y la subred regional pública `upc-aula-publica` están creadas.
 Las capturas confirman `10.0.0.0/16` para la VCN y `10.0.0.0/24` para la subred.
 El formulario de la VM ya permitió activar la IP pública; no implica que haya una IP
-asignada ni conectividad verificada. Puerta de enlace, rutas y reglas quedan por comprobar.
+asignada ni conectividad verificada. La puerta `upc-aula-igw` aparece Available y el usuario
+confirmó la creación de la ruta `0.0.0.0/0` hacia ella en la tabla de la subred.
+La captura final confirma SSH TCP 22 desde la IP administrativa `/32`, HTTP TCP 80 y
+HTTPS TCP 443 públicos, y las dos reglas ICMP conservadas. La salida permite todos los
+protocolos. No se incluye la IP administrativa real en la documentación compartible.
 
 Orden propuesto para continuar el primer roadmap:
 
-1. **Completar la red, sin esperar a la VM:** revisar o crear la puerta de enlace de
-   Internet, asociar a la subred una tabla con ruta `0.0.0.0/0` hacia esa puerta y revisar
-   las reglas de SSH y HTTP/HTTPS. No dar por terminada la conectividad hasta probarla.
-2. **Entregable 4, separar la cuenta de ejecución:** inventariar accesos reales de la
-   aplicación y preparar permisos mínimos, resolución del esquema propietario y
-   comprobaciones para una cuenta distinta de `UPC_ASISTENCIA`. La cuenta administrativa
-   limitada ya existe. Este trabajo no requiere rediseñar paquetes ni reglas de negocio;
-   no se marcará completo hasta verificarlo con la cuenta limitada en Oracle.
+1. **Red preparada, pendiente de ensayo:** puerta de enlace y reglas revisadas mediante
+   capturas, ruta confirmada por el usuario. Comprobar habilitación de la puerta,
+   asociación de la tabla, SSH e Internet desde la VM cuando exista; no dar por terminada
+   la conectividad antes de esa prueba.
+2. **Entregable 4 completado el 22/11:** UPC_AULA_APP creado y verificado en Autonomous;
+   esquema UPC_ASISTENCIA, 53 permisos de objeto/columna, 55 sentencias analizadas sin
+   ejecutar sus operaciones y cero objetos propios. Se conserva el ensayo previo en XE
+   y la regresión. La configuración local no se cambió; integrar este perfil en el
+   servidor y probar el despliegue corresponde a los entregables siguientes.
+   Guía: [cuenta de ejecución](CUENTA_EJECUCION.md).
 3. **Entregable 5, preparar la configuración cloud:** preparar el perfil privado de
    producción, conservar las claves originales y definir el traslado o inicio sin datos.
    Crear las cuentas web iniciales solo contra el destino cloud explícitamente comprobado;

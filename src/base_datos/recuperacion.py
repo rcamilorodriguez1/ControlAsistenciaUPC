@@ -94,7 +94,16 @@ def _huella_fila(fila, columnas):
     return sha256(canonico(resultado)).hexdigest()
 
 
+def _exigir_propietario(conexion):
+    with conexion.cursor() as cur:
+        cur.execute(cargar_sql('base_datos/recuperacion/identidad_propietario'))
+        usuario, esquema = cur.fetchone()
+    if usuario != esquema:
+        raise PermissionError('El respaldo/restauración requiere la cuenta propietaria; la cuenta de ejecución no sirve para mantenimiento.')
+
+
 def respaldar(conexion, destino, clave):
+    _exigir_propietario(conexion)
     destino = Path(destino)
     destino.mkdir(parents=True, exist_ok=False)
     destino.chmod(0o700)
@@ -222,6 +231,7 @@ def _valor(valor, columna):
 
 
 def restaurar(destino, clave, conexion, *, usuario_esperado):
+    _exigir_propietario(conexion)
     manifiesto,datos = verificar(destino,clave)
     if manifiesto['formato'] != 2:
         raise ValueError('V1 no contiene el plan de restauracion autenticado. Convierta/verifique su estructura con el administrador; no se ejecuto DDL.')

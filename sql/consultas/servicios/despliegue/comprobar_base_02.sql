@@ -1,1 +1,1 @@
-SELECT COUNT(*) FROM user_objects WHERE status='INVALID'
+SELECT COUNT(*) FROM all_objects WHERE owner=:esquema AND status='INVALID'

@@ -1,13 +1,20 @@
 # Despliegue de UPC Aula con Docker y Oracle Cloud
 
-Estado del 21 de noviembre de 2026: Autonomous UPCAULA ya tiene usuarios y esquema
+Estado del 22 de noviembre de 2026: Autonomous UPCAULA ya tiene usuarios y esquema
 001–008 instalados, con TLS y permisos administrativos verificados. El usuario confirma
 que todavía no tiene una VM Compute. La aplicación se ejecutará con Docker en esa VM.
+
+La cuenta de ejecución UPC_AULA_APP ya está creada y verificada, separada del propietario
+UPC_ASISTENCIA y de la cuenta administrativa UPC_ADMIN_APP: 53 permisos comprobados,
+55 sentencias analizadas y cero objetos propios. El perfil privado está preparado; la
+aplicación local conserva su conexión anterior.
 
 Actualización de infraestructura: la VCN `upc-aula-vcn` y la subred regional pública
 `upc-aula-publica` están creadas. Los intentos de crear A1.Flex con 2 OCPU y 12 GB
 devolvieron falta de capacidad en AD-1, AD-2 y AD-3 de Ashburn. No hay VM creada ni IP
-asignada confirmada. Falta comprobar puerta de enlace, rutas y reglas de la red.
+asignada confirmada. La puerta `upc-aula-igw` aparece Available, la ruta hacia ella está
+confirmada por el usuario y las capturas muestran SSH restringido y HTTP/HTTPS públicos.
+La conectividad efectiva sigue pendiente de ensayo con la VM.
 El [orden de continuación sin VM](ROADMAP.md#continuación-mientras-no-haya-capacidad-compute)
 permite avanzar en red, permisos, configuración y validación Linux mientras se reintenta.
 
@@ -66,6 +73,8 @@ durante el ensayo antes de elegir el tamaño final.
 | `sql/cloud/00_crear_usuarios.sql` | Crea las dos cuentas técnicas en una Autonomous nueva, conectado como ADMIN. |
 | `sql/cloud/01_permisos_administracion.sql` | Concede los permisos administrativos limitados desde el propietario. |
 | `scripts/crear_administrador.py` | Crea explícitamente la primera cuenta administrativa web, con contraseña solicitada sin eco. |
+| `scripts/preparar_ejecucion_cloud.py` | Crea el runtime separado mediante ADMIN interactivo; conserva el propietario y verifica el contrato de permisos. |
+| `sql/cloud/06_crear_usuario_ejecucion.sql`, `07_permisos_ejecucion.sql`, `08_verificar_ejecucion.sql` | Creación parametrizada, grants mínimos y verificador del runtime. |
 | `.github/workflows/contenedor.yml` | Comprobación manual en Linux x64 y ARM64; no publica ni despliega. |
 
 ## 1 Preparar infraestructura
@@ -99,6 +108,30 @@ Permitir TCP 22 desde la IP administrativa y TCP 80/443 para la página pública
 las reglas de red de OCI. No publicar 8501: Compose lo mantiene entre la aplicación y Caddy.
 Añadir la IP de salida de la VM a la lista de acceso de Autonomous, conservando la del PC.
 
+### Red preparada durante los intentos de creación
+
+La subred pública regional usa `10.0.0.0/24` dentro de la VCN `10.0.0.0/16`.
+Se creó `upc-aula-igw` sin asociación opcional de tabla de rutas en la propia puerta.
+El usuario confirmó añadir `0.0.0.0/0 → Internet Gateway → upc-aula-igw` en la tabla
+utilizada por la subred. No confundir esa ruta con el enrutamiento avanzado de entrada
+de la puerta de enlace.
+
+La lista de seguridad asociada muestra estas reglas de entrada con estado
+(`Stateless: No`), todas con puerto de origen All cuando corresponde:
+
+| Uso | Origen | Protocolo / destino |
+| --- | --- | --- |
+| SSH administrativo | IP pública administrativa actual `/32` | TCP / 22 |
+| HTTP y certificados | `0.0.0.0/0` | TCP / 80 |
+| HTTPS | `0.0.0.0/0` | TCP / 443 |
+| Fragmentación / MTU | `0.0.0.0/0` | ICMP tipo 3, código 4 |
+| Errores internos de red | `10.0.0.0/16` | ICMP tipo 3 |
+
+La salida conserva la regla con estado hacia `0.0.0.0/0` para todos los protocolos.
+Si cambia la IP administrativa, actualizar el origen SSH. La IP real no se registra aquí.
+Esta revisión de consola no sustituye comprobar la habilitación del gateway, asociación
+de la tabla, IP pública, firewall del sistema y conectividad desde una VM existente.
+
 Con la VM disponible, conectar por SSH como `ubuntu`, instalar Docker Engine y el plugin
 Compose según la [guía oficial de Ubuntu](https://docs.docker.com/engine/install/ubuntu/),
 y verificar `sudo docker version` y `sudo docker compose version`. Los siguientes apartados
@@ -119,7 +152,7 @@ pertenece únicamente al desarrollo local. Cámara y micrófono se autorizan en 
 Estos pasos se ejecutan **en una Autonomous nueva de ensayo**, antes de importar datos.
 No ejecutar el instalador inicial encima del esquema local existente.
 
-**En la UPCAULA actual este apartado ya está completado.** No repetir la creación de
+**En la UPCAULA actual la instalación 001–008 ya está completada.** No repetir la creación de
 usuarios ni el instalador inicial. Desde el PC puede comprobarse con
 `scripts/preparar_oracle_cloud.py --verificar`. El comando `--continuar` solo se utiliza
 para recuperar una instalación parcial revisada, como se explica en [INSTALACION.md](INSTALACION.md).
@@ -146,6 +179,11 @@ entorno XE/SYSDBA. Los nuevos scripts no borran ni reemplazan usuarios existente
 `exports/modelo_008.sql` sirve para visualizar la estructura, no para instalar la aplicación:
 no sustituye los paquetes ni las migraciones. Ver [base de datos](BASE_DE_DATOS.md).
 
+La cuenta `UPC_AULA_APP` está completada en la UPCAULA actual. No repetir su creación.
+Puede revisarse con `scripts/preparar_ejecucion_cloud.py --verificar`. En otra instalación
+nueva el preparador pide ADMIN sin guardarlo y conserva el propietario para mantenimiento.
+Instrucciones y recuperación: [cuenta de ejecución](CUENTA_EJECUCION.md).
+
 ## 3 Configurar el servidor Linux
 
 Los siguientes comandos son **Bash en la VM**, desde la raíz del repositorio. No ejecutarlos
@@ -166,7 +204,10 @@ sudoedit deploy/private/secrets.toml
 DC=(sudo docker compose --env-file deploy/.env -f deploy/compose.yaml)
 ```
 
-Completar el archivo privado con las dos contraseñas Oracle, la autorización de alta docente
+Completar el archivo privado con las dos contraseñas Oracle de **ejecución** y administración
+limitada, usando `.local/oracle_cloud/credenciales_ejecucion.toml` como fuente privada.
+Configurar `ORACLE_USUARIO=UPC_AULA_APP` y `ORACLE_ESQUEMA=UPC_ASISTENCIA`; no colocar
+la contraseña propietaria en la configuración normal del servidor. Añadir la autorización de alta docente
 y la cadena de conexión real. La contraseña administrativa web se crea en el paso siguiente:
 es diferente de la contraseña técnica `ORACLE_ADMIN_CONTRASENA`.
 
@@ -213,13 +254,13 @@ Para una **base nueva sin documentos registrados**, generar su primera clave de 
 
 ```bash
 "${DC[@]}" run --rm --no-deps --entrypoint python app scripts/preparar_identidad.py
-"${DC[@]}" run --rm --no-deps --entrypoint python app \
-  scripts/crear_administrador.py --usuario admin.upc --nombre "Administración UPC"
 ```
 
-La segunda orden solicita una contraseña fuerte y su confirmación, la guarda como bcrypt
-y registra el alta. No imprime ni escribe la contraseña en un documento. Si ya existe una
-cuenta administrativa, la herramienta se detiene y no la sustituye.
+La primera cuenta web administrativa se prepara explícitamente desde el PC con el perfil
+propietario y `crear_administrador.py --config-oracle`, según la [guía](CUENTA_EJECUCION.md#alta-administrativa-y-operación).
+La cuenta runtime no tiene INSERT en administradores. El preparador pide una contraseña
+fuerte sin eco, registra el alta y rechaza sustituir una cuenta existente; no se ejecuta
+automáticamente durante el arranque de la aplicación.
 
 Para **trasladar una base existente**, antes de iniciar transferir su clave ORIGINAL
 `.local/claves/identidad.key` a `deploy/private/state/claves/identidad.key`, con propietario
@@ -272,10 +313,10 @@ Esta configuración prepara una sola instancia de la aplicación.
 - Respaldo cifrado, copia externa privada de claves y restauración en un destino de ensayo.
 - Memoria, tiempos de reconocimiento y concurrencia con el tamaño real de la VM.
 
-Continúa pendiente la separación de la cuenta propietaria y la cuenta de ejecución de
-profesor/estudiante indicada en el roadmap. El pool administrativo ya usa su cuenta limitada.
-La preparación de hosting conserva esa arquitectura y no presenta la separación completa
-como terminada. La publicación con datos institucionales debe considerar ese pendiente.
+La separación de propietario y ejecución está implementada, ensayada con una cuenta
+temporal en XE y verificada en la cuenta definitiva cloud. El pool administrativo ya
+usa su cuenta limitada. Falta incorporar el perfil de ejecución al servidor y completar
+el ensayo productivo; la cuenta técnica preparada no equivale a publicar la aplicación.
 
 ## Operación y actualización
 
