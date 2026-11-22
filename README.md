@@ -30,7 +30,7 @@ administración gestiona cuentas y consulta la auditoría.
 
 | Rol | Acceso actual | Funciones |
 | --- | --- | --- |
-| Docente | Usuario y contraseña; alta mediante autorización privada | Gestión de materias, inscripción de estudiantes, sesiones de clase, toma y revisión de asistencia e historial. |
+| Docente | Usuario y contraseña; alta mediante autorización privada | Materias, clases, asistencia e historial; perfil con agenda, configuración de cuenta y autorización de excepciones para sus alumnos. |
 | Estudiante | Reconocimiento facial o excepción previamente autorizada con documento y contraseña | Inscripción por código o enlace, consulta de materias y registros, perfil académico y calendario de asistencia. |
 | Administración | Cuenta administrativa habilitada | Consulta y exportación de auditoría, edición de cuentas y materias, autorización y revocación de excepciones biométricas. |
 
@@ -108,7 +108,7 @@ ejecuta la instalación del esquema. Después se preparan las claves y autorizac
 Las credenciales se generan y guardan en archivos privados del equipo. Para una base ya
 preparada o una conexión remota, seguir la [guía de instalación](docs/INSTALACION.md).
 Una instalación existente se actualiza mediante `scripts/oracle.py migrar`, que realiza
-un respaldo privado previo; la aplicación requiere las versiones **001–008**.
+un respaldo privado previo; la aplicación requiere las versiones **001–009**.
 
 Arrancar la aplicación:
 
@@ -138,7 +138,8 @@ La continuación actual utiliza **Render con Docker** para la aplicación y **Or
 Autonomous Database** para los datos, con Python 3.11 y procesamiento en CPU. El despliegue
 de `20ed6be` está **Live**, con Oracle y permisos comprobados. Se verificaron HTTP 200
 en la raíz HTTPS y 200/ok en el endpoint de salud; el punto 6 del roadmap queda completado.
-La VM de OCI sigue como alternativa, sin capacidad disponible en los intentos registrados.
+Para estas pruebas y la presentación se usa solo Render; Vercel queda descartado.
+Las pruebas de la página, cámara y reconocimiento quedan a cargo del usuario.
 Los recorridos de los portales, QR, persistencia y decisión o traslado de datos siguen pendientes.
 
 La [guía de despliegue](docs/DESPLIEGUE.md) describe Render, el plan de VM y la configuración
@@ -151,11 +152,15 @@ de forma independiente de Oracle local y solicita la contraseña en la terminal,
 
 Las consultas de la aplicación se organizan en [sql/consultas](sql/consultas/README.md),
 con un lector común y parámetros enlazados. Esta organización conserva el comportamiento
-actual. El [primer roadmap](docs/ROADMAP.md) cubre organización y despliegue; el
-[segundo](docs/ROADMAP_2.md) registra el rediseño posterior de frontend y base de datos.
+actual. El [roadmap general](docs/ROADMAP.md) enlaza las ramas de
+[frontend/backend](docs/ROADMAP_FRONT_BACK.md), [base de datos](docs/ROADMAP_BASE_DATOS.md)
+y [evolución posterior](docs/ROADMAP_2.md); el plan anterior conserva su archivo histórico.
 
 La [guía detallada de la base de datos](docs/BASE_DE_DATOS.md) explica las tablas, columnas,
 relaciones, vistas, paquetes, disparadores, consultas y su visualización en SQL Developer.
+El [catálogo interactivo](docs/base_datos/index.html), el
+[diccionario vigente](docs/DICCIONARIO_DATOS.md), la [conexión](docs/CONEXION_BASE_DATOS.md)
+y el [aporte académico](docs/GOODWILL.md) completan la presentación de la base.
 
 El esquema evoluciona mediante scripts de instalación y migraciones versionadas:
 
@@ -169,6 +174,7 @@ El esquema evoluciona mediante scripts de instalación y migraciones versionadas
 | 006 | Administración institucional y edición auditable |
 | 007 | Sesiones únicas, revocación y caducidad en servidor |
 | 008 | Autorizaciones excepcionales y estado de verificación de identidad |
+| 009 | Excepciones autorizadas por el docente para alumnos matriculados, con entrega manual de la clave |
 
 El punto de entrada SQL es [oracle_scripts.sql](oracle_scripts.sql); las migraciones están
 en [sql/migraciones](sql/migraciones). La operación actual utiliza SQL*Plus. La conexión,

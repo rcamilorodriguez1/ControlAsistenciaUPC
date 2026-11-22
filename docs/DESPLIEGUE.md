@@ -1,5 +1,18 @@
 # Despliegue de UPC Aula con Docker y Oracle Cloud
 
+> Decisión vigente del usuario, 22/11/2026: **solo Render** para estas pruebas y la
+> presentación; Vercel queda descartado. La base sigue en Oracle Autonomous.
+> El usuario realiza las pruebas de la página, cámara y reconocimiento. Las
+> comprobaciones técnicas del servidor no equivalen a validar una captura facial.
+
+
+> Actualización 22/11/2026: las funciones de excepción docente requieren **001–009**,
+> instaladas y verificadas en Autonomous tras respaldo cifrado. La cuenta runtime
+> conserva 53 permisos; la conexión administrativa limitada tiene cinco EXECUTE.
+> El [roadmap general](ROADMAP.md) enlaza las ramas y distingue publicación de
+> aceptación del despliegue. Los registros fechados anteriores conservan su versión.
+
+
 ## Alternativa preparada: Render y Oracle Autonomous
 
 El 22/11 el despliegue de `20ed6be` en Render queda **Live**, con Oracle y permisos
@@ -222,7 +235,7 @@ pertenece únicamente al desarrollo local. Cámara y micrófono se autorizan en 
 Estos pasos se ejecutan **en una Autonomous nueva de ensayo**, antes de importar datos.
 No ejecutar el instalador inicial encima del esquema local existente.
 
-**En la UPCAULA actual la instalación 001–008 ya está completada.** No repetir la creación de
+**En la UPCAULA actual la instalación 001–009 ya está completada.** No repetir la creación de
 usuarios ni el instalador inicial. Desde el PC puede comprobarse con
 `scripts/preparar_oracle_cloud.py --verificar`. El comando `--continuar` solo se utiliza
 para recuperar una instalación parcial revisada, como se explica en [INSTALACION.md](INSTALACION.md).
@@ -235,7 +248,7 @@ para recuperar una instalación parcial revisada, como se explica en [INSTALACIO
 2. Conectar como `UPC_ASISTENCIA` y ejecutar `@oracle_scripts.sql`. Instala las versiones
    001–008, incluidas tablas, relaciones, vistas, paquetes y disparadores existentes.
 3. En esa misma conexión ejecutar `@sql/cloud/01_permisos_administracion.sql`.
-   Concede EXECUTE en cuatro paquetes y SELECT en tres vistas a `UPC_ADMIN_APP`, sin
+   Concede EXECUTE en cinco paquetes y SELECT en tres vistas a `UPC_ADMIN_APP`, sin
    edición directa de tablas. En la nube son permisos directos equivalentes al rol local.
 4. Revisar los resultados de los verificadores incluidos en la instalación. No debe haber
    objetos inválidos ni errores ORA/PLS. Conservar el resultado del ensayo en un lugar privado.
@@ -356,7 +369,7 @@ a copias divergentes de los mismos datos institucionales.
 
 La primera comprobación revisa el dominio, credenciales presentes, TCPS, tamaños de pools y
 la existencia de la clave de 32 bytes. La segunda añade consultas de solo lectura a Oracle:
-versiones 001–008, objetos inválidos, disparadores deshabilitados y permisos administrativos.
+versiones 001–009, objetos inválidos, disparadores deshabilitados y permisos administrativos.
 El arranque real siempre comprueba Oracle; `--sin-bd` solo se admite con `--comprobar`.
 
 La aplicación escucha dentro de Docker en 0.0.0.0:8501, conserva el tema y desactiva el

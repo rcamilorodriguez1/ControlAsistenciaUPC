@@ -5,10 +5,10 @@ Depende del [roadmap general](ROADMAP.md). Goodwill aclarado por el usuario:
 
 | ID | Entregable y criterio de cierre | Estado |
 | --- | --- | --- |
-| BD1 | Visualización de tablas y relaciones, navegable sin credenciales ni registros personales | Pendiente |
-| BD2 | Diccionario con columnas, tipos, nulabilidad, claves y reglas, contrastado con el esquema instalado | Pendiente |
-| BD3 | Guía de conexión: navegador, Render, driver/pools, TLS, Oracle y separación de cuentas | Pendiente |
-| BD4 | Goodwill: problema, valor por actor, beneficios medibles, aporte académico y límites | Pendiente |
+| BD1 | Visualización de tablas y relaciones, navegable sin credenciales ni registros personales | Terminado: [catálogo interactivo](base_datos/index.html), 14 tablas y 11 FK |
+| BD2 | Diccionario con columnas, tipos, nulabilidad, claves y reglas, contrastado con el esquema instalado | Terminado: [140 columnas de Autonomous 009](DICCIONARIO_DATOS.md) |
+| BD3 | Guía de conexión: navegador, Render, driver/pools, TLS, Oracle y separación de cuentas | Terminado: [guía de conexión](CONEXION_BASE_DATOS.md) |
+| BD4 | Goodwill: problema, valor por actor, beneficios medibles, aporte académico y límites | Terminado: [valor y aporte académico](GOODWILL.md) |
 
 ## Fuentes y continuidad
 

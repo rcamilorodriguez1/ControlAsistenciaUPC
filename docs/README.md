@@ -11,12 +11,15 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 | Explorar las pantallas y sus recorridos por rol | [Mockup navegable](mockup/index.html) · [Alcance](mockup/README.md) |
 | Consultar los cambios realizados | [Registro de cambios](CAMBIOS.md) |
 | Consultar el plan general y sus ramas | [General](ROADMAP.md), [frontend/backend](ROADMAP_FRONT_BACK.md), [base de datos](ROADMAP_BASE_DATOS.md) |
-| Consultar propuestas de arquitectura y el plan anterior | [Evoluci?n](ROADMAP_2.md), [hist?rico](ROADMAP_HISTORICO.md) |
+| Consultar propuestas de arquitectura y el plan anterior | [Evolución](ROADMAP_2.md), [histórico](ROADMAP_HISTORICO.md) |
 | Distinguir lo probado de lo aprobado por el usuario | [Seguimiento del frontend](FRONTEND.md) |
 | Instalar, ejecutar y comprobar HTTPS | [Instalación](INSTALACION.md) |
-| Preparar Render o una VM Linux con Oracle Autonomous | [Despliegue en la nube](DESPLIEGUE.md) |
+| Preparar Render con Oracle Autonomous | [Despliegue en la nube](DESPLIEGUE.md) |
 | Separar la cuenta de ejecución del propietario Oracle | [Cuenta de ejecución, permisos y preparación cloud](CUENTA_EJECUCION.md) |
 | Entender cada tabla, relación, consulta y disparador actual | [Funcionamiento de la base de datos](BASE_DE_DATOS.md) |
+| Explorar las tablas sin conectar a Oracle | [Catálogo interactivo](base_datos/index.html) · [diccionario vigente](DICCIONARIO_DATOS.md) |
+| Explicar la conexión y el aporte del proyecto | [Conexión](CONEXION_BASE_DATOS.md) · [goodwill](GOODWILL.md) |
+| Consultar el perfil y la configuración del docente | [Perfil docente](PERFIL_DOCENTE.md) |
 | Utilizar la última entrega de excepciones biométricas | [Excepciones biométricas](EXCEPCIONES_BIOMETRICAS.md) |
 
 ## Contexto del proyecto y orden de publicación
@@ -60,14 +63,14 @@ Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
   explícita de commit o push puede adelantar el paso. Si una comprobación falla, corregirla
   antes de publicar y registrar el bloqueo; no marcar un punto como completo sin su evidencia.
 
-Último lote preparado, contado desde `2c3baaf`:
+Último lote preparado, contado desde `bd00c7f`:
 
 | Referencia | Estado |
 | --- | --- |
-| Base del lote | `2c3baaf`, rama `main` |
-| Cambios del lote | 5: requisitos de excepción/correo y alternativa Vercel; revisión de recursos; fotos comprimidas; reutilización del clasificador de voz; audio por bloques |
-| Commit | Los primeros tres se guardaron en fc2c29d; confirmar los dos pendientes tras las comprobaciones |
-| Push | Corresponde al completar los 5 cambios comprobados |
+| Base del lote | `bd00c7f`, rama `main` |
+| Cambios del lote | Roadmaps, créditos, anclas de títulos, selección de clases, perfil/configuración docente, excepción manual 009 y cuatro entregables de base de datos |
+| Commit | `ab2a415`, `20eda13`, `64e91fd` y `e35e98a` publicados; documentación de la rama de base de datos preparada para confirmar |
+| Push | Se ha publicado al cerrar los puntos de frontend/backend; corresponde publicar los entregables documentales terminados |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el

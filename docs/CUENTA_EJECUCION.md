@@ -1,5 +1,11 @@
 # Cuenta Oracle de ejecución separada del propietario
 
+> 22/11/2026: la migración 009 añade PKG_EXCEPCIONES_DOCENTES a la conexión técnica
+> administrativa limitada (cinco EXECUTE). No se concede al runtime ordinario ni se
+> modifica su contrato de **53 permisos**. El servicio valida la sesión real y el
+> paquete restringe cada operación al docente, su materia y alumno matriculado.
+
+
 Punto 4 del [primer roadmap](ROADMAP.md), completado el 22 de noviembre de 2026.
 UPC_AULA_APP está creado y verificado en Autonomous con esquema UPC_ASISTENCIA, 53
 permisos comprobados, 55 sentencias analizadas y cero objetos propios. Se conserva el

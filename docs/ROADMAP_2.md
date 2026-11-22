@@ -1,6 +1,6 @@
-# Segundo roadmap de UPC Aula
+# Rama de evolución de UPC Aula
 
-Estado: registrado para después del cierre del [primer roadmap](ROADMAP.md).
+Estado: propuestas posteriores enlazadas desde el [roadmap general](ROADMAP.md).
 Acuerdo del 21 de noviembre de 2026: primero completar organización y despliegue de la
 versión actual; después mejorar frontend y diseño de la base. Este registro no autoriza
 adelantar funcionalidades que el usuario dejó expresamente aplazadas.
@@ -11,54 +11,32 @@ Mejorar la experiencia universitaria y revisar la distribución de responsabilid
 Python y Oracle sobre una versión desplegada y comprobada. Los cambios se harán mediante
 migraciones nuevas, conservando datos, contratos de acceso y evidencia de las pruebas.
 
-## Alternativa de alojamiento: Vercel y Render
+<a id="alternativa-de-alojamiento-vercel-y-render"></a>
 
-El 22/11 el usuario pide considerar Vercel para la interfaz y Render para el backend,
-o distribuir servicios entre otros proveedores, por las limitaciones del alojamiento.
-Es una alternativa a evaluar, sin una decisión de migrar el servicio ya desplegado.
+## Alojamiento: solo Render
 
-- La aplicación actual usa Streamlit para interfaz y servicios en el mismo proceso.
-  Separar las pantallas requiere diseñar una interfaz independiente y una API, con
-  autenticación, sesiones, subida de muestras y comunicación entre los dos dominios.
-- Una distribución posible es interfaz en Vercel, API Python y biometría en Render,
-  Oracle Autonomous para los datos. La excepción utiliza entrega manual de la clave.
-- Trasladar la interfaz no acredita una reducción suficiente de memoria: los modelos
-  faciales y de voz seguirían consumiendo recursos donde se ejecute la inferencia.
-  El usuario confirma que la prioridad es **memoria y CPU del reconocimiento facial y de
-  voz**, para la presentación. Medir consumo antes de elegir la distribución.
-- La revisión estática confirma imports diferidos en `biometria_diferida.py` y reutilización
-  mediante `st.cache_resource` en las dos canalizaciones. Falta medir el proceso con ambos
-  modelos cargados, las capturas grandes y tomas simultáneas; no hay un fallo de memoria
-  demostrado por los logs disponibles. La salud HTTP no acredita ese rendimiento.
-- Render Free ofrece 512 MB y 0,1 CPU según la documentación consultada. Comprobar el
-  plan real y observar **Metrics** en reposo, tras análisis facial y tras voz. Separar solo
-  el motor biométrico en un servicio con recursos suficientes es otra opción a evaluar;
-  permitiría conservar la interfaz Streamlit y el acceso Oracle en Render mientras se
-  dimensiona el procesamiento, sin exigir primero un rediseño de las pantallas.
-- Evaluar también el alojamiento completo: Vercel incorporó soporte de contenedores
-  y WebSockets durante 2026. No descartarlo por afirmaciones antiguas sobre Python;
-  verificar compatibilidad, duración de conexiones, cuotas y costo del plan elegido.
-- Conservar el servicio Render/Oracle funcional mientras se compara y prueba la alternativa.
+Decisión vigente del 22/11: **se descarta Vercel**. Las pruebas y la presentación
+utilizan la aplicación Streamlit completa en Render, con Oracle Autonomous para
+los datos. La propuesta anterior de dividir frontend y backend queda cancelada;
+no se prepara otra plataforma ni una API para separar las pantallas.
 
-El usuario comunica pruebas satisfactorias con un familiar y prioriza optimizar la
-versión Render existente. Se aplican almacenamiento de fotos comprimidas con miniaturas,
-reutilización del clasificador de voz y lectura de audio por bloques; se conservan modelos,
-pixeles de análisis y criterios de decisión. [Evidencia y límites](RECONOCIMIENTO.md#uso-de-memoria-de-las-capturas-en-render).
-Esto no inicia una migración a Vercel ni cierra el ensayo de recursos y biometría del roadmap.
+Se conservan las optimizaciones ya aplicadas: fotos originales comprimidas con
+miniaturas de presentación, carga diferida y caché de modelos, clasificador de
+voz reutilizado y lectura de audio por bloques. No se cambian los píxeles utilizados
+para reconocer el rostro ni los criterios de decisión.
 
-Referencias consultadas el 22/11:
-[backends Python y contenedores en Vercel](https://vercel.com/blog/backends-on-vercel-python-containers-and-daemons),
-[WebSockets en Vercel](https://vercel.com/changelog/websocket-support-is-now-in-public-beta),
-[límites de funciones](https://vercel.com/docs/functions/limitations) y
-[límites de Render Free](https://render.com/docs/free),
-[planes de cómputo](https://render.com/docs/compute-plans) y
-[métricas CPU/RAM](https://render.com/docs/service-metrics).
+El usuario realiza las pruebas de la página, cámara y reconocimiento. Este PC no
+tiene cámara; no se intenta confirmar una captura ni se da por validada la biometría
+con las pruebas técnicas. Si se estudian recursos, se usarán las métricas del plan
+Render existente y resultados aportados por el usuario.
+
+[Evidencia técnica y límites de las optimizaciones](RECONOCIMIENTO.md#uso-de-memoria-de-las-capturas-en-render).
 
 ## Interfaz y experiencia de uso
 
 - [ ] Revisar con el usuario las pantallas de los tres roles y cerrar la aceptación pendiente.
 - [ ] Refinar tipografía, espaciado, jerarquía, formularios, tablas, mensajes y navegación.
-- [ ] Comprobar escritorio, móvil, zoom reducido, teclado y accesibilidad entre navegadores.
+- [ ] El usuario comprobará la página, cámara, reconocimiento y aceptación visual en Render.
 - [ ] Completar las vistas de perfil y configuración que se acuerden para cada rol.
 - [ ] Diseñar por separado el acceso institucional del estudiante y sus opciones de recuperación.
 - [ ] Mantener como referencia la identidad UPC aprobada y el separador de Cerrar sesión,
@@ -91,7 +69,7 @@ implementación forman parte de esta segunda etapa.
 - [ ] Verificar preservación del historial y trazabilidad de cambios administrativos.
 - [ ] Revisar vistas de consulta y exposición de campos según el rol.
 - [ ] Medir consultas con datos representativos antes de modificar índices o agregaciones.
-- [ ] Versionar cambios nuevos posteriores a 008; no reinstalar encima del esquema existente.
+- [ ] Versionar cambios nuevos posteriores a 009; no reinstalar encima del esquema existente.
 
 ## Pruebas y documentación
 

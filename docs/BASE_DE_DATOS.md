@@ -1,5 +1,27 @@
 # Base de datos de UPC | Aula: funcionamiento y consulta
 
+> **Estado vigente, 22/11/2026:** Oracle local y Autonomous están en **001–009**:
+> 14 tablas, 11 vistas, 10 triggers y 8 paquetes compilados. El diccionario vigente
+> está en [DICCIONARIO_DATOS.md](DICCIONARIO_DATOS.md), contrastado con Autonomous;
+> la [visualización interactiva](base_datos/index.html) no contiene datos de personas.
+> [Cómo se conecta](CONEXION_BASE_DATOS.md) explica Render, pools, TLS y cuentas técnicas.
+> Los inventarios y el diccionario 001–008 que siguen conservan la captura histórica
+> local del 18/11; el cambio posterior se explica aquí y en la guía de excepciones.
+
+### Ampliación 009
+
+`VERIFICACION_ESTUDIANTES` tiene ahora 18 columnas: se añaden
+`autorizado_docente_por → PROFESORES` y `materia_autorizacion_id → MATERIAS`.
+La aprobación activa exige administrador o docente con materia, con exclusión mutua.
+Las aprobaciones administrativas previas permanecen válidas.
+
+`PKG_EXCEPCIONES_DOCENTES` incorpora listar, autorizar y revocar para un docente activo,
+su materia y alumnos matriculados. Solo el aprobador docente puede renovar/revocar su
+excepción; Administración puede sustituirla. El paquete se concede a la conexión
+administrativa limitada, sin DML directo. Se conservan los 53 permisos del runtime.
+La clave se entrega manualmente; la propuesta anterior de correo queda sustituida.
+
+
 Consulta estructural realizada el **18 de noviembre de 2026** sobre el esquema
 `UPC_ASISTENCIA`, servicio/PDB `XEPDB1`, versiones **001–008**.
 
@@ -306,7 +328,7 @@ que ya se haya completado un acceso. Revocarlo conserva el último resultado his
 inhabilita nuevas entradas y sesiones anteriores. La política facial actual acredita 1/1;
 una excepción acredita 0 factores biométricos y se identifica expresamente como tal.
 
-La entrega de la contraseña por el profesor mediante correo, similar a `ALTA_DOCENTE`, está
+La propuesta histórica de entrega mediante correo, similar a `ALTA_DOCENTE`, estaba
 **anotada como pendiente**: no describe una funcionalidad implementada.
 
 ### 4.14 VERSIONES_ESQUEMA

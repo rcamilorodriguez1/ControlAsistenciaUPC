@@ -1,5 +1,35 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Alcance de pruebas y alojamiento confirmado
+
+- Instrucción expresa: el usuario realiza las pruebas de la página, cámara y
+  reconocimiento; este PC no tiene cámara. Se detiene la revisión de la página y
+  se termina la implementación/documentación con comprobaciones técnicas.
+- Vercel queda descartado; solo Render aloja la aplicación para pruebas y presentación.
+  Oracle Autonomous continúa como base de datos. Se retira la alternativa del roadmap
+  activo; las menciones anteriores en el registro de cambios conservan su carácter histórico.
+- Al terminar, registrar los cambios, realizar commit local y push, según lo solicitado.
+
+
+## 22/11/2026 — Catálogo, diccionario, conexión y aporte académico
+
+- La rama de base de datos entrega un catálogo HTML autónomo con búsqueda, selección
+  de tabla y mapa de relaciones: 14 tablas, 140 columnas y 11 FK, desde Autonomous 009.
+- El diccionario Markdown contiene tipos, nulabilidad, identidades, claves, valores
+  predeterminados, reglas CHECK y significados. La semántica existente se conserva
+  en una plantilla; los metadatos se vuelven a contrastar mediante el generador.
+- Se documenta el recorrido navegador → Render → driver/pools → Oracle, TLS/ACL,
+  sesiones y diferencias entre propietario, runtime y conexión administrativa limitada.
+- Goodwill cubre valor por participante, beneficios esperados, indicadores para
+  medirlos, aporte a Base de Datos y límites académicos, sin inventar precisión ni ahorros.
+- Roadmap general e índice enlazan las dos ramas. El plan anterior y el diccionario
+  001–008 se identifican como históricos; el PDF conserva su edición 1.1 sin regenerar.
+- Verificación: extracción de metadatos sin filas de personas ni credenciales; búsqueda
+  y selección probadas en Orca; presentación móvil a 390 px sin desbordamiento de página;
+  enlaces locales y cobertura del diccionario revisados. Capturas y comprobaciones
+  privadas en .local/revision_22nov. El catálogo funciona al abrir su index.html local.
+
+
 ## 22/11/2026 — Excepción docente con entrega manual y migración 009
 
 - El portal docente añade Excepciones de acceso: materia propia, alumno matriculado,

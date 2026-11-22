@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UPC | Aula · Catálogo de datos</title>
+<style>
+:root{color-scheme:light;font:15px/1.5 system-ui,sans-serif;color:#183c30;background:#f1f4ed}*{box-sizing:border-box}
+body{margin:0}header{padding:2rem max(1rem,4vw);background:#103d33;color:white}h1{margin:.3rem 0;font:clamp(1.8rem,4vw,3rem) Georgia,serif}header p{max-width:70ch;color:#cee2d7}
+main{max-width:1440px;margin:auto;padding:1.5rem}a{color:#176d4b}.panel{background:white;border:1px solid #d4dfd5;border-radius:12px;padding:1.2rem;margin:1rem 0}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:1.5rem}.menu{display:flex;flex-direction:column;gap:.4rem}.menu button{font:inherit;text-align:left;background:white;border:1px solid #d4dfd5;border-radius:5px;padding:.55rem;overflow-wrap:anywhere;cursor:pointer}
+.menu button[aria-pressed=true]{background:#164e3e;color:white}label{display:block}input{font:inherit;padding:.65rem;width:100%;margin:.5rem 0 1rem;border:1px solid #547d67;border-radius:6px}
+.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{text-align:left;padding:.65rem;border-bottom:1px solid #dbe5da;vertical-align:top;overflow-wrap:anywhere}th{background:#eff4ed}code{font-size:.85em}
+.grafo{width:100%;min-width:680px;height:auto}.grafo path{fill:none;stroke:#8ca79c;stroke-width:1.8;opacity:.65}.grafo rect{fill:#eaf3e7;stroke:#4b866e}.grafo text{fill:#163e30;font:12px system-ui}.grafo g{cursor:pointer}.grafo g:focus rect{stroke:#cf6c1e;stroke-width:4}small{color:#52685d}.chips{display:flex;gap:.6rem;flex-wrap:wrap}.chips span{background:#e1eddf;border-radius:15px;padding:.3rem .8rem}
+#detalle h2{overflow-wrap:anywhere;font-size:1.35rem}.relaciones li{padding:.3rem 0}.nota{border-left:4px solid #749682;padding-left:1rem}button:focus-visible,a:focus-visible{outline:3px solid #c5833c;outline-offset:2px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.menu button{font-size:.75rem}main{padding:.7rem}.panel{padding:.8rem}header{padding:1.5rem}}
+</style></head><body>
+<header><p>UPC | AULA · BASE DE DATOS</p><h1>El mapa de la información.</h1>
+<p>Tablas, columnas y reglas del proyecto. Este catálogo consulta metadatos exportados y funciona sin conectarse a Oracle.</p></header>
+<main><div class="chips" id="cifras"></div><p id="corte"></p>
+<details class="panel" open><summary>Relaciones entre tablas</summary><p>Selecciona una tabla del mapa o de la lista. Las flechas van de la clave foránea a la tabla referenciada.</p><div class="scroll" id="mapa"></div></details>
+<div class="layout"><aside class="panel"><label for="buscar">Buscar una tabla</label><input id="buscar" type="search" placeholder="Ej. clases o verificación" autocomplete="off"><nav class="menu" id="menu" aria-label="Tablas"></nav><p id="sin-resultados" hidden>No hay tablas con ese nombre.</p></aside>
+<section class="panel" id="detalle" aria-live="polite"></section></div>
+<p class="nota">Los números de identidad son globales por tabla. Una clase pendiente no constituye asistencia; el registro confirmado se guarda por estudiante y clase. Las contraseñas de acceso se almacenan como hash. El catálogo no contiene sus valores.</p>
+<p><a href="../DICCIONARIO_DATOS.md">Diccionario completo</a> · <a href="../CONEXION_BASE_DATOS.md">Cómo se conecta</a> · <a href="../GOODWILL.md">Valor y aporte académico</a> · <a href="../ROADMAP.md">Roadmap general</a></p></main>
+<script id="catalogo" type="application/json">__CATALOGO_JSON__</script>
+<script>
+'use strict';
+const db=JSON.parse(document.getElementById('catalogo').textContent), tablas=db.tablas, porNombre=new Map(tablas.map(t=>[t.nombre,t]));
+const $=id=>document.getElementById(id), texto=(tag,value,parent)=>{const e=document.createElement(tag);e.textContent=value;if(parent)parent.append(e);return e;};
+const normalizar=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+for(const valor of [tablas.length+' tablas',tablas.reduce((n,t)=>n+t.columnas.length,0)+' columnas',tablas.reduce((n,t)=>n+t.restricciones.filter(r=>r.tipo==='R').length,0)+' relaciones','Esquema '+db.versiones.at(-1)])texto('span',valor,$('cifras'));
+$('corte').textContent='Captura: '+db.generado_utc+' · Solo metadatos; sin datos personales.';
+const botones=new Map();
+function mostrar(nombre){const t=porNombre.get(nombre);if(!t)return;for(const [n,b]of botones)b.setAttribute('aria-pressed',String(n===nombre));$('detalle').replaceChildren();texto('h2',t.nombre,$('detalle'));texto('p',t.comentario||'Tabla del esquema académico; consulta las reglas de integridad al final.',$('detalle'));
+const scroll=document.createElement('div');scroll.className='scroll';$('detalle').append(scroll);const table=document.createElement('table');scroll.append(table);const head=table.createTHead().insertRow();for(const h of ['Columna','Tipo','NULL','Claves'])texto('th',h,head).scope='col';const body=table.createTBody();
+for(const c of t.columnas){const row=body.insertRow();for(const v of [c.nombre,c.tipo+(c.identidad?' · IDENTITY':''),c.admite_nulo?'Sí':'No',t.restricciones.filter(r=>r.columnas.includes(c.nombre)&&'PRU'.includes(r.tipo)).map(r=>({P:'PK',R:'FK',U:'UNIQUE'}[r.tipo])).join(', ')])texto('td',v,row);if(c.comentario)row.title=c.comentario;}
+texto('h3','Relaciones',$('detalle'));const ul=document.createElement('ul');ul.className='relaciones';$('detalle').append(ul);
+const relaciones=t.restricciones.filter(r=>r.tipo==='R');for(const r of relaciones){const li=document.createElement('li');li.append(document.createTextNode(r.columnas.join(', ')+' → '));const a=texto('a',r.referencia,li);a.href='#'+r.referencia;a.onclick=e=>{e.preventDefault();mostrar(r.referencia);};li.append(document.createTextNode(' ('+r.columnas_referencia.join(', ')+') · ON DELETE '+r.al_eliminar));ul.append(li);}if(!relaciones.length)texto('li','No tiene claves foráneas salientes.',ul);
+const entradas=tablas.flatMap(x=>x.restricciones.filter(r=>r.tipo==='R'&&r.referencia===nombre).map(r=>x.nombre+' ('+r.columnas.join(', ')+')'));texto('p','Referenciada por: '+(entradas.join('; ')||'ninguna tabla')+'.',$('detalle'));
+texto('h3','Reglas de integridad',$('detalle'));for(const r of t.restricciones){const d=document.createElement('details');texto('summary',r.nombre+' · '+r.estado,d);texto('p',r.condicion||r.tipo+' ('+r.columnas.join(', ')+')',d);$('detalle').append(d);}}
+for(const t of tablas){const b=texto('button',t.nombre,$('menu'));b.type='button';b.onclick=()=>mostrar(t.nombre);botones.set(t.nombre,b);}
+$('buscar').oninput=()=>{let count=0;for(const[n,b]of botones){b.hidden=!normalizar(n).includes(normalizar($('buscar').value));if(!b.hidden)count++;}$('sin-resultados').hidden=count>0;};
+const ns='http://www.w3.org/2000/svg', svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 1040 650');svg.setAttribute('class','grafo');svg.setAttribute('role','img');svg.setAttribute('aria-label','Relaciones de las catorce tablas del proyecto');
+const coords=new Map(tablas.map((t,i)=>[t.nombre,[20+(i%4)*260,40+Math.floor(i/4)*160]]));
+const defs=document.createElementNS(ns,'defs');defs.innerHTML='<marker id="flecha" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#567e6b"/></marker>';svg.append(defs);
+for(const t of tablas)for(const r of t.restricciones.filter(r=>r.tipo==='R')){if(!coords.has(r.referencia))continue;const [x,y]=coords.get(t.nombre),[a,b]=coords.get(r.referencia);const p=document.createElementNS(ns,'path');p.setAttribute('d',`M${x+110},${y+55} C${x+110},${y+110} ${a+110},${b-40} ${a+110},${b}`);p.setAttribute('marker-end','url(#flecha)');svg.append(p);}
+for(const t of tablas){const[x,y]=coords.get(t.nombre),g=document.createElementNS(ns,'g');g.setAttribute('tabindex','0');g.setAttribute('role','button');g.setAttribute('aria-label','Ver '+t.nombre);g.onclick=()=>mostrar(t.nombre);g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();mostrar(t.nombre);}};const rect=document.createElementNS(ns,'rect');for(const[k,v]of Object.entries({x,y,width:225,height:55,rx:8}))rect.setAttribute(k,v);g.append(rect);const label=document.createElementNS(ns,'text');label.setAttribute('x',x+10);label.setAttribute('y',y+23);label.textContent=t.nombre;g.append(label);const count=document.createElementNS(ns,'text');count.setAttribute('x',x+10);count.setAttribute('y',y+42);count.textContent=t.columnas.length+' columnas';g.append(count);svg.append(g);}
+$('mapa').append(svg);mostrar(tablas[0].nombre);
+</script></body></html>

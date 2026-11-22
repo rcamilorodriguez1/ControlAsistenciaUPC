@@ -21,5 +21,12 @@ Depende del [roadmap general](ROADMAP.md). Solicitudes del 22/11/2026.
 - Excepciones: contraseña protegida mediante hash, documento comprobado, caducidad,
   control de versiones, invalidación de sesiones y revocación. Sin correo automático.
 - Pruebas de cambios de materia/rol, navegación, calendario vacío, meses sin clases,
-  contenido escapado y permisos. Revisar escritorio y móvil con datos sintéticos.
+  contenido escapado y permisos mediante comprobaciones técnicas. La prueba de la página,
+  cámara y reconocimiento en Render queda al usuario, por instrucción expresa.
 - Implementación verificada no implica aceptación del usuario en producción.
+
+## Entrega y aceptación
+
+La implementación, migración y comprobaciones técnicas están terminadas. El usuario
+realiza las pruebas de la página y biometría en Render; este PC no dispone de cámara.
+No se inicia otra revisión de la página ni se certifica una captura desde este equipo.
