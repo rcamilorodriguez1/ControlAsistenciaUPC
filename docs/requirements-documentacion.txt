@@ -1,0 +1,5 @@
+# Herramientas opcionales para generar la memoria, separadas del runtime de la aplicación.
+# Versiones utilizadas para la edición documental 1.1.
+Markdown==3.11.3
+PyMuPDF==2.1
+websockets==17.4

@@ -8,6 +8,14 @@ el acceso desde Python y el diccionario real de Oracle mediante una transacción
 No se ejecutaron migraciones, laboratorios, inserciones, actualizaciones ni borrados para prepararlo.
 No se incluyen filas de usuarios, contraseñas, hashes reales ni muestras biométricas.
 
+**Actualización documental del 21 de noviembre de 2026:** Autonomous UPCAULA ya tiene
+las versiones 001–008 instaladas, TLS y acceso administrativo limitado verificados;
+14 tablas, 11 vistas, 10 disparadores y siete paquetes con sus cuerpos válidos.
+El diccionario detallado de columnas, restricciones e índices de esta guía conserva su
+procedencia de la consulta local del 18/11; no se presenta como un nuevo inventario cloud.
+La aplicación mantiene por ahora su conexión local. El catálogo SQL y el despliegue se
+describen abajo y en [DESPLIEGUE.md](DESPLIEGUE.md). No se cambió la base para esta actualización.
+
 ## Índice
 
 1. [Dónde está guardada la base](#1-dónde-está-guardada-la-base)
@@ -31,18 +39,21 @@ Hay que distinguir **datos activos**, **scripts de construcción** y **copia de 
 
 | Elemento | Ubicación | Qué contiene |
 | --- | --- | --- |
-| Datos activos | Servidor Oracle; esquema `UPC_ASISTENCIA` dentro de `XEPDB1` | Las filas actuales, tablas, restricciones, vistas, paquetes y disparadores. |
+| Datos de la aplicación local | Servidor Oracle XE; esquema `UPC_ASISTENCIA` dentro de `XEPDB1` | Las filas y objetos del entorno local al que sigue conectada la aplicación. |
+| Esquema cloud instalado | Autonomous UPCAULA; esquema `UPC_ASISTENCIA` | Versiones 001–008 y objetos verificados; no implica que se hayan trasladado las filas locales. |
 | Entrada de instalación | [oracle_scripts.sql](../oracle_scripts.sql) | Llama al instalador versionado. No es una copia de los datos. |
 | Instalador | [sql/instalar.sql](../sql/instalar.sql) | Ordena estructura inicial y migraciones 002–008. |
 | Tablas iniciales | [sql/01_tablas.sql](../sql/01_tablas.sql) | Solo las seis tablas de 001; por sí solo no representa la base actual. |
 | Evolución del esquema | [sql/migraciones/](../sql/migraciones/) | Cambios que completan la estructura hasta 008. |
 | Modelo consolidado generado en esta revisión | `exports/modelo_008.sql` | DDL de las 14 tablas, 9 FK, 11 índices adicionales y 11 vistas; sin filas de usuarios. Preparado para importar en Data Modeler. |
 | Exportador general existente | [sql/06_exportar_ddl.sql](../sql/06_exportar_ddl.sql) | Puede generar `exports/esquema_ddl.sql`, incluyendo también paquetes y disparadores. |
-| Configuración de conexión | [src/base_datos/configuracion.py](../src/base_datos/configuracion.py) | Crea el pool y toma la configuración privada. No almacena las tablas ni las filas. |
+| Catálogo de consultas | [sql/consultas/](../sql/consultas/README.md) | SQL que carga la aplicación; no instala la base ni contiene filas. |
+| Configuración de conexión | [src/base_datos/configuracion.py](../src/base_datos/configuracion.py) y [transporte.py](../src/base_datos/transporte.py) | Pool y opciones TCP local o TLS/mTLS; no almacenan las tablas ni las filas. |
 | Secretos del equipo | `.streamlit/secrets.toml` o variables de entorno | Credenciales y configuración de conexión; excluidos de Git. |
 
 Oracle organiza el almacenamiento en tablespaces y archivos de datos. Las tablas de este
-esquema están asignadas a `USERS`; los archivos físicos los administra Oracle y normalmente
+esquema local están asignadas a `USERS`; en el aprovisionamiento de Autonomous se usa `DATA`.
+Los archivos físicos los administra Oracle y normalmente
 tienen extensión `.dbf`. Un archivo de ese tipo no se abre como script SQL ni se edita desde VS Code.
 La ruta física exacta de este equipo no se verificó con la cuenta del esquema. Referencia:
 [Oracle: tablespaces y archivos de datos](https://docs.oracle.com/en/database/oracle/oracle-database/18/ntdbi/identifying-tablespaces-and-data-files.html).
@@ -81,13 +92,14 @@ Navegador HTTPS → Streamlit → servicios de aplicación → repositorios Pyth
                             SQL y paquetes PL/SQL → tablas / triggers / vistas
 ```
 
-1. [src/configuracion.py](../src/configuracion.py) resuelve variables del proceso, secretos
-   de Streamlit y valores predeterminados, en ese orden.
+1. [src/configuracion.py](../src/configuracion.py) resuelve variables directas del proceso,
+   archivos de texto `KEY_FILE`, secretos de Streamlit y valores predeterminados, en ese orden.
 2. `src/base_datos/configuracion.py` usa python-oracledb en modo thin y un pool. La configuración
    habitual del proyecto es `localhost:1521/XEPDB1`; la contraseña no tiene valor predeterminado.
 3. [bd.py](../src/base_datos/bd.py) toma una conexión, limpia el contexto anterior, valida la
    sesión web y establece el actor de auditoría antes de las operaciones protegidas.
-4. Los repositorios envían SQL con parámetros y llaman paquetes. Los servicios Python validan
+4. Los repositorios cargan el SQL desde `sql/consultas/` mediante el lector compartido,
+   envían datos como parámetros y llaman paquetes. Los servicios Python validan
    formatos, contraseñas y vectores; PL/SQL vuelve a comprobar las reglas que le corresponden.
 5. Una escritura válida se confirma con `COMMIT`; ante un error se revierte. Antes de devolver
    una conexión al pool se hace limpieza de transacción/contexto para no atribuir una acción al usuario anterior.
@@ -940,6 +952,14 @@ estudio con transacción de solo lectura y cerrar esa transacción después de c
 
 ## 11. Dónde encontrar las consultas del programa
 
+Desde el 21/11 las sentencias de nueve módulos están en `sql/consultas/`: 88 consultas
+únicas y dos plantillas de identificadores, extraídas de 104 apariciones originales.
+[consultas.py](../src/base_datos/consultas.py) valida rutas, mantiene caché y limita las
+plantillas a identificadores Oracle permitidos. Los módulos siguientes conservan la
+coordinación, los parámetros y las transacciones; sus descripciones señalan las operaciones
+que solicitan, aunque el texto SQL esté en el catálogo externo. La generación de DDL de
+respaldo continúa como excepción técnica. Esta organización no traslada reglas a PL/SQL.
+
 | Archivo | Funciones/consultas relevantes |
 | --- | --- |
 | [bd.py](../src/base_datos/bd.py) | `existe_profesor`, `crear_profesor`, `iniciar_sesion_profesor`; estudiantes y vectores; creación/búsqueda de materias; comprobación/matrícula/retiro; listas por rol; registros y resúmenes. |
@@ -966,6 +986,11 @@ documenta ambas como fuentes de modelos relacionales:
 [Data Modeler: importación de diseños y metadatos](https://docs.oracle.com/en/database/oracle/sql-developer-data-modeler/24.3/dmdug/data-modeler-concepts-usage.html).
 
 ### A. Desde la base existente
+
+La conexión local siguiente se conserva para XE. También puede visualizarse el esquema
+de Autonomous desde SQL Developer mediante la conexión TLS o mTLS correspondiente a esa
+base y sus credenciales privadas. No utilizar `localhost`/`XEPDB1` para cloud ni ejecutar
+el instalador para generar el diagrama. Ver [despliegue](DESPLIEGUE.md).
 
 Crear una conexión básica al mismo servicio de la aplicación:
 

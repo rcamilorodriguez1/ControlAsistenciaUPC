@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><title>UPC | Aula — Documentación integral del proyecto</title><meta name="description" content="Memoria académica y técnica de UPC Aula. Edición 1.0, 18 de noviembre de 2026."><style>
+<html lang="es"><head><meta charset="utf-8"><title>UPC | Aula — Documentación integral del proyecto</title><meta name="description" content="Memoria académica y técnica de UPC Aula. Edición 1.1, 21 de noviembre de 2026."><style>
     @page {size:A4; margin:20mm 18mm 20mm 20mm;}
     @page landscape {size:A4 landscape; margin:20mm 18mm 20mm 20mm;}
     *{box-sizing:border-box;} html{font-size:10.3pt;} body{margin:0;color:#263b30;background:white;font-family:Arial,Helvetica,sans-serif;line-height:1.43;}
@@ -19,7 +19,7 @@
     pre code{font-size:1em;} blockquote{border-left:2pt solid #007337;margin:4mm 0;padding:1mm 0 1mm 4mm;color:#476052;}
     figure{margin:5mm 0 7mm;break-inside:avoid-page;} figure svg,figure img{display:block;width:100%;height:auto;}
     figcaption{font-size:8.2pt;line-height:1.4;margin-top:3mm;color:#52675a;}
-    .diagram{padding:3mm 0;} .architecture{padding:0;margin:4mm 0;} .architecture svg{max-height:60mm;} .screenshot img{border:1px solid #dbe4de;}
+    .diagram{padding:3mm 0;} .architecture{padding:0;margin:4mm 0;} .architecture svg{max-height:60mm;} .screenshot img{border:1px solid #dbe4de;max-height:80mm;object-fit:contain;}
     .chapter{break-before:page;} .compact{font-size:10pt;line-height:1.35;} .compact p{margin-bottom:2.4mm;} .compact h3{margin-top:4mm;margin-bottom:2.2mm;} .compact table{font-size:8.6pt;} .compact th,.compact td{padding:1.8mm 2.3mm;}
     .roadmap{font-size:9.8pt;line-height:1.32;} .roadmap table{font-size:8.4pt;line-height:1.32;} .roadmap th,.roadmap td{padding:1.4mm 2.3mm;} .keep{break-inside:avoid-page;}
     .landscape{page:landscape;} .landscape table{font-size:8.7pt;}
@@ -52,11 +52,11 @@
     <p class="eyebrow">PROYECTO ACADÉMICO · DOCUMENTACIÓN INTEGRAL</p><h1>UPC | Aula</h1>
     <p class="subtitle">Gestión y seguimiento<br>académico.</p><div class="rule"></div>
     <p class="lead">Planteamiento, objetivos, arquitectura, flujos funcionales y referencia de la base de datos.</p>
-    <div class="cover-bottom"><div class="meta-grid"><div><span>Universidad</span>Universidad Popular del Cesar</div><div><span>Contexto académico</span>Ingeniería de Sistemas · Base de Datos</div><div><span>Edición documental</span>1.0 · 18 de noviembre de 2026</div><div><span>Estado técnico de referencia</span>Oracle · versiones 001–008</div></div>
+    <div class="cover-bottom"><div class="meta-grid"><div><span>Universidad</span>Universidad Popular del Cesar</div><div><span>Contexto académico</span>Ingeniería de Sistemas · Base de Datos</div><div><span>Edición documental</span>1.1 · 21 de noviembre de 2026</div><div><span>Estado técnico de referencia</span>Oracle · versiones 001–008</div></div>
     <p class="motto">Educación y Futuro</p><p class="small" style="margin-top:5mm">Memoria del proyecto en desarrollo. Los estados implementado, verificado y aceptado se documentan por separado. Sin credenciales ni registros personales.</p></div></section>
-    <section class="toc"><p class="eyebrow">GUÍA DE LECTURA</p><h2>Contenido</h2><p>Memoria principal</p><ol><li><a href="#cap-1-resumen-ejecutivo"><span>1. Resumen ejecutivo</span><span class="toc-page" data-target="cap-1-resumen-ejecutivo">4</span></a></li><li><a href="#cap-2-planteamiento-del-programa"><span>2. Planteamiento del programa</span><span class="toc-page" data-target="cap-2-planteamiento-del-programa">5</span></a></li><li><a href="#cap-3-objetivos"><span>3. Objetivos</span><span class="toc-page" data-target="cap-3-objetivos">6</span></a></li><li><a href="#cap-4-alcance-actores-y-requisitos"><span>4. Alcance, actores y requisitos</span><span class="toc-page" data-target="cap-4-alcance-actores-y-requisitos">7</span></a></li><li><a href="#cap-5-arquitectura-y-organizacion"><span>5. Arquitectura y organización</span><span class="toc-page" data-target="cap-5-arquitectura-y-organizacion">9</span></a></li><li><a href="#cap-6-flujos-funcionales"><span>6. Flujos funcionales</span><span class="toc-page" data-target="cap-6-flujos-funcionales">10</span></a></li><li><a href="#cap-7-modelo-de-datos-y-pl-sql"><span>7. Modelo de datos y PL/SQL</span><span class="toc-page" data-target="cap-7-modelo-de-datos-y-pl-sql">13</span></a></li><li><a href="#cap-8-seguridad-privacidad-y-reconocimiento"><span>8. Seguridad, privacidad y reconocimiento</span><span class="toc-page" data-target="cap-8-seguridad-privacidad-y-reconocimiento">15</span></a></li><li><a href="#cap-9-interfaz-e-identidad-institucional"><span>9. Interfaz e identidad institucional</span><span class="toc-page" data-target="cap-9-interfaz-e-identidad-institucional">16</span></a></li><li><a href="#cap-10-instalacion-y-operacion"><span>10. Instalación y operación</span><span class="toc-page" data-target="cap-10-instalacion-y-operacion">17</span></a></li><li><a href="#cap-11-verificacion-y-evidencias"><span>11. Verificación y evidencias</span><span class="toc-page" data-target="cap-11-verificacion-y-evidencias">18</span></a></li><li><a href="#cap-12-roadmap-riesgos-y-continuidad"><span>12. Roadmap, riesgos y continuidad</span><span class="toc-page" data-target="cap-12-roadmap-riesgos-y-continuidad">19</span></a></li><li><a href="#cap-13-glosario-y-referencias-del-proyecto"><span>13. Glosario y referencias del proyecto</span><span class="toc-page" data-target="cap-13-glosario-y-referencias-del-proyecto">20</span></a></li></ol><h3><a href="#anexo-a"><span>Anexo A · Base de datos y programación PL/SQL</span><span class="toc-page" data-target="anexo-a">22</span></a></h3><p class="small">Incluye tablas, relaciones, disparadores, paquetes y consultas de estudio.</p></section>
-    <section class="toc"><p class="eyebrow">REFERENCIA DEL ESQUEMA</p><h2>Contenido del anexo A</h2><ol><li><a href="#db-1-donde-esta-guardada-la-base"><span>1. Dónde está guardada la base</span><span class="toc-page" data-target="db-1-donde-esta-guardada-la-base">23</span></a></li><li><a href="#db-2-como-se-conecta-el-programa"><span>2. Cómo se conecta el programa</span><span class="toc-page" data-target="db-2-como-se-conecta-el-programa">25</span></a></li><li><a href="#db-3-modelo-y-relaciones"><span>3. Modelo y relaciones</span><span class="toc-page" data-target="db-3-modelo-y-relaciones">26</span></a></li><li><a href="#db-4-las-catorce-tablas"><span>4. Las catorce tablas</span><span class="toc-page" data-target="db-4-las-catorce-tablas">28</span></a></li><li><a href="#db-5-integridad-estados-e-identificadores"><span>5. Integridad, estados e identificadores</span><span class="toc-page" data-target="db-5-integridad-estados-e-identificadores">32</span></a></li><li><a href="#db-6-las-once-vistas"><span>6. Las once vistas</span><span class="toc-page" data-target="db-6-las-once-vistas">33</span></a></li><li><a href="#db-7-los-diez-disparadores-actuales"><span>7. Los diez disparadores actuales</span><span class="toc-page" data-target="db-7-los-diez-disparadores-actuales">34</span></a></li><li><a href="#db-8-los-siete-paquetes-pl-sql"><span>8. Los siete paquetes PL/SQL</span><span class="toc-page" data-target="db-8-los-siete-paquetes-pl-sql">36</span></a></li><li><a href="#db-9-los-flujos-completos"><span>9. Los flujos completos</span><span class="toc-page" data-target="db-9-los-flujos-completos">39</span></a></li><li><a href="#db-10-catalogo-de-consultas-de-solo-lectura"><span>10. Catálogo de consultas de solo lectura</span><span class="toc-page" data-target="db-10-catalogo-de-consultas-de-solo-lectura">40</span></a></li><li><a href="#db-11-donde-encontrar-las-consultas-del-programa"><span>11. Dónde encontrar las consultas del programa</span><span class="toc-page" data-target="db-11-donde-encontrar-las-consultas-del-programa">47</span></a></li><li><a href="#db-12-visualizacion-en-sql-developer"><span>12. Visualización en SQL Developer</span><span class="toc-page" data-target="db-12-visualizacion-en-sql-developer">48</span></a></li><li><a href="#db-fuentes-y-alcance-de-la-revision"><span>Fuentes y alcance de la revisión</span><span class="toc-page" data-target="db-fuentes-y-alcance-de-la-revision">50</span></a></li><li><a href="#db-13-diccionario-completo-de-columnas"><span>13. Diccionario completo de columnas</span><span class="toc-page" data-target="db-13-diccionario-completo-de-columnas">51</span></a></li><li><a href="#db-14-restricciones-e-indices-consultados"><span>14. Restricciones e índices consultados</span><span class="toc-page" data-target="db-14-restricciones-e-indices-consultados">64</span></a></li></ol><p class="small" style="margin-top:6mm">Las secciones 13 y 14 del anexo utilizan páginas A4 apaisadas para facilitar la lectura del diccionario y las restricciones.</p></section>
-    <section class="chapter"><h2 id="cap-1-resumen-ejecutivo">1. Resumen ejecutivo</h2>
+    <section class="toc"><p class="eyebrow">GUÍA DE LECTURA</p><h2>Contenido</h2><p>Memoria principal</p><ol><li><a href="#cap-1-resumen-ejecutivo"><span>1. Resumen ejecutivo</span><span class="toc-page" data-target="cap-1-resumen-ejecutivo">4</span></a></li><li><a href="#cap-2-planteamiento-del-programa"><span>2. Planteamiento del programa</span><span class="toc-page" data-target="cap-2-planteamiento-del-programa">5</span></a></li><li><a href="#cap-3-objetivos"><span>3. Objetivos</span><span class="toc-page" data-target="cap-3-objetivos">6</span></a></li><li><a href="#cap-4-alcance-actores-y-requisitos"><span>4. Alcance, actores y requisitos</span><span class="toc-page" data-target="cap-4-alcance-actores-y-requisitos">7</span></a></li><li><a href="#cap-5-arquitectura-y-organizacion"><span>5. Arquitectura y organización</span><span class="toc-page" data-target="cap-5-arquitectura-y-organizacion">9</span></a></li><li><a href="#cap-6-flujos-funcionales"><span>6. Flujos funcionales</span><span class="toc-page" data-target="cap-6-flujos-funcionales">11</span></a></li><li><a href="#cap-7-modelo-de-datos-y-pl-sql"><span>7. Modelo de datos y PL/SQL</span><span class="toc-page" data-target="cap-7-modelo-de-datos-y-pl-sql">14</span></a></li><li><a href="#cap-8-seguridad-privacidad-y-reconocimiento"><span>8. Seguridad, privacidad y reconocimiento</span><span class="toc-page" data-target="cap-8-seguridad-privacidad-y-reconocimiento">16</span></a></li><li><a href="#cap-9-interfaz-e-identidad-institucional"><span>9. Interfaz e identidad institucional</span><span class="toc-page" data-target="cap-9-interfaz-e-identidad-institucional">17</span></a></li><li><a href="#cap-10-instalacion-y-operacion"><span>10. Instalación y operación</span><span class="toc-page" data-target="cap-10-instalacion-y-operacion">18</span></a></li><li><a href="#cap-11-verificacion-y-evidencias"><span>11. Verificación y evidencias</span><span class="toc-page" data-target="cap-11-verificacion-y-evidencias">21</span></a></li><li><a href="#cap-12-roadmap-riesgos-y-continuidad"><span>12. Roadmap, riesgos y continuidad</span><span class="toc-page" data-target="cap-12-roadmap-riesgos-y-continuidad">22</span></a></li><li><a href="#cap-13-glosario-y-referencias-del-proyecto"><span>13. Glosario y referencias del proyecto</span><span class="toc-page" data-target="cap-13-glosario-y-referencias-del-proyecto">24</span></a></li></ol><h3><a href="#anexo-a"><span>Anexo A · Base de datos y programación PL/SQL</span><span class="toc-page" data-target="anexo-a">26</span></a></h3><p class="small">Incluye tablas, relaciones, disparadores, paquetes y consultas de estudio.</p></section>
+    <section class="toc"><p class="eyebrow">REFERENCIA DEL ESQUEMA</p><h2>Contenido del anexo A</h2><ol><li><a href="#db-1-donde-esta-guardada-la-base"><span>1. Dónde está guardada la base</span><span class="toc-page" data-target="db-1-donde-esta-guardada-la-base">27</span></a></li><li><a href="#db-2-como-se-conecta-el-programa"><span>2. Cómo se conecta el programa</span><span class="toc-page" data-target="db-2-como-se-conecta-el-programa">29</span></a></li><li><a href="#db-3-modelo-y-relaciones"><span>3. Modelo y relaciones</span><span class="toc-page" data-target="db-3-modelo-y-relaciones">30</span></a></li><li><a href="#db-4-las-catorce-tablas"><span>4. Las catorce tablas</span><span class="toc-page" data-target="db-4-las-catorce-tablas">32</span></a></li><li><a href="#db-5-integridad-estados-e-identificadores"><span>5. Integridad, estados e identificadores</span><span class="toc-page" data-target="db-5-integridad-estados-e-identificadores">36</span></a></li><li><a href="#db-6-las-once-vistas"><span>6. Las once vistas</span><span class="toc-page" data-target="db-6-las-once-vistas">37</span></a></li><li><a href="#db-7-los-diez-disparadores-actuales"><span>7. Los diez disparadores actuales</span><span class="toc-page" data-target="db-7-los-diez-disparadores-actuales">38</span></a></li><li><a href="#db-8-los-siete-paquetes-pl-sql"><span>8. Los siete paquetes PL/SQL</span><span class="toc-page" data-target="db-8-los-siete-paquetes-pl-sql">40</span></a></li><li><a href="#db-9-los-flujos-completos"><span>9. Los flujos completos</span><span class="toc-page" data-target="db-9-los-flujos-completos">43</span></a></li><li><a href="#db-10-catalogo-de-consultas-de-solo-lectura"><span>10. Catálogo de consultas de solo lectura</span><span class="toc-page" data-target="db-10-catalogo-de-consultas-de-solo-lectura">44</span></a></li><li><a href="#db-11-donde-encontrar-las-consultas-del-programa"><span>11. Dónde encontrar las consultas del programa</span><span class="toc-page" data-target="db-11-donde-encontrar-las-consultas-del-programa">51</span></a></li><li><a href="#db-12-visualizacion-en-sql-developer"><span>12. Visualización en SQL Developer</span><span class="toc-page" data-target="db-12-visualizacion-en-sql-developer">52</span></a></li><li><a href="#db-fuentes-y-alcance-de-la-revision"><span>Fuentes y alcance de la revisión</span><span class="toc-page" data-target="db-fuentes-y-alcance-de-la-revision">54</span></a></li><li><a href="#db-13-diccionario-completo-de-columnas"><span>13. Diccionario completo de columnas</span><span class="toc-page" data-target="db-13-diccionario-completo-de-columnas">55</span></a></li><li><a href="#db-14-restricciones-e-indices-consultados"><span>14. Restricciones e índices consultados</span><span class="toc-page" data-target="db-14-restricciones-e-indices-consultados">68</span></a></li></ol><p class="small" style="margin-top:6mm">Las secciones 13 y 14 del anexo utilizan páginas A4 apaisadas para facilitar la lectura del diccionario y las restricciones.</p></section>
+    <section class="chapter compact"><h2 id="cap-1-resumen-ejecutivo">1. Resumen ejecutivo</h2>
 <p><strong>UPC | Aula</strong> es un proyecto académico para el registro, la administración y el seguimiento
 de la actividad de clase en el contexto de la Universidad Popular del Cesar. Organiza
 asignaturas y grupos, matrículas, sesiones académicas, resultados de asistencia e historial.
@@ -84,8 +84,12 @@ institucional, una medición de precisión biométrica ni una declaración de de
 <td>UPC | Aula, con recursos institucionales originales y lema Educación y Futuro.</td>
 </tr>
 <tr>
-<td>Entorno verificado</td>
-<td>Windows x64, Python 3.11 y Oracle XE 18c / XEPDB1.</td>
+<td>Entorno local</td>
+<td>Windows x64, Python 3.11 y Oracle XE 18c / XEPDB1; la aplicación conserva esta conexión.</td>
+</tr>
+<tr>
+<td>Base cloud</td>
+<td>Autonomous UPCAULA, TLS y versiones 001–008 instaladas y verificadas; Oracle informa 23.26.4.1.0.</td>
 </tr>
 <tr>
 <td>Persistencia</td>
@@ -97,11 +101,19 @@ institucional, una medición de precisión biométrica ni una declaración de de
 </tr>
 <tr>
 <td>Verificación de software</td>
-<td>Última publicación completa: 217 pruebas aprobadas con Oracle habilitado.</td>
+<td>Entrega anterior: 217 pruebas con Oracle. Reorganización actual: 182 aprobadas y 64 de integración omitidas. Son ejecuciones distintas.</td>
 </tr>
 <tr>
 <td>Revisión de estructura</td>
-<td>43 SELECT validados el 18 de noviembre sin extraer filas de datos.</td>
+<td>Consulta local del 18/11; instalación cloud verificada el 21/11 y 65 consultas de lectura analizadas sin ejecutarlas.</td>
+</tr>
+<tr>
+<td>Navegadores</td>
+<td>173 vistas revisadas en Firefox, Edge, Chrome y Brave; límites de foco y aceptación documentados.</td>
+</tr>
+<tr>
+<td>Alojamiento</td>
+<td>Docker y Caddy preparados; VM pendiente por falta de capacidad A1.Flex en AD-1, AD-2 y AD-3 de Ashburn.</td>
 </tr>
 <tr>
 <td>Aceptación</td>
@@ -114,6 +126,10 @@ institucional, una medición de precisión biométrica ni una declaración de de
 incorpora la guía detallada de la base de datos: cada tabla y campo, relaciones, vistas,
 disparadores, rutinas y catálogo de consultas. Los estados «implementado», «probado» y
 «aceptado por el usuario» se mantienen separados.</p>
+<p>Esta edición incorpora la organización del catálogo SQL, el estado real de Oracle Cloud,
+las comprobaciones entre navegadores y la separación de los dos roadmaps. Conserva la
+referencia estructural local del 18 de noviembre: no presenta sus consultas como una nueva
+auditoría completa realizada hoy. La captura de portada es histórica y no acredita publicación.</p>
 </section><section class="chapter compact"><h2 id="cap-2-planteamiento-del-programa">2. Planteamiento del programa</h2>
 <h3 id="cap-2-1-contexto-y-necesidad">2.1 Contexto y necesidad</h3>
 <p>El seguimiento de clases necesita vincular personas, asignaturas, grupos y sesiones concretas.
@@ -411,13 +427,23 @@ coordinan reglas y los repositorios conectan con Oracle.</p>
 <td>Pool, consultas, llamadas PL/SQL, transacción y recuperación.</td>
 </tr>
 <tr>
+<td>Catálogo SQL</td>
+<td>sql/consultas y src/base_datos/consultas.py</td>
+<td>Sentencias externas, caché, validación de rutas y plantillas de identificadores.</td>
+</tr>
+<tr>
 <td>Reglas Oracle</td>
 <td>sql y sql/migraciones</td>
 <td>Estructura, paquetes, triggers, vistas y verificación.</td>
 </tr>
+<tr>
+<td>Operación cloud</td>
+<td>Dockerfile, deploy y scripts de preparación</td>
+<td>Imagen Linux, proxy HTTPS, configuración privada y verificación previa al arranque.</td>
+</tr>
 </tbody>
 </table>
-<h3 id="cap-5-2-decisiones-relevantes">5.2 Decisiones relevantes</h3>
+<div class="keep"><h3 id="cap-5-2-decisiones-relevantes">5.2 Decisiones relevantes</h3>
 <ul>
 <li>Las reglas sensibles se comprueban en servidor; un botón deshabilitado no es el control definitivo.</li>
 <li>Las conexiones del pool limpian contexto para no heredar el actor de una operación anterior.</li>
@@ -425,7 +451,18 @@ coordinan reglas y los repositorios conectan con Oracle.</p>
 <li>Una propuesta biométrica se revisa antes de persistir la confirmación de una clase.</li>
 <li>Una operación de escritura con resultado incierto no se repite indiscriminadamente.</li>
 <li>Las vistas simplifican consultas; el control de filas por usuario depende del contexto y los servicios.</li>
-</ul>
+</ul></div>
+<h3 id="cap-5-3-organizacion-de-las-consultas">5.3 Organización de las consultas</h3>
+<p>La reorganización del 21 de noviembre extrae 104 apariciones de SQL de nueve módulos
+a un catálogo de 88 sentencias únicas y dos plantillas de identificadores. Las consultas
+iguales se comparten; se conservan sus parámetros, texto y límites de transacción.
+<code>cargar_sql</code> lee archivos UTF-8 dentro del catálogo y mantiene caché. Las plantillas
+validan nombres Oracle; los datos continúan enviándose mediante parámetros enlazados.</p>
+<p>El catálogo no sustituye a <code>oracle_scripts.sql</code>, las migraciones ni los paquetes PL/SQL.
+Tampoco traslada por sí mismo las reglas de negocio de Python a Oracle. La generación
+dinámica de DDL en las herramientas de respaldo es una excepción técnica documentada
+para revisar más adelante. No se afirma que todo SQL de cualquier herramienta haya desaparecido.
+Detalle: <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/sql/consultas/README.md">catálogo SQL</a>.</p>
 </section><section class="chapter"><h2 id="cap-6-flujos-funcionales">6. Flujos funcionales</h2>
 <h3 id="cap-6-1-alta-y-acceso-docente">6.1 Alta y acceso docente</h3>
 <p>La herramienta de preparación genera una autorización privada de alta. El docente proporciona
@@ -619,7 +656,7 @@ puede engañar el acceso. También quedan pendientes evaluación con voces exter
 ruido y otras condiciones reales. La interfaz administrativa no vuelve inmutable la auditoría
 frente al propietario Oracle. La separación completa de cuentas de ejecución, retención y
 operación institucional requiere trabajo adicional antes de una entrega real.</p>
-</section><section class="chapter"><h2 id="cap-9-interfaz-e-identidad-institucional">9. Interfaz e identidad institucional</h2>
+</section><section class="chapter compact"><h2 id="cap-9-interfaz-e-identidad-institucional">9. Interfaz e identidad institucional</h2>
 <p>La marca de la plataforma es <strong>UPC | Aula</strong>, separada del logosímbolo universitario. Se emplean
 recursos originales del manual de identidad, sin redibujar ni recolorear símbolos. El verde
 principal del proyecto es #007337, con blanco y superficies neutras; Arial proporciona la
@@ -633,6 +670,14 @@ composición institucional y acceso por rol. El pie académico es común a las p
 El usuario confirmó identidad actual, iconos/contraseñas, recuperación docente y el separador
 de Cerrar sesión. Otros recorridos y pantallas siguen pendientes de aceptación expresa.
 Los créditos nominales del pie aún contienen valores provisionales que deben completarse.</p>
+<p>La revisión del 21 de noviembre corrige la dependencia de la fuente nativa de iconos en
+Chrome mediante una fuente local. En Firefox se ajusta el ancho efectivo del pie compartido
+con un ResizeObserver. La comprobación posterior comprende 173 vistas en Firefox, Edge,
+Chrome y Brave. Los tamaños móviles son viewports de escritorio, no teléfonos físicos.
+Los recorridos autenticados emplean fixtures con Oracle bloqueado. En Firefox se omite
+la comprobación visual de foco de dos formularios por ventana inactiva de automatización;
+las acciones de teclado sí se comprobaron. No equivale a certificar accesibilidad completa,
+Safari ni cámara y micrófono físicos. Evidencia: <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/docs/FRONTEND.md">frontend</a>.</p>
 </section><section class="chapter"><h2 id="cap-10-instalacion-y-operacion">10. Instalación y operación</h2>
 <h3 id="cap-10-1-entorno">10.1 Entorno</h3>
 <p>El entorno verificado es Windows x64 con Python 3.11 y Oracle XE 18c / XEPDB1. Las dependencias
@@ -663,6 +708,116 @@ configuración de red/certificado indicada en la guía de instalación.</p>
 <p>La operación debe diferenciar verificar, respaldar, migrar e instalar. Los laboratorios y
 pruebas de integración pueden escribir fixtures aunque luego reviertan; no se confunden con
 una revisión estrictamente de solo lectura.</p>
+<h3 id="cap-10-4-oracle-autonomous-instalacion-y-recuperacion">10.4 Oracle Autonomous: instalación y recuperación</h3>
+<p>UPCAULA ya tiene las versiones 001–008 y las cuentas técnicas preparadas. La instalación
+cloud se verificó con 14 tablas, 11 vistas, 10 disparadores habilitados y siete paquetes
+con sus siete cuerpos válidos. No se repite el instalador sobre esta base existente.</p>
+<p>La primera instalación se detuvo con ORA-20021 al detectar vistas inválidas después de
+ALTER TABLE. Se centralizó la recompilación del esquema en <code>sql/36_recompilar_esquema.sql</code>
+y se continuaron únicamente las migraciones pendientes, preservando los usuarios.
+El verificador sigue rechazando objetos inválidos; no se desactivó el control para continuar.</p>
+<table>
+<thead>
+<tr>
+<th>Herramienta</th>
+<th>Uso y alcance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>scripts/probar_oracle_cloud.py</td>
+<td>Comprueba TLS y una consulta de lectura; solicita la contraseña sin eco cuando corresponde.</td>
+</tr>
+<tr>
+<td>scripts/preparar_oracle_cloud.py</td>
+<td>Aprovisiona una base nueva; --continuar recupera una instalación parcial validando destino y versiones.</td>
+</tr>
+<tr>
+<td>scripts/preparar_oracle_cloud.py --verificar</td>
+<td>Revisa la instalación actual con las cuentas técnicas, sin repetir el DDL.</td>
+</tr>
+<tr>
+<td>sql/cloud</td>
+<td>Sentencias de aprovisionamiento, permisos, conexión e inventario para Autonomous.</td>
+</tr>
+<tr>
+<td>sql/36_recompilar_esquema.sql</td>
+<td>Recompila el esquema del proyecto antes de verificar las migraciones.</td>
+</tr>
+</tbody>
+</table>
+<p>La contraseña ADMIN no se guarda en scripts públicos. La cuenta propietaria conserva el
+esquema; UPC_ADMIN_APP tiene acceso administrativo limitado. La separación de una tercera
+cuenta de ejecución respecto del propietario sigue pendiente. Las cuentas del portal son
+identidades funcionales distintas de estos usuarios técnicos Oracle.</p>
+<h3 id="cap-10-5-despliegue-preparado-con-docker-y-caddy">10.5 Despliegue preparado con Docker y Caddy</h3>
+<p>La arquitectura prevista permite acceder desde otros dispositivos sin mantener encendido
+el PC: el navegador se conecta por HTTPS al servidor OCI, Caddy termina TLS y envía HTTP y
+WebSocket al contenedor Streamlit; Python se conecta por TCPS a Autonomous. Solo el proxy
+publica 80/443; el puerto 8501 queda dentro de la red de contenedores.</p>
+<figure class="diagram architecture"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 312" role="img" aria-label="Arquitectura prevista del despliegue cloud; servidor pendiente" style="font-family:Arial,sans-serif">
+    <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#49765e"></path></marker></defs><rect x="10" y="8" width="700" height="62" rx="5" fill="#f2f6f3" stroke="#b8ccc0"></rect><text x="360.0" y="36.0" text-anchor="middle" font-size="18" font-weight="bold" fill="#123e2b">Navegador · otros equipos y dispositivos</text><text x="360.0" y="59.0" text-anchor="middle" font-size="13" fill="#123e2b">Dominio público · HTTPS / WebSocket</text><path d="M360,70 L360,86" fill="none" stroke="#49765e" stroke-width="2" marker-end="url(#arrow)"></path><rect x="10" y="86" width="700" height="62" rx="5" fill="#f2f6f3" stroke="#b8ccc0"></rect><text x="360.0" y="114.0" text-anchor="middle" font-size="18" font-weight="bold" fill="#123e2b">VM OCI · Docker / Caddy</text><text x="360.0" y="137.0" text-anchor="middle" font-size="13" fill="#123e2b">Proxy 80/443 → Streamlit privado en 8501</text><path d="M360,148 L360,164" fill="none" stroke="#49765e" stroke-width="2" marker-end="url(#arrow)"></path><rect x="10" y="164" width="700" height="62" rx="5" fill="#f2f6f3" stroke="#b8ccc0"></rect><text x="360.0" y="192.0" text-anchor="middle" font-size="18" font-weight="bold" fill="#123e2b">Aplicación Python</text><text x="360.0" y="215.0" text-anchor="middle" font-size="13" fill="#123e2b">Servicios · modelos CPU · pool Oracle / TCPS</text><path d="M360,226 L360,242" fill="none" stroke="#49765e" stroke-width="2" marker-end="url(#arrow)"></path><rect x="10" y="242" width="700" height="62" rx="5" fill="#007337" stroke="#b8ccc0"></rect><text x="360.0" y="270.0" text-anchor="middle" font-size="18" font-weight="bold" fill="#ffffff">Autonomous UPCAULA · esquema 001–008</text><text x="360.0" y="293.0" text-anchor="middle" font-size="13" fill="#ffffff">Base instalada; contenedor y publicación aún pendientes</text></svg><figcaption>Figura 5. Arquitectura cloud preparada. La VM y el despliegue público no están completados.</figcaption></figure>
+
+<table>
+<thead>
+<tr>
+<th>Archivo</th>
+<th>Responsabilidad</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dockerfile y .dockerignore</td>
+<td>Construcción Linux en dos etapas, modelos CPU, usuario sin privilegios y exclusión de datos privados.</td>
+</tr>
+<tr>
+<td>deploy/compose.yaml y deploy/Caddyfile</td>
+<td>Aplicación, proxy HTTPS, persistencia, rotación de logs y comprobación HTTP.</td>
+</tr>
+<tr>
+<td>deploy/.env.example</td>
+<td>Plantilla de dominio público, correo de certificados y etiqueta de imagen.</td>
+</tr>
+<tr>
+<td>deploy/secrets.produccion.toml.example</td>
+<td>Plantilla sin credenciales reales; las claves se completan en un archivo privado.</td>
+</tr>
+<tr>
+<td>scripts/iniciar_produccion.py</td>
+<td>Valida configuración, clave de identidad, transporte, esquema y permisos antes del arranque.</td>
+</tr>
+<tr>
+<td>scripts/comprobar_modelos.py</td>
+<td>Comprueba la carga CPU de modelos sin personas ni conexión Oracle.</td>
+</tr>
+<tr>
+<td>.github/workflows/contenedor.yml</td>
+<td>Workflow manual preparado para construir y comprobar Linux x64/ARM64; no aloja ni publica la aplicación.</td>
+</tr>
+</tbody>
+</table>
+<p>La imagen y Compose están preparados, pero no se ha completado una construcción Linux real.
+La disponibilidad del workflow no demuestra su ejecución. El lock de Windows no se usa
+para instalar Linux; la construcción final debe conservar sus versiones y digest.
+El healthcheck comprueba HTTP, no la disponibilidad continua de Oracle.</p>
+<h3 id="cap-10-6-estado-de-la-infraestructura">10.6 Estado de la infraestructura</h3>
+<p>Se crearon la VCN upc-aula-vcn y la subred pública regional upc-aula-publica en Ashburn.
+Los intentos A1.Flex de 2 OCPU y 12 GB devolvieron falta de capacidad en AD-1, AD-2 y AD-3.
+No hay VM creada ni IP pública asignada confirmada. Faltan revisar puerta de enlace,
+tabla de rutas y reglas; la selección de IP pública en el formulario no prueba conectividad.
+La disponibilidad gratuita depende de la capacidad y de las cuotas vigentes de la cuenta.
+No se registra un cargo real a partir del estimador ni se promete disponibilidad permanente.</p>
+<h3 id="cap-10-7-configuracion-y-publicacion-pendientes">10.7 Configuración y publicación pendientes</h3>
+<p>Antes de publicar se necesita comprobar la cuenta de ejecución limitada, preparar las
+cuentas web cloud, definir traslado o inicio sin datos, instalar Docker en la VM y apuntar
+un dominio a su IP. La ACL de Autonomous debe admitir la salida del servidor. El certificado
+público se obtiene mediante Caddy; no se traslada la CA de desarrollo del PC.</p>
+<p>La configuración resuelve variables directas del proceso, archivos de texto KEY_FILE,
+secrets de Streamlit y valores predeterminados. Las contraseñas, autorizaciones y claves
+se conservan fuera de Git. Si se trasladan documentos registrados, debe conservarse la
+clave HMAC original; generar otra no permite reconocer sus huellas existentes.
+El traslado XE a Autonomous y la restauración en cloud aún no se han validado.
+Guía operativa: <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/docs/DESPLIEGUE.md">despliegue</a>.</p>
 </section><section class="chapter"><h2 id="cap-11-verificacion-y-evidencias">11. Verificación y evidencias</h2>
 <h3 id="cap-11-1-estrategia">11.1 Estrategia</h3>
 <p>La verificación combina pruebas de servicios, interfaz y Oracle, datos sintéticos, revisión
@@ -678,9 +833,24 @@ software; no sustituyen la evaluación biométrica con personas ni la aceptació
 </thead>
 <tbody>
 <tr>
-<td>Publicación completa</td>
+<td>Publicación anterior</td>
 <td>217 pruebas aprobadas con Oracle sobre una copia de los archivos publicables.</td>
-<td>Verificación del software de esa entrega.</td>
+<td>Evidencia histórica de esa entrega, no resultado de la nueva ejecución.</td>
+</tr>
+<tr>
+<td>Catálogo SQL</td>
+<td>182 pruebas aprobadas y 64 de integración omitidas; 104 cadenas conservadas y 65 consultas de lectura analizadas en cloud.</td>
+<td>Las consultas se analizaron sin ejecutarlas; las pruebas omitidas no cuentan como aprobadas.</td>
+</tr>
+<tr>
+<td>Compatibilidad visual</td>
+<td>173 vistas correctas en Firefox, Edge, Chrome y Brave.</td>
+<td>Fixtures, viewports y límites de foco documentados; aceptación del usuario separada.</td>
+</tr>
+<tr>
+<td>Instalación cloud</td>
+<td>Versiones 001–008, 14 tablas, 11 vistas, 10 triggers y siete paquetes/cuerpos válidos.</td>
+<td>La base está instalada; no demuestra publicación del servidor web.</td>
 </tr>
 <tr>
 <td>Excepciones</td>
@@ -718,54 +888,72 @@ varias pestañas y dispositivos, QR/LAN, revocación, exportación, copias y res
 La calibración debe separar sus muestras de las de evaluación y registrar FAR, FRR y confusiones
 solo cuando existan grupos de datos suficientes. No se declara una precisión biométrica medida.</p>
 </section><section class="chapter compact roadmap"><h2 id="cap-12-roadmap-riesgos-y-continuidad">12. Roadmap, riesgos y continuidad</h2>
-<h3 id="cap-12-1-trabajo-pendiente">12.1 Trabajo pendiente</h3>
+<h3 id="cap-12-1-primer-roadmap-terminar-organizacion-y-despliegue">12.1 Primer roadmap: terminar organización y despliegue</h3>
 <table>
 <thead>
 <tr>
-<th>Bloque</th>
-<th>Trabajo siguiente</th>
+<th>Entregable</th>
+<th>Estado</th>
 <th>Dependencia de cierre</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Frontend</td>
-<td>Continuar aceptación de navegación, selectores, perfil, pie y zoom.</td>
-<td>Revisión expresa de los recorridos por el usuario.</td>
+<td>1. Autonomous, TLS y esquema</td>
+<td>Completado.</td>
+<td>Mantener verificaciones y conservación de datos.</td>
 </tr>
 <tr>
-<td>Acceso estudiantil</td>
-<td>Diseñar login institucional general y recuperación.</td>
-<td>Definir el flujo sin sustituir identidad por un formulario anónimo.</td>
+<td>2. Organización de SQL</td>
+<td>Catálogo compartido completado.</td>
+<td>No equivale a rediseñar las reglas de negocio.</td>
 </tr>
 <tr>
-<td>Entrega alternativa</td>
-<td>Contraseña proporcionada por el docente mediante correo, similar a ALTA_DOCENTE.</td>
-<td>Aplazado por instrucción del usuario; no implementarlo aún.</td>
+<td>3. Verificación del catálogo</td>
+<td>182 pruebas aprobadas, 64 omitidas y 65 consultas analizadas.</td>
+<td>Repetir cuando haya cambios que lo justifiquen.</td>
 </tr>
 <tr>
-<td>Perfiles</td>
-<td>Mi perfil para otros roles y Configuración.</td>
-<td>Definición y autorización de funciones.</td>
+<td>4. Separación de cuentas técnicas</td>
+<td>Administración limitada lista; ejecución usa propietario.</td>
+<td>Probar permisos y resolución del esquema con una cuenta limitada.</td>
 </tr>
 <tr>
-<td>Entrega por equipo</td>
-<td>Portabilidad, dependencias, licencia y separación de ejecución/propietario.</td>
-<td>Verificación en otro PC y decisiones operativas.</td>
+<td>5. Configuración cloud</td>
+<td>Preparación pendiente.</td>
+<td>Cuentas web, autorizaciones, claves originales y decisión sobre traslado de datos.</td>
 </tr>
 <tr>
-<td>Ensayo real</td>
-<td>Personas, dispositivos, biometría, ruido, red y calibración.</td>
-<td>Muestras y procedimientos consentidos, métricas y depuración.</td>
+<td>6. VM y Docker</td>
+<td>VM detenida por falta de capacidad en los tres AD.</td>
+<td>Conseguir capacidad; construir y comprobar Linux real.</td>
 </tr>
 <tr>
-<td>Presentación de datos</td>
-<td>Importación visual en SQL Developer y demostración final.</td>
-<td>Revisar el modelo/guion sobre el mismo esquema Oracle.</td>
+<td>7. Dominio y operación</td>
+<td>Pendiente.</td>
+<td>Red, DNS público, HTTPS, QR y persistencia comprobados.</td>
+</tr>
+<tr>
+<td>8. Ensayo y presentación</td>
+<td>Pendiente de cierre.</td>
+<td>Dispositivos reales, permisos, auditoría, restauración y SQL Developer.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cap-12-2-riesgos-y-tratamiento-propuesto">12.2 Riesgos y tratamiento propuesto</h3>
+<p>Mientras no haya VM pueden completarse la red, los permisos de ejecución y la preparación
+privada. Una construcción en Linux disponible o CI permite detectar fallos sin esperar
+al servidor. El ensayo público y la aceptación final requieren el despliegue.</p>
+<h3 id="cap-12-2-segundo-roadmap-mejoras-posteriores">12.2 Segundo roadmap: mejoras posteriores</h3>
+<p>Después del cierre del primero se revisarán la experiencia de los tres roles, tipografía,
+formularios, tablas, perfiles y configuración, además del login institucional estudiantil.
+Se mantiene la identidad aprobada y el separador de Cerrar sesión aceptado como perfecto.</p>
+<p>En Oracle se revisarán cohesión de paquetes, disparadores, tablas, vistas, restricciones,
+índices y distribución de reglas entre Python y PL/SQL. Las decisiones se implementarán
+con migraciones nuevas, preservando historial y contratos. La extracción actual de SQL no
+inicia este rediseño. La entrega por correo de la contraseña alternativa por el docente,
+similar a ALTA_DOCENTE, continúa expresamente aplazada y sin implementar.
+Detalle: <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/docs/ROADMAP.md">primer roadmap</a> y <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/docs/ROADMAP_2.md">segundo roadmap</a>.</p>
+<h3 id="cap-12-3-riesgos-y-tratamiento-propuesto">12.3 Riesgos y tratamiento propuesto</h3>
 <table>
 <thead>
 <tr>
@@ -806,13 +994,18 @@ solo cuando existan grupos de datos suficientes. No se declara una precisión bi
 <td>Documentar el entorno verificado y ensayar otras condiciones.</td>
 </tr>
 <tr>
+<td>Falta de capacidad Compute</td>
+<td>No poder publicar todavía en la VM prevista.</td>
+<td>Reintentar disponibilidad y completar tareas independientes; no sustituir por recursos de pago automáticamente.</td>
+</tr>
+<tr>
 <td>Datos provisionales de presentación</td>
 <td>Documento o interfaz con créditos incompletos.</td>
 <td>Completar nombres y validar contenidos antes de la entrega formal.</td>
 </tr>
 </tbody>
 </table>
-<h3 id="cap-12-3-criterio-de-continuidad">12.3 Criterio de continuidad</h3>
+<h3 id="cap-12-4-criterio-de-continuidad">12.4 Criterio de continuidad</h3>
 <p>El siguiente trabajo debe respetar la separación entre cambios visuales, autenticación,
 reglas académicas y operación Oracle. Cada entrega se documenta con alcance, archivos,
 verificación y pendientes. La evolución de la base se realiza con migraciones y respaldo
@@ -899,6 +1092,18 @@ previo; estudiar el modelo o imprimir este documento no requiere aplicar DDL.</p
 <td>Prioridades, decisiones y pendientes.</td>
 </tr>
 <tr>
+<td>docs/ROADMAP_2.md</td>
+<td>Mejoras visuales y revisión futura de reglas, paquetes y modelo.</td>
+</tr>
+<tr>
+<td>docs/DESPLIEGUE.md</td>
+<td>Docker, Caddy, TLS con Autonomous, configuración privada y ensayo público.</td>
+</tr>
+<tr>
+<td>sql/consultas/README.md</td>
+<td>Catálogo externo y separación entre consultas e instalación.</td>
+</tr>
+<tr>
 <td>docs/BASE_DE_DATOS.md</td>
 <td>Inventario estructural y funcionamiento detallado; incorporado en el anexo A.</td>
 </tr>
@@ -981,6 +1186,13 @@ Las rutas de código de esta memoria son relativas a la raíz del repositorio Co
 el acceso desde Python y el diccionario real de Oracle mediante una transacción <code>READ ONLY</code>.
 No se ejecutaron migraciones, laboratorios, inserciones, actualizaciones ni borrados para prepararlo.
 No se incluyen filas de usuarios, contraseñas, hashes reales ni muestras biométricas.</p>
+<p><strong>Actualización documental del 21 de noviembre de 2026:</strong> Autonomous UPCAULA ya tiene
+las versiones 001–008 instaladas, TLS y acceso administrativo limitado verificados;
+14 tablas, 11 vistas, 10 disparadores y siete paquetes con sus cuerpos válidos.
+El diccionario detallado de columnas, restricciones e índices de esta guía conserva su
+procedencia de la consulta local del 18/11; no se presenta como un nuevo inventario cloud.
+La aplicación mantiene por ahora su conexión local. El catálogo SQL y el despliegue se
+describen abajo y en <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/docs/DESPLIEGUE.md">DESPLIEGUE.md</a>. No se cambió la base para esta actualización.</p>
 <div class="key-facts"><div><b>14</b><span>tablas</span></div><div><b>9</b><span>claves foráneas</span></div><div><b>10</b><span>disparadores</span></div><div><b>7</b><span>paquetes PL/SQL</span></div></div><p class="small">Fuente: docs/BASE_DE_DATOS.md. Inventario contrastado el 18 de noviembre de 2026 en modo de solo lectura.</p></section><section class="chapter appendix "><h2 id="db-1-donde-esta-guardada-la-base">1. Dónde está guardada la base</h2>
 <p>Hay que distinguir <strong>datos activos</strong>, <strong>scripts de construcción</strong> y <strong>copia de estructura</strong>:</p>
 <table>
@@ -993,9 +1205,14 @@ No se incluyen filas de usuarios, contraseñas, hashes reales ni muestras biomé
 </thead>
 <tbody>
 <tr>
-<td>Datos activos</td>
-<td>Servidor Oracle; esquema <code>UPC_ASISTENCIA</code> dentro de <code>XEPDB1</code></td>
-<td>Las filas actuales, tablas, restricciones, vistas, paquetes y disparadores.</td>
+<td>Datos de la aplicación local</td>
+<td>Servidor Oracle XE; esquema <code>UPC_ASISTENCIA</code> dentro de <code>XEPDB1</code></td>
+<td>Las filas y objetos del entorno local al que sigue conectada la aplicación.</td>
+</tr>
+<tr>
+<td>Esquema cloud instalado</td>
+<td>Autonomous UPCAULA; esquema <code>UPC_ASISTENCIA</code></td>
+<td>Versiones 001–008 y objetos verificados; no implica que se hayan trasladado las filas locales.</td>
 </tr>
 <tr>
 <td>Entrada de instalación</td>
@@ -1028,9 +1245,14 @@ No se incluyen filas de usuarios, contraseñas, hashes reales ni muestras biomé
 <td>Puede generar <code>exports/esquema_ddl.sql</code>, incluyendo también paquetes y disparadores.</td>
 </tr>
 <tr>
+<td>Catálogo de consultas</td>
+<td><a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/sql/consultas/README.md">sql/consultas/</a></td>
+<td>SQL que carga la aplicación; no instala la base ni contiene filas.</td>
+</tr>
+<tr>
 <td>Configuración de conexión</td>
-<td><a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/src/base_datos/configuracion.py">src/base_datos/configuracion.py</a></td>
-<td>Crea el pool y toma la configuración privada. No almacena las tablas ni las filas.</td>
+<td><a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/src/base_datos/configuracion.py">src/base_datos/configuracion.py</a> y <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/src/base_datos/transporte.py">transporte.py</a></td>
+<td>Pool y opciones TCP local o TLS/mTLS; no almacenan las tablas ni las filas.</td>
 </tr>
 <tr>
 <td>Secretos del equipo</td>
@@ -1040,7 +1262,8 @@ No se incluyen filas de usuarios, contraseñas, hashes reales ni muestras biomé
 </tbody>
 </table>
 <p>Oracle organiza el almacenamiento en tablespaces y archivos de datos. Las tablas de este
-esquema están asignadas a <code>USERS</code>; los archivos físicos los administra Oracle y normalmente
+esquema local están asignadas a <code>USERS</code>; en el aprovisionamiento de Autonomous se usa <code>DATA</code>.
+Los archivos físicos los administra Oracle y normalmente
 tienen extensión <code>.dbf</code>. Un archivo de ese tipo no se abre como script SQL ni se edita desde VS Code.
 La ruta física exacta de este equipo no se verificó con la cuenta del esquema. Referencia:
 <a href="https://docs.oracle.com/en/database/oracle/oracle-database/18/ntdbi/identifying-tablespaces-and-data-files.html">Oracle: tablespaces y archivos de datos</a>.</p>
@@ -1110,13 +1333,14 @@ modelo visual ni sustituye los archivos de instalación.</p>
                             SQL y paquetes PL/SQL → tablas / triggers / vistas
 </code></pre>
 <ol>
-<li><a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/src/configuracion.py">src/configuracion.py</a> resuelve variables del proceso, secretos
-   de Streamlit y valores predeterminados, en ese orden.</li>
+<li><a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/src/configuracion.py">src/configuracion.py</a> resuelve variables directas del proceso,
+   archivos de texto <code>KEY_FILE</code>, secretos de Streamlit y valores predeterminados, en ese orden.</li>
 <li><code>src/base_datos/configuracion.py</code> usa python-oracledb en modo thin y un pool. La configuración
    habitual del proyecto es <code>localhost:1521/XEPDB1</code>; la contraseña no tiene valor predeterminado.</li>
 <li><a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/src/base_datos/bd.py">bd.py</a> toma una conexión, limpia el contexto anterior, valida la
    sesión web y establece el actor de auditoría antes de las operaciones protegidas.</li>
-<li>Los repositorios envían SQL con parámetros y llaman paquetes. Los servicios Python validan
+<li>Los repositorios cargan el SQL desde <code>sql/consultas/</code> mediante el lector compartido,
+   envían datos como parámetros y llaman paquetes. Los servicios Python validan
    formatos, contraseñas y vectores; PL/SQL vuelve a comprobar las reglas que le corresponden.</li>
 <li>Una escritura válida se confirma con <code>COMMIT</code>; ante un error se revierte. Antes de devolver
    una conexión al pool se hace limpieza de transacción/contexto para no atribuir una acción al usuario anterior.</li>
@@ -2062,6 +2286,13 @@ WHERE status&lt;&gt;'VALID' ORDER BY object_type, object_name;
 ni llamadas a procedimientos que los realicen. Los ejemplos se pueden usar en una sesión de
 estudio con transacción de solo lectura y cerrar esa transacción después de consultar.</p>
 </section><section class="chapter appendix "><h2 id="db-11-donde-encontrar-las-consultas-del-programa">11. Dónde encontrar las consultas del programa</h2>
+<p>Desde el 21/11 las sentencias de nueve módulos están en <code>sql/consultas/</code>: 88 consultas
+únicas y dos plantillas de identificadores, extraídas de 104 apariciones originales.
+<a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/src/base_datos/consultas.py">consultas.py</a> valida rutas, mantiene caché y limita las
+plantillas a identificadores Oracle permitidos. Los módulos siguientes conservan la
+coordinación, los parámetros y las transacciones; sus descripciones señalan las operaciones
+que solicitan, aunque el texto SQL esté en el catálogo externo. La generación de DDL de
+respaldo continúa como excepción técnica. Esta organización no traslada reglas a PL/SQL.</p>
 <table>
 <thead>
 <tr>
@@ -2125,6 +2356,10 @@ importar el diccionario existente o importar un DDL consolidado a un modelo loca
 documenta ambas como fuentes de modelos relacionales:
 <a href="https://docs.oracle.com/en/database/oracle/sql-developer-data-modeler/24.3/dmdug/data-modeler-concepts-usage.html">Data Modeler: importación de diseños y metadatos</a>.</p>
 <h3 id="db-a-desde-la-base-existente">A. Desde la base existente</h3>
+<p>La conexión local siguiente se conserva para XE. También puede visualizarse el esquema
+de Autonomous desde SQL Developer mediante la conexión TLS o mTLS correspondiente a esa
+base y sus credenciales privadas. No utilizar <code>localhost</code>/<code>XEPDB1</code> para cloud ni ejecutar
+el instalador para generar el diagrama. Ver <a href="https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/docs/DESPLIEGUE.md">despliegue</a>.</p>
 <p>Crear una conexión básica al mismo servicio de la aplicación:</p>
 <table>
 <thead>

@@ -20,13 +20,13 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 
 ## Memoria integral del proyecto
 
-La [edición 1.0 en PDF](UPC_Aula_Documentacion_Integral.pdf), del 18 de noviembre de 2026,
+La [edición 1.1 en PDF](UPC_Aula_Documentacion_Integral.pdf), del 21 de noviembre de 2026,
 reúne el planteamiento, la justificación, los objetivos, los requisitos, la arquitectura,
 los flujos por rol, la seguridad, la interfaz, la instalación, las evidencias y el roadmap.
 Su anexo incorpora íntegra la guía de base de datos, con diccionario, relaciones,
 disparadores, paquetes y consultas. Distingue implementación, verificación y aceptación.
 
-Son **72 páginas**, con portada institucional, índice numerado y navegable, marcadores,
+Son **76 páginas**, con portada institucional, índice numerado y navegable, marcadores,
 diagramas y tablas A4 apaisadas para el diccionario y las restricciones. El logotipo se
 conserva tal como fue extraído del manual UPC; la captura corresponde a la portada local.
 No contiene credenciales, registros personales ni claves privadas.
@@ -34,8 +34,35 @@ No contiene credenciales, registros personales ni claves privadas.
 Fuentes editables: [memoria principal en Markdown](INFORME_PROYECTO.md),
 [guía de base de datos](BASE_DE_DATOS.md) y [maquetación completa en HTML](UPC_Aula_Documentacion_Integral.html).
 El HTML incorpora las imágenes y los diagramas, sin depender de rutas absolutas del equipo.
-El PDF es una fotografía documental de esta edición; las guías temáticas y el roadmap
-siguen registrando la evolución posterior.
+La edición 1.1 incorpora el catálogo SQL, Autonomous 001–008, Docker/Caddy preparados,
+las pruebas entre navegadores y ambos roadmaps. Registra la falta de capacidad Compute
+en los tres dominios de Ashburn; la aplicación aún no está publicada. Conserva la
+procedencia del diccionario local del 18/11 y distingue las verificaciones cloud posteriores.
+El PDF es una fotografía documental de esta edición; las guías temáticas registran
+la evolución posterior y no se consideran incluidas hasta regenerar la memoria.
+
+### Regenerar la memoria
+
+El generador compartido es [scripts/generar_documentacion.py](../scripts/generar_documentacion.py).
+Lee únicamente las fuentes documentales y los recursos gráficos; no conecta con Oracle ni
+ejecuta la aplicación. Requiere Python 3.11, las
+[herramientas opcionales](requirements-documentacion.txt) y un navegador Chromium,
+Chrome, Brave o Edge instalado. Las herramientas no se añaden al runtime del portal.
+
+Desde la raíz del repositorio, usando un entorno dedicado para documentación:
+
+```powershell
+python -m venv .local/venv-documentacion
+.\.local\venv-documentacion\Scripts\python.exe -m pip install -r docs/requirements-documentacion.txt
+.\.local\venv-documentacion\Scripts\python.exe scripts/generar_documentacion.py
+```
+
+En Linux, el intérprete de ese entorno está en `.local/venv-documentacion/bin/python`.
+El navegador se detecta en las ubicaciones habituales; puede indicarse con `--navegador`
+o `AULA_NAVEGADOR_PDF`. Se usa un perfil headless temporal, separado del perfil personal.
+El generador actualiza el HTML/PDF y guarda comprobaciones y muestras de páginas en
+`.local/memoria_pdf/`. Antes de entregar, revisar contenido, índice, márgenes y privacidad;
+la generación no sustituye la aceptación funcional ni el ensayo público.
 
 ## Guías por área
 

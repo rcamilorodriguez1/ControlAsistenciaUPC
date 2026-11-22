@@ -4,6 +4,41 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 21 de noviembre de 2026 — Memoria integral actualizada a edición 1.1
+
+Se revisa la edición del 18/11 y se actualizan la memoria principal, la guía de base de
+datos, el HTML y el PDF. La nueva edición tiene 76 páginas e incorpora catálogo SQL,
+instalación Autonomous 001–008, recuperación de ORA-20021, preparación Docker/Caddy,
+verificaciones entre navegadores y los dos roadmaps. Conserva la procedencia local del
+diccionario del 18/11 y distingue esa consulta de las comprobaciones cloud posteriores.
+Registra la falta de capacidad A1.Flex en los tres AD; no declara la aplicación publicada.
+
+Se incorpora `scripts/generar_documentacion.py` para regenerar desde las fuentes actuales,
+con detección de navegador y perfil temporal. Sus dependencias opcionales quedan en
+`docs/requirements-documentacion.txt`, separadas de las del portal. El índice de guías
+explica el procedimiento. Se conservó una copia privada de la edición anterior.
+
+**Verificación documental:** 2.375 unidades de contenido encontradas en el PDF, 29 entradas
+de índice con destino correcto, 171 marcadores y 87 enlaces. Sin texto fuera de márgenes,
+contenido omitido, rutas absolutas privadas ni coincidencias con las credenciales locales
+y cloud comprobadas en memoria. Inspección visual de las 76 páginas mediante hojas de
+contacto; tablas del diccionario y restricciones conservadas en A4 apaisado.
+
+Evidencia privada: `.local/memoria_pdf/validacion.json` y `revision_contenido.json`.
+Los resultados funcionales citados son evidencias de entregas previas; no se ejecutaron
+migraciones, pruebas de negocio ni cambios de la interfaz al actualizar la documentación.
+
+## 21 de noviembre de 2026 — Estado de Compute y continuación sin VM
+
+Se documentan la VCN y subred pública creadas y la confirmación del usuario de falta de
+capacidad A1.Flex en AD-1, AD-2 y AD-3 de Ashburn. La VM no está creada; red, IP y acceso
+SSH no se consideran verificados. El primer roadmap ordena trabajo que puede avanzar
+sin servidor: completar red, separar la cuenta de ejecución, preparar configuración
+cloud, validar Docker en Linux disponible y preparar recuperación/SQL Developer.
+
+Solo cambia la documentación. No se cambian cuentas, credenciales, Oracle, la aplicación
+ni recursos cloud; no se ejecuta el workflow ni se inicia el segundo roadmap.
+
 ## 21 de noviembre de 2026 — Organización de consultas y separación de roadmaps
 
 El usuario confirma que solo tiene la base Autonomous, todavía sin VM Compute, y retoma

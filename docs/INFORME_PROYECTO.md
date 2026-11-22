@@ -1,6 +1,6 @@
 # Documentación integral del proyecto UPC | Aula
 
-Edición documental 1.0 · 18 de noviembre de 2026 · Esquema Oracle 001–008.
+Edición documental 1.1 · 21 de noviembre de 2026 · Esquema Oracle 001–008.
 
 ## 1. Resumen ejecutivo
 
@@ -25,11 +25,14 @@ institucional, una medición de precisión biométrica ni una declaración de de
 | Aspecto | Situación al corte documental |
 | --- | --- |
 | Identidad | UPC \| Aula, con recursos institucionales originales y lema Educación y Futuro. |
-| Entorno verificado | Windows x64, Python 3.11 y Oracle XE 18c / XEPDB1. |
+| Entorno local | Windows x64, Python 3.11 y Oracle XE 18c / XEPDB1; la aplicación conserva esta conexión. |
+| Base cloud | Autonomous UPCAULA, TLS y versiones 001–008 instaladas y verificadas; Oracle informa 23.26.4.1.0. |
 | Persistencia | 14 tablas, 138 columnas visibles, 9 FK, 11 vistas y 7 paquetes PL/SQL. |
 | Reglas automáticas | 10 disparadores habilitados; sin objetos inválidos ni errores de compilación en la consulta registrada. |
-| Verificación de software | Última publicación completa: 217 pruebas aprobadas con Oracle habilitado. |
-| Revisión de estructura | 43 SELECT validados el 18 de noviembre sin extraer filas de datos. |
+| Verificación de software | Entrega anterior: 217 pruebas con Oracle. Reorganización actual: 182 aprobadas y 64 de integración omitidas. Son ejecuciones distintas. |
+| Revisión de estructura | Consulta local del 18/11; instalación cloud verificada el 21/11 y 65 consultas de lectura analizadas sin ejecutarlas. |
+| Navegadores | 173 vistas revisadas en Firefox, Edge, Chrome y Brave; límites de foco y aceptación documentados. |
+| Alojamiento | Docker y Caddy preparados; VM pendiente por falta de capacidad A1.Flex en AD-1, AD-2 y AD-3 de Ashburn. |
 | Aceptación | Parcial: continúan la revisión visual, el ensayo con personas y la preparación de entrega. |
 
 ### 1.2 Lectura de este documento
@@ -38,6 +41,11 @@ Los capítulos principales presentan la propuesta y el funcionamiento transversa
 incorpora la guía detallada de la base de datos: cada tabla y campo, relaciones, vistas,
 disparadores, rutinas y catálogo de consultas. Los estados «implementado», «probado» y
 «aceptado por el usuario» se mantienen separados.
+
+Esta edición incorpora la organización del catálogo SQL, el estado real de Oracle Cloud,
+las comprobaciones entre navegadores y la separación de los dos roadmaps. Conserva la
+referencia estructural local del 18 de noviembre: no presenta sus consultas como una nueva
+auditoría completa realizada hoy. La captura de portada es histórica y no acredita publicación.
 
 ## 2. Planteamiento del programa
 
@@ -192,7 +200,9 @@ coordinan reglas y los repositorios conectan con Oracle.
 | Aplicación | src/servicios | Validaciones, coordinación, autenticación, identidad y revisión. |
 | Biometría | src/canalizaciones y utilidades de muestras | Extracción, comparación y tratamiento de captura/audio. |
 | Persistencia | src/base_datos | Pool, consultas, llamadas PL/SQL, transacción y recuperación. |
+| Catálogo SQL | sql/consultas y src/base_datos/consultas.py | Sentencias externas, caché, validación de rutas y plantillas de identificadores. |
 | Reglas Oracle | sql y sql/migraciones | Estructura, paquetes, triggers, vistas y verificación. |
+| Operación cloud | Dockerfile, deploy y scripts de preparación | Imagen Linux, proxy HTTPS, configuración privada y verificación previa al arranque. |
 
 ### 5.2 Decisiones relevantes
 
@@ -202,6 +212,20 @@ coordinan reglas y los repositorios conectan con Oracle.
 - Una propuesta biométrica se revisa antes de persistir la confirmación de una clase.
 - Una operación de escritura con resultado incierto no se repite indiscriminadamente.
 - Las vistas simplifican consultas; el control de filas por usuario depende del contexto y los servicios.
+
+### 5.3 Organización de las consultas
+
+La reorganización del 21 de noviembre extrae 104 apariciones de SQL de nueve módulos
+a un catálogo de 88 sentencias únicas y dos plantillas de identificadores. Las consultas
+iguales se comparten; se conservan sus parámetros, texto y límites de transacción.
+`cargar_sql` lee archivos UTF-8 dentro del catálogo y mantiene caché. Las plantillas
+validan nombres Oracle; los datos continúan enviándose mediante parámetros enlazados.
+
+El catálogo no sustituye a `oracle_scripts.sql`, las migraciones ni los paquetes PL/SQL.
+Tampoco traslada por sí mismo las reglas de negocio de Python a Oracle. La generación
+dinámica de DDL en las herramientas de respaldo es una excepción técnica documentada
+para revisar más adelante. No se afirma que todo SQL de cualquier herramienta haya desaparecido.
+Detalle: [catálogo SQL](../sql/consultas/README.md).
 
 ## 6. Flujos funcionales
 
@@ -396,6 +420,15 @@ El usuario confirmó identidad actual, iconos/contraseñas, recuperación docent
 de Cerrar sesión. Otros recorridos y pantallas siguen pendientes de aceptación expresa.
 Los créditos nominales del pie aún contienen valores provisionales que deben completarse.
 
+La revisión del 21 de noviembre corrige la dependencia de la fuente nativa de iconos en
+Chrome mediante una fuente local. En Firefox se ajusta el ancho efectivo del pie compartido
+con un ResizeObserver. La comprobación posterior comprende 173 vistas en Firefox, Edge,
+Chrome y Brave. Los tamaños móviles son viewports de escritorio, no teléfonos físicos.
+Los recorridos autenticados emplean fixtures con Oracle bloqueado. En Firefox se omite
+la comprobación visual de foco de dos formularios por ventana inactiva de automatización;
+las acciones de teclado sí se comprobaron. No equivale a certificar accesibilidad completa,
+Safari ni cámara y micrófono físicos. Evidencia: [frontend](FRONTEND.md).
+
 ## 10. Instalación y operación
 
 ### 10.1 Entorno
@@ -439,6 +472,77 @@ La operación debe diferenciar verificar, respaldar, migrar e instalar. Los labo
 pruebas de integración pueden escribir fixtures aunque luego reviertan; no se confunden con
 una revisión estrictamente de solo lectura.
 
+### 10.4 Oracle Autonomous: instalación y recuperación
+
+UPCAULA ya tiene las versiones 001–008 y las cuentas técnicas preparadas. La instalación
+cloud se verificó con 14 tablas, 11 vistas, 10 disparadores habilitados y siete paquetes
+con sus siete cuerpos válidos. No se repite el instalador sobre esta base existente.
+
+La primera instalación se detuvo con ORA-20021 al detectar vistas inválidas después de
+ALTER TABLE. Se centralizó la recompilación del esquema en `sql/36_recompilar_esquema.sql`
+y se continuaron únicamente las migraciones pendientes, preservando los usuarios.
+El verificador sigue rechazando objetos inválidos; no se desactivó el control para continuar.
+
+| Herramienta | Uso y alcance |
+| --- | --- |
+| scripts/probar_oracle_cloud.py | Comprueba TLS y una consulta de lectura; solicita la contraseña sin eco cuando corresponde. |
+| scripts/preparar_oracle_cloud.py | Aprovisiona una base nueva; --continuar recupera una instalación parcial validando destino y versiones. |
+| scripts/preparar_oracle_cloud.py --verificar | Revisa la instalación actual con las cuentas técnicas, sin repetir el DDL. |
+| sql/cloud | Sentencias de aprovisionamiento, permisos, conexión e inventario para Autonomous. |
+| sql/36_recompilar_esquema.sql | Recompila el esquema del proyecto antes de verificar las migraciones. |
+
+La contraseña ADMIN no se guarda en scripts públicos. La cuenta propietaria conserva el
+esquema; UPC_ADMIN_APP tiene acceso administrativo limitado. La separación de una tercera
+cuenta de ejecución respecto del propietario sigue pendiente. Las cuentas del portal son
+identidades funcionales distintas de estos usuarios técnicos Oracle.
+
+### 10.5 Despliegue preparado con Docker y Caddy
+
+La arquitectura prevista permite acceder desde otros dispositivos sin mantener encendido
+el PC: el navegador se conecta por HTTPS al servidor OCI, Caddy termina TLS y envía HTTP y
+WebSocket al contenedor Streamlit; Python se conecta por TCPS a Autonomous. Solo el proxy
+publica 80/443; el puerto 8501 queda dentro de la red de contenedores.
+
+<!-- FIGURA_CLOUD -->
+
+| Archivo | Responsabilidad |
+| --- | --- |
+| Dockerfile y .dockerignore | Construcción Linux en dos etapas, modelos CPU, usuario sin privilegios y exclusión de datos privados. |
+| deploy/compose.yaml y deploy/Caddyfile | Aplicación, proxy HTTPS, persistencia, rotación de logs y comprobación HTTP. |
+| deploy/.env.example | Plantilla de dominio público, correo de certificados y etiqueta de imagen. |
+| deploy/secrets.produccion.toml.example | Plantilla sin credenciales reales; las claves se completan en un archivo privado. |
+| scripts/iniciar_produccion.py | Valida configuración, clave de identidad, transporte, esquema y permisos antes del arranque. |
+| scripts/comprobar_modelos.py | Comprueba la carga CPU de modelos sin personas ni conexión Oracle. |
+| .github/workflows/contenedor.yml | Workflow manual preparado para construir y comprobar Linux x64/ARM64; no aloja ni publica la aplicación. |
+
+La imagen y Compose están preparados, pero no se ha completado una construcción Linux real.
+La disponibilidad del workflow no demuestra su ejecución. El lock de Windows no se usa
+para instalar Linux; la construcción final debe conservar sus versiones y digest.
+El healthcheck comprueba HTTP, no la disponibilidad continua de Oracle.
+
+### 10.6 Estado de la infraestructura
+
+Se crearon la VCN upc-aula-vcn y la subred pública regional upc-aula-publica en Ashburn.
+Los intentos A1.Flex de 2 OCPU y 12 GB devolvieron falta de capacidad en AD-1, AD-2 y AD-3.
+No hay VM creada ni IP pública asignada confirmada. Faltan revisar puerta de enlace,
+tabla de rutas y reglas; la selección de IP pública en el formulario no prueba conectividad.
+La disponibilidad gratuita depende de la capacidad y de las cuotas vigentes de la cuenta.
+No se registra un cargo real a partir del estimador ni se promete disponibilidad permanente.
+
+### 10.7 Configuración y publicación pendientes
+
+Antes de publicar se necesita comprobar la cuenta de ejecución limitada, preparar las
+cuentas web cloud, definir traslado o inicio sin datos, instalar Docker en la VM y apuntar
+un dominio a su IP. La ACL de Autonomous debe admitir la salida del servidor. El certificado
+público se obtiene mediante Caddy; no se traslada la CA de desarrollo del PC.
+
+La configuración resuelve variables directas del proceso, archivos de texto KEY_FILE,
+secrets de Streamlit y valores predeterminados. Las contraseñas, autorizaciones y claves
+se conservan fuera de Git. Si se trasladan documentos registrados, debe conservarse la
+clave HMAC original; generar otra no permite reconocer sus huellas existentes.
+El traslado XE a Autonomous y la restauración en cloud aún no se han validado.
+Guía operativa: [despliegue](DESPLIEGUE.md).
+
 ## 11. Verificación y evidencias
 
 ### 11.1 Estrategia
@@ -449,7 +553,10 @@ software; no sustituyen la evaluación biométrica con personas ni la aceptació
 
 | Área | Evidencia registrada | Interpretación |
 | --- | --- | --- |
-| Publicación completa | 217 pruebas aprobadas con Oracle sobre una copia de los archivos publicables. | Verificación del software de esa entrega. |
+| Publicación anterior | 217 pruebas aprobadas con Oracle sobre una copia de los archivos publicables. | Evidencia histórica de esa entrega, no resultado de la nueva ejecución. |
+| Catálogo SQL | 182 pruebas aprobadas y 64 de integración omitidas; 104 cadenas conservadas y 65 consultas de lectura analizadas en cloud. | Las consultas se analizaron sin ejecutarlas; las pruebas omitidas no cuentan como aprobadas. |
+| Compatibilidad visual | 173 vistas correctas en Firefox, Edge, Chrome y Brave. | Fixtures, viewports y límites de foco documentados; aceptación del usuario separada. |
+| Instalación cloud | Versiones 001–008, 14 tablas, 11 vistas, 10 triggers y siete paquetes/cuerpos válidos. | La base está instalada; no demuestra publicación del servidor web. |
 | Excepciones | Credenciales incorrectas, bloqueo, revocación, vencimiento, prueba obsoleta y alta sin biometría. | El permiso y la prueba se vuelven a validar en servidor. |
 | Navegador | 12 vistas nuevas y 12 anónimas de la instancia HTTPS en la entrega 008. | Revisión de presentación/recorridos, no aceptación global del usuario. |
 | Restauración | Dos esquemas temporales, 14 tablas, versiones 001–008 y estados excepcionales recuperados. | Ensayo controlado; los esquemas temporales se retiraron. |
@@ -469,19 +576,37 @@ solo cuando existan grupos de datos suficientes. No se declara una precisión bi
 
 ## 12. Roadmap, riesgos y continuidad
 
-### 12.1 Trabajo pendiente
+### 12.1 Primer roadmap: terminar organización y despliegue
 
-| Bloque | Trabajo siguiente | Dependencia de cierre |
+| Entregable | Estado | Dependencia de cierre |
 | --- | --- | --- |
-| Frontend | Continuar aceptación de navegación, selectores, perfil, pie y zoom. | Revisión expresa de los recorridos por el usuario. |
-| Acceso estudiantil | Diseñar login institucional general y recuperación. | Definir el flujo sin sustituir identidad por un formulario anónimo. |
-| Entrega alternativa | Contraseña proporcionada por el docente mediante correo, similar a ALTA_DOCENTE. | Aplazado por instrucción del usuario; no implementarlo aún. |
-| Perfiles | Mi perfil para otros roles y Configuración. | Definición y autorización de funciones. |
-| Entrega por equipo | Portabilidad, dependencias, licencia y separación de ejecución/propietario. | Verificación en otro PC y decisiones operativas. |
-| Ensayo real | Personas, dispositivos, biometría, ruido, red y calibración. | Muestras y procedimientos consentidos, métricas y depuración. |
-| Presentación de datos | Importación visual en SQL Developer y demostración final. | Revisar el modelo/guion sobre el mismo esquema Oracle. |
+| 1. Autonomous, TLS y esquema | Completado. | Mantener verificaciones y conservación de datos. |
+| 2. Organización de SQL | Catálogo compartido completado. | No equivale a rediseñar las reglas de negocio. |
+| 3. Verificación del catálogo | 182 pruebas aprobadas, 64 omitidas y 65 consultas analizadas. | Repetir cuando haya cambios que lo justifiquen. |
+| 4. Separación de cuentas técnicas | Administración limitada lista; ejecución usa propietario. | Probar permisos y resolución del esquema con una cuenta limitada. |
+| 5. Configuración cloud | Preparación pendiente. | Cuentas web, autorizaciones, claves originales y decisión sobre traslado de datos. |
+| 6. VM y Docker | VM detenida por falta de capacidad en los tres AD. | Conseguir capacidad; construir y comprobar Linux real. |
+| 7. Dominio y operación | Pendiente. | Red, DNS público, HTTPS, QR y persistencia comprobados. |
+| 8. Ensayo y presentación | Pendiente de cierre. | Dispositivos reales, permisos, auditoría, restauración y SQL Developer. |
 
-### 12.2 Riesgos y tratamiento propuesto
+Mientras no haya VM pueden completarse la red, los permisos de ejecución y la preparación
+privada. Una construcción en Linux disponible o CI permite detectar fallos sin esperar
+al servidor. El ensayo público y la aceptación final requieren el despliegue.
+
+### 12.2 Segundo roadmap: mejoras posteriores
+
+Después del cierre del primero se revisarán la experiencia de los tres roles, tipografía,
+formularios, tablas, perfiles y configuración, además del login institucional estudiantil.
+Se mantiene la identidad aprobada y el separador de Cerrar sesión aceptado como perfecto.
+
+En Oracle se revisarán cohesión de paquetes, disparadores, tablas, vistas, restricciones,
+índices y distribución de reglas entre Python y PL/SQL. Las decisiones se implementarán
+con migraciones nuevas, preservando historial y contratos. La extracción actual de SQL no
+inicia este rediseño. La entrega por correo de la contraseña alternativa por el docente,
+similar a ALTA_DOCENTE, continúa expresamente aplazada y sin implementar.
+Detalle: [primer roadmap](ROADMAP.md) y [segundo roadmap](ROADMAP_2.md).
+
+### 12.3 Riesgos y tratamiento propuesto
 
 | Riesgo | Consecuencia | Tratamiento actual o pendiente |
 | --- | --- | --- |
@@ -491,9 +616,10 @@ solo cuando existan grupos de datos suficientes. No se declara una precisión bi
 | Pérdida de claves privadas | Imposibilidad de recuperar copias o resolver documentos HMAC. | Custodia privada e independiente y ensayo de recuperación. |
 | Exceso de privilegios del runtime | Mayor impacto de una credencial comprometida. | Conexión administrativa limitada; completar separación de otros roles. |
 | Suposiciones de portabilidad o precisión | Entrega que no reproduce lo prometido. | Documentar el entorno verificado y ensayar otras condiciones. |
+| Falta de capacidad Compute | No poder publicar todavía en la VM prevista. | Reintentar disponibilidad y completar tareas independientes; no sustituir por recursos de pago automáticamente. |
 | Datos provisionales de presentación | Documento o interfaz con créditos incompletos. | Completar nombres y validar contenidos antes de la entrega formal. |
 
-### 12.3 Criterio de continuidad
+### 12.4 Criterio de continuidad
 
 El siguiente trabajo debe respetar la separación entre cambios visuales, autenticación,
 reglas académicas y operación Oracle. Cada entrega se documenta con alcance, archivos,
@@ -526,6 +652,9 @@ previo; estudiar el modelo o imprimir este documento no requiere aplicar DDL.
 | Fuente | Contenido |
 | --- | --- |
 | docs/ROADMAP.md | Prioridades, decisiones y pendientes. |
+| docs/ROADMAP_2.md | Mejoras visuales y revisión futura de reglas, paquetes y modelo. |
+| docs/DESPLIEGUE.md | Docker, Caddy, TLS con Autonomous, configuración privada y ensayo público. |
+| sql/consultas/README.md | Catálogo externo y separación entre consultas e instalación. |
 | docs/BASE_DE_DATOS.md | Inventario estructural y funcionamiento detallado; incorporado en el anexo A. |
 | docs/PORTAL_Y_SESIONES.md | Navegación, sesiones y validación compartida. |
 | docs/REGLAS_NEGOCIO.md | Gestión de cuentas, matrícula, archivo y biometría. |

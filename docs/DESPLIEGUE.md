@@ -4,6 +4,13 @@ Estado del 21 de noviembre de 2026: Autonomous UPCAULA ya tiene usuarios y esque
 001–008 instalados, con TLS y permisos administrativos verificados. El usuario confirma
 que todavía no tiene una VM Compute. La aplicación se ejecutará con Docker en esa VM.
 
+Actualización de infraestructura: la VCN `upc-aula-vcn` y la subred regional pública
+`upc-aula-publica` están creadas. Los intentos de crear A1.Flex con 2 OCPU y 12 GB
+devolvieron falta de capacidad en AD-1, AD-2 y AD-3 de Ashburn. No hay VM creada ni IP
+asignada confirmada. Falta comprobar puerta de enlace, rutas y reglas de la red.
+El [orden de continuación sin VM](ROADMAP.md#continuación-mientras-no-haya-capacidad-compute)
+permite avanzar en red, permisos, configuración y validación Linux mientras se reintenta.
+
 La organización inicial de consultas está completa y la aplicación conserva su
 conexión local mientras se prepara el servidor. La imagen y Compose están preparados;
 falta construirlos y probarlos en Linux real. No se ha publicado la aplicación.

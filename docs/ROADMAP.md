@@ -20,7 +20,7 @@ SQL*Plus y SQL Developer son clientes de la misma base Oracle; pasar al segundo 
 | 3 | Comprobar la reorganización | Completado: 182 pruebas aprobadas, 64 de integración omitidas y 65 consultas de lectura analizadas en Oracle Cloud. |
 | 4 | Separar ejecución y administración del esquema | Cuenta administrativa limitada lista; cuenta de ejecución distinta del propietario pendiente. |
 | 5 | Preparar la configuración de la aplicación para cloud | Pendiente: cuentas web iniciales, autorización docente, claves y traslado de datos si corresponde. |
-| 6 | Crear VM Compute y construir/ejecutar Docker | Pendiente: el usuario aún no ha creado la VM; imagen preparada, sin construcción Linux real validada. |
+| 6 | Crear VM Compute y construir/ejecutar Docker | Creación detenida por falta de capacidad A1.Flex en AD-1, AD-2 y AD-3 de Ashburn; imagen preparada, sin construcción Linux real validada. |
 | 7 | Dominio, HTTPS, QR y persistencia del servidor | Pendiente. |
 | 8 | Ensayo completo, recuperación y presentación en SQL Developer | Pendiente. |
 
@@ -32,6 +32,45 @@ La organización actual mueve sentencias a archivos `.sql` y conserva el comport
 Las mejoras de frontend y el rediseño de paquetes, disparadores, tablas, vistas y reglas
 que deban trasladarse de Python a Oracle quedan para el **segundo roadmap**. No se crea
 una migración de negocio nueva ni se da esa segunda etapa por iniciada.
+
+## Continuación mientras no haya capacidad Compute
+
+El usuario confirmó errores `Out of capacity` para `VM.Standard.A1.Flex` en los tres
+dominios de disponibilidad de Ashburn. La VM no está creada. Esto describe los intentos
+realizados; no permite conocer cuándo habrá capacidad. Se conserva la propuesta de
+2 OCPU y 12 GB, sin sustituirla automáticamente por una máquina de pago.
+
+La VCN `upc-aula-vcn` y la subred regional pública `upc-aula-publica` están creadas.
+Las capturas confirman `10.0.0.0/16` para la VCN y `10.0.0.0/24` para la subred.
+El formulario de la VM ya permitió activar la IP pública; no implica que haya una IP
+asignada ni conectividad verificada. Puerta de enlace, rutas y reglas quedan por comprobar.
+
+Orden propuesto para continuar el primer roadmap:
+
+1. **Completar la red, sin esperar a la VM:** revisar o crear la puerta de enlace de
+   Internet, asociar a la subred una tabla con ruta `0.0.0.0/0` hacia esa puerta y revisar
+   las reglas de SSH y HTTP/HTTPS. No dar por terminada la conectividad hasta probarla.
+2. **Entregable 4, separar la cuenta de ejecución:** inventariar accesos reales de la
+   aplicación y preparar permisos mínimos, resolución del esquema propietario y
+   comprobaciones para una cuenta distinta de `UPC_ASISTENCIA`. La cuenta administrativa
+   limitada ya existe. Este trabajo no requiere rediseñar paquetes ni reglas de negocio;
+   no se marcará completo hasta verificarlo con la cuenta limitada en Oracle.
+3. **Entregable 5, preparar la configuración cloud:** preparar el perfil privado de
+   producción, conservar las claves originales y definir el traslado o inicio sin datos.
+   Crear las cuentas web iniciales solo contra el destino cloud explícitamente comprobado;
+   mantener la instalación local mientras se acepta el resultado. Dominio e IP de la VM
+   seguirán pendientes y no se sustituirán por valores ficticios en el despliegue final.
+4. **Construcción Linux del entregable 6:** comprobar dependencias, modelos CPU y arranque
+   del contenedor en un entorno Linux disponible. Existe el workflow manual
+   `.github/workflows/contenedor.yml` para x64 y ARM64; su presencia no significa que se
+   haya ejecutado. GitHub Actions puede validar la imagen sin alojar la aplicación.
+5. **Preparación del entregable 8:** revisar respaldo/restauración de ensayo y preparar
+   la visualización en SQL Developer con el esquema existente, sin repetir el instalador.
+   El ensayo público con dispositivos y la validación final necesitan el servidor.
+
+Al conseguir capacidad: crear la VM, comprobar SSH e Internet, añadir su IP a la ACL de
+Autonomous, instalar Docker y completar dominio, HTTPS, QR y persistencia. No es necesario
+mantener encendido el PC para operar la aplicación una vez desplegada en la VM.
 
 ## Seguimiento funcional e histórico
 
