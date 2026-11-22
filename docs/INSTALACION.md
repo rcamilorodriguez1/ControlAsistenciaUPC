@@ -155,3 +155,78 @@ La confianza TLS de ese diagnóstico usa la CA local; no demuestra que el navega
 
 Streamlit recomienda un proxy para TLS en producción. Este arranque es para desarrollo local y
 demostraciones: [referencia oficial](https://docs.streamlit.io/develop/api-reference/configuration/config.toml).
+
+## Alojamiento público
+
+Para Oracle Cloud, certificados públicos y el despliegue Linux con Docker, seguir
+[DESPLIEGUE.md](DESPLIEGUE.md). Ese procedimiento utiliza `scripts/iniciar_produccion.py`
+y mantiene separado el arranque local con `iniciar.cmd`. No trasladar la CA de desarrollo
+al servidor ni a los navegadores de los usuarios de la plataforma pública.
+
+### Primera comprobación de Oracle Cloud desde Windows
+
+La cadena TLS de la base se guarda en `.local/oracle_cloud/dsn.txt`, fuera de Git y sin
+contraseña. Copiarla del servicio `*_low` sin añadir barras invertidas antes de los puntos.
+Esta comprobación no modifica `.streamlit/secrets.toml` ni cambia la base local.
+
+```powershell
+.\.venv\Scripts\python.exe scripts\probar_oracle_cloud.py --solo-validar
+.\.venv\Scripts\python.exe scripts\probar_oracle_cloud.py --solo-red
+.\.venv\Scripts\python.exe scripts\probar_oracle_cloud.py
+```
+
+La última orden solicita en la terminal la contraseña del usuario `ADMIN` de la nueva base,
+con entrada oculta. Ejecuta únicamente `sql/cloud/02_comprobar_conexion.sql`, que consulta
+usuario, base y servicio. Guarda un resultado sin contraseña en
+`.local/oracle_cloud/ultima_comprobacion.json`. Los modos `--solo-validar` y `--solo-red`
+no comprueban credenciales ni demuestran por sí solos una conexión Oracle autenticada.
+
+### Instalar el esquema en una Autonomous nueva
+
+Con la prueba ADMIN correcta, ejecutar desde la terminal PowerShell del proyecto:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\preparar_oracle_cloud.py --comprobar-plan
+.\.venv\Scripts\python.exe scripts\preparar_oracle_cloud.py
+```
+
+La segunda orden solicita la contraseña ADMIN, crea `UPC_ASISTENCIA` y `UPC_ADMIN_APP`
+si ambos nombres están libres, instala `oracle_scripts.sql` y las versiones 001–008,
+concede los permisos administrativos limitados y verifica el inventario del esquema.
+No copia personas ni biometría de la base local ni cambia su configuración.
+
+El SQL y PL/SQL permanecen en `sql/`: Python lee los archivos y envía sus sentencias,
+con claves enlazadas como parámetros para el aprovisionamiento. El lector de scripts
+admite el subconjunto utilizado por el instalador del repositorio (`@`, `@@`, bloques `/`
+y directivas de presentación); no sustituye un intérprete SQL*Plus completo.
+
+Las claves técnicas generadas se guardan **antes de ejecutar el DDL** en
+`.local/oracle_cloud/credenciales_tecnicas.toml`; la contraseña ADMIN no se guarda.
+El archivo de estado es `.local/oracle_cloud/instalacion.json`. Es una configuración
+cloud separada: no sustituir con ella los secretos locales de Streamlit.
+
+Oracle confirma DDL implícitamente. Si la instalación se interrumpe, conservar esos
+archivos y revisar la fase y la ubicación SQL informadas; el comando no repite la
+instalación inicial sobre cuentas ya preparadas ni borra objetos para reintentar.
+Para comprobar una instalación terminada sin pedir ADMIN ni ejecutar DDL:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\preparar_oracle_cloud.py --verificar
+```
+
+Para continuar una instalación interrumpida **después de registrar 001**, una vez revisada
+la causa del fallo:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\preparar_oracle_cloud.py --continuar
+```
+
+Esta opción reutiliza las cuentas técnicas privadas, valida el destino y la secuencia
+continua de versiones, y aplica únicamente las migraciones pendientes. También recupera
+los permisos si el esquema llegó a 008 y esa última etapa quedó incompleta. No pide ADMIN,
+no vuelve a ejecutar `01_tablas.sql` y no recrea usuarios. Si 001 no llegó a registrarse,
+la reparación inicial requiere revisar los objetos existentes; no se hace un reinicio ciego.
+
+Las migraciones recompilan su propio esquema mediante `sql/36_recompilar_esquema.sql`
+antes de comprobar objetos válidos. Esto resuelve invalidaciones de dependencias causadas
+por `ALTER TABLE`; los verificadores siguen rechazando errores reales y objetos inválidos.

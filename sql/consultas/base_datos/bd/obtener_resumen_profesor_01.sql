@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM materias WHERE profesor_id = :profesor_id AND activo=1

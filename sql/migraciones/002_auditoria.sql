@@ -21,6 +21,7 @@ PROMPT Compilando operaciones de asistencia...
 @sql/11_paquete_asistencia.sql
 PROMPT Creando disparadores y vistas...
 @sql/10_disparadores.sql
+@sql/36_recompilar_esquema.sql
 @sql/04_verificar.sql
 -- Registrar version solo despues de validar todos los objetos y disparadores.
 INSERT INTO versiones_esquema (version, descripcion)

@@ -14,7 +14,7 @@ Proyecto académico para organizar asignaturas y grupos, registrar sesiones de c
 la participación estudiantil. Reúne los portales docente, estudiantil y administrativo, con
 información académica en Oracle y trazabilidad de las operaciones mediante SQL y PL/SQL.
 
-[Instalación](docs/INSTALACION.md) · [Documentación](docs/README.md) · [Roadmap](docs/ROADMAP.md) · [Registro de cambios](docs/CAMBIOS.md)
+[Instalación](docs/INSTALACION.md) · [Despliegue en la nube](docs/DESPLIEGUE.md) · [Documentación](docs/README.md) · [Roadmap](docs/ROADMAP.md) · [Registro de cambios](docs/CAMBIOS.md)
 
 ## La plataforma
 
@@ -71,7 +71,8 @@ introducir un documento por sí solo no autentica ni registra asistencia.
 
 Las dependencias directas están en [requirements.txt](requirements.txt). El archivo
 [requirements-lock-windows-py311.txt](requirements-lock-windows-py311.txt) registra el entorno
-Windows auditado; la compatibilidad con otras plataformas forma parte del trabajo pendiente.
+Windows auditado. Se incluye preparación de contenedor Linux x64/ARM64 con PyTorch CPU;
+su construcción y el ensayo en la infraestructura de destino siguen pendientes.
 
 ## Puesta en marcha
 
@@ -130,7 +131,23 @@ exportaciones y respaldos permanecen fuera de Git. Al restaurar una base, tambi�
 recuperarse por un canal privado su clave original de identidad. Los procedimientos están en
 [recuperación](docs/RECUPERACION.md) y [excepciones biométricas](docs/EXCEPCIONES_BIOMETRICAS.md).
 
+### Alojamiento en la nube
+
+El plan vigente utiliza Oracle Autonomous Database y una máquina Linux de OCI con
+**Docker**, Python 3.11 y procesamiento en CPU. La base cloud está instalada y verificada;
+la máquina virtual todavía no está creada. Servidor, dominio, HTTPS y traslado de datos
+siguen pendientes.
+
+La [guía de despliegue](docs/DESPLIEGUE.md) describe la VM, el contenedor y la configuración
+privada. `scripts/probar_oracle_cloud.py` comprueba la nueva conexión TLS
+de forma independiente de Oracle local y solicita la contraseña en la terminal, sin mostrarla.
+
 ## Oracle y PL/SQL
+
+Las consultas de la aplicación se organizan en [sql/consultas](sql/consultas/README.md),
+con un lector común y parámetros enlazados. Esta organización conserva el comportamiento
+actual. El [primer roadmap](docs/ROADMAP.md) cubre organización y despliegue; el
+[segundo](docs/ROADMAP_2.md) registra el rediseño posterior de frontend y base de datos.
 
 La [guía detallada de la base de datos](docs/BASE_DE_DATOS.md) explica las tablas, columnas,
 relaciones, vistas, paquetes, disparadores, consultas y su visualización en SQL Developer.

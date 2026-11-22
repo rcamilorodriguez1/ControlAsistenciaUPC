@@ -1,19 +1,44 @@
-# Roadmap del proyecto de asistencia UPC
+# Primer roadmap de UPC Aula
 
 Documentación: [índice de guías](README.md) y [registro de cambios](CAMBIOS.md).
 
-Fecha de planificación: 8 de noviembre de 2026. Base: auditoría del workspace y pruebas locales.
-Actualización de base de datos: 17 de noviembre de 2026, migración 008 de excepciones biométricas.
-Actualización de sesiones y alcance del frontend: 11 de noviembre de 2026.
-Revisión actual: puntos 1, 2, 3 y 4 implementados; puntos 5, 6 y 7 pendientes.
-Prioridad actual: continuar la revisión del frontend. El punto 2 está implementado, con
-aceptación parcial del usuario; no se considera cerrado.
+Actualización: 21 de noviembre de 2026. Objetivo vigente: completar la organización y el
+despliegue de la versión actual antes de iniciar el [segundo roadmap](ROADMAP_2.md).
+El usuario confirma que tiene Autonomous Database y **todavía no tiene una VM Compute**.
+La decisión vigente es ejecutar la aplicación **con Docker** en Oracle Cloud.
 
 Objetivo: una instalación reproducible por PC, datos consistentes en Oracle, asistencia revisable,
 HTTPS local y una presentación final del esquema y de PL/SQL con SQL Developer.
 SQL*Plus y SQL Developer son clientes de la misma base Oracle; pasar al segundo no requiere migrar datos.
 
-## Qué falta ahora
+## Secuencia de trabajo y estado actual
+
+| Orden | Entregable | Estado |
+| --- | --- | --- |
+| 1 | Autonomous, TLS, usuarios y esquema 001–008 | Completado: 14 tablas, 11 vistas, 10 disparadores y 7 paquetes válidos. |
+| 2 | Organizar las consultas y el acceso a datos existente | Completado: catálogo SQL compartido, sin cambiar reglas ni transacciones. |
+| 3 | Comprobar la reorganización | Completado: 182 pruebas aprobadas, 64 de integración omitidas y 65 consultas de lectura analizadas en Oracle Cloud. |
+| 4 | Separar ejecución y administración del esquema | Cuenta administrativa limitada lista; cuenta de ejecución distinta del propietario pendiente. |
+| 5 | Preparar la configuración de la aplicación para cloud | Pendiente: cuentas web iniciales, autorización docente, claves y traslado de datos si corresponde. |
+| 6 | Crear VM Compute y construir/ejecutar Docker | Pendiente: el usuario aún no ha creado la VM; imagen preparada, sin construcción Linux real validada. |
+| 7 | Dominio, HTTPS, QR y persistencia del servidor | Pendiente. |
+| 8 | Ensayo completo, recuperación y presentación en SQL Developer | Pendiente. |
+
+Guías: [despliegue](DESPLIEGUE.md), [instalación](INSTALACION.md) y
+[catálogo de consultas](../sql/consultas/README.md). La aplicación mantiene por ahora su
+conexión local. El primer roadmap permanece abierto hasta completar los entregables pendientes.
+
+La organización actual mueve sentencias a archivos `.sql` y conserva el comportamiento.
+Las mejoras de frontend y el rediseño de paquetes, disparadores, tablas, vistas y reglas
+que deban trasladarse de Python a Oracle quedan para el **segundo roadmap**. No se crea
+una migración de negocio nueva ni se da esa segunda etapa por iniciada.
+
+## Seguimiento funcional e histórico
+
+El plan original del 8 de noviembre y sus fases se conservan a continuación como registro
+de las entregas, verificaciones y aceptaciones. Su numeración no sustituye la secuencia
+actual de ocho entregables. Las confirmaciones del usuario siguen distinguiéndose de las
+pruebas automáticas.
 
 **Excepciones biométricas, 17 de noviembre de 2026:** implementados el acceso estudiantil alternativo
 con documento/contraseña y aprobación administrativa, alta sin biometría, estado persistente,
@@ -64,7 +89,8 @@ y administrador; logotipo/Inicio conservan la autenticación. Selectores docente
 de materias corregidos. Detalle y pruebas: [PORTAL_Y_SESIONES.md](PORTAL_Y_SESIONES.md).
 
 Hay implementaciones funcionales, visuales y de recuperación verificadas automáticamente.
-Primero continúa la revisión y aceptación del frontend. Después quedan estos tres bloques generales:
+La aceptación pendiente del frontend se conserva. Estos tres bloques generales siguen abiertos,
+con la preparación del despliegue incorporada al punto 5:
 
 1. **Punto 5: preparar la entrega para otro PC.** Dependencias por plataforma, instalación,
    documentación general, licencia y separación de usuarios Oracle de ejecución y administración.

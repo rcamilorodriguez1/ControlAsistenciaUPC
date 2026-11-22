@@ -1,0 +1,1 @@
+SELECT object_type,COUNT(*) FROM user_objects WHERE object_type IN ('TABLE','INDEX','VIEW','PACKAGE','PACKAGE BODY','TRIGGER','SEQUENCE') GROUP BY object_type

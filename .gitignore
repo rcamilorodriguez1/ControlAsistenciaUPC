@@ -14,6 +14,15 @@ __pycache__/
 !.env.example
 .certs/
 .local/
+deploy/private/
+deploy/.env
+wallet/
+[Ww]allet*.zip
+*.sso
+deploy/secrets*.toml
+**/tnsnames.ora
+**/sqlnet.ora
+**/cwallet.sso
 *.log
 
 # Archivos generados durante la presentación.

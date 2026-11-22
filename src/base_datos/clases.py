@@ -5,10 +5,11 @@ import json
 import oracledb
 
 from src.base_datos import bd
+from src.base_datos.consultas import cargar_sql
 
 
 def _comprobar_actor(cur, profesor_id):
-    cur.execute('SELECT pkg_auditoria.rol_actual,pkg_auditoria.actor_actual FROM dual')
+    cur.execute(cargar_sql('base_datos/clases/comprobar_actor_01'))
     rol, actor = cur.fetchone()
     if rol != 'PROFESOR' or actor != profesor_id:
         raise PermissionError('La sesión de profesor cambió. Vuelve a iniciar sesión.')
@@ -32,8 +33,7 @@ def abrir_clase(materia_id, profesor_id, fecha_hora):
             with conn.cursor() as cur:
                 _comprobar_actor(cur, profesor_id)
                 salida = cur.var(oracledb.NUMBER)
-                cur.execute('''BEGIN pkg_clases.abrir_clase(:m,
-                    TO_TIMESTAMP_TZ(:f,'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM'),:id); END;''',
+                cur.execute(cargar_sql('base_datos/clases/abrir_clase_01'),
                     m=materia_id, f=fecha, id=salida)
                 clase_id = int(salida.getvalue())
             conn.commit()
@@ -51,10 +51,7 @@ def abrir_clase(materia_id, profesor_id, fecha_hora):
 def obtener_clases_profesor(materia_id, profesor_id):
     def op(conn):
         with conn.cursor() as cur:
-            cur.execute('''SELECT c.clase_id,c.materia_id,c.estado,c.origen,c.lote_legado,c.registros_confirmados,
-                TO_CHAR(c.fecha_hora,'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM') fecha_hora
-                FROM clases c JOIN materias m ON m.materia_id=c.materia_id
-                WHERE c.materia_id=:m AND m.profesor_id=:p ORDER BY c.fecha_hora DESC,c.clase_id DESC''',
+            cur.execute(cargar_sql('base_datos/clases/obtener_clases_profesor_01'),
                 m=materia_id, p=profesor_id)
             return bd._filas_a_diccionarios(cur, cur.fetchall())
     return bd.ejecutar_con_reintentos(op)
@@ -83,13 +80,13 @@ def confirmar_clase(registros, profesor_id, clase_id, clave_confirmacion, origen
         try:
             with conn.cursor() as cur:
                 _comprobar_actor(cur, profesor_id)
-                cur.execute('SELECT materia_id FROM clases WHERE clase_id=:c', c=clase_id)
+                cur.execute(cargar_sql('base_datos/clases/confirmar_clase_01'), c=clase_id)
                 clase = cur.fetchone()
                 if clase is None or clase[0] != registros[0]['materia_id']:
                     raise ValueError('La propuesta no corresponde a la clase seleccionada.')
                 cantidad = cur.var(oracledb.NUMBER)
                 cur.setinputsizes(carga=oracledb.DB_TYPE_CLOB)
-                cur.execute('BEGIN pkg_clases.confirmar_clase(:c,:clave,:origen,:carga,:n); END;',
+                cur.execute(cargar_sql('base_datos/clases/confirmar_clase_02'),
                             c=clase_id, clave=clave_confirmacion, origen=origen, carga=contenido, n=cantidad)
                 total = int(cantidad.getvalue())
             conn.commit()

@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM verificacion_estudiantes WHERE documento_huella IS NOT NULL

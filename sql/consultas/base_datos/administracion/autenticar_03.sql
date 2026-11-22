@@ -1,0 +1,1 @@
+SELECT administrador_id,usuario,nombre,contrasena FROM administradores WHERE LOWER(TRIM(usuario))=:u AND activo=1

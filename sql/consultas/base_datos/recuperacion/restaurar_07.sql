@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM user_tables WHERE table_name='SESIONES_USUARIO'

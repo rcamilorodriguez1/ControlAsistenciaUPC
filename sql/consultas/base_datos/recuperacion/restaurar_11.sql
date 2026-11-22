@@ -1,0 +1,1 @@
+UPDATE sesiones_usuario SET revocada_en=SYSTIMESTAMP WHERE revocada_en IS NULL

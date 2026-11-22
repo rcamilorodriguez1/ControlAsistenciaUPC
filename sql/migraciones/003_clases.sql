@@ -15,6 +15,7 @@ END;
 @sql/14_integridad_clases.sql
 @sql/15_vistas_clases.sql
 ALTER PACKAGE pkg_asistencia COMPILE BODY;
+@sql/36_recompilar_esquema.sql
 @sql/04_verificar.sql
 INSERT INTO versiones_esquema(version,descripcion)
 SELECT '003','Clases, unicidad por estudiante, confirmacion idempotente y revision manual'

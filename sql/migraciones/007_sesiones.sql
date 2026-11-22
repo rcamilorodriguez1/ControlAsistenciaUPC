@@ -27,6 +27,7 @@ BEGIN
 EXCEPTION WHEN OTHERS THEN IF SQLCODE<>-1917 THEN RAISE; END IF;
 END;
 /
+@sql/36_recompilar_esquema.sql
 @sql/33_verificar_sesiones.sql
 INSERT INTO versiones_esquema(version,descripcion)
 SELECT '007','Sesiones unicas en servidor, revocacion y caducidad para los tres roles' FROM dual

@@ -1,0 +1,1 @@
+SELECT materia_id FROM clases WHERE clase_id=:c

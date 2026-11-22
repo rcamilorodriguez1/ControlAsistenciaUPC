@@ -1,0 +1,1 @@
+SELECT contrasena FROM profesores WHERE profesor_id=:i AND activo=1 FOR UPDATE WAIT 5

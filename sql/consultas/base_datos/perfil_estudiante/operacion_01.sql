@@ -1,0 +1,1 @@
+SELECT pkg_auditoria.rol_actual, pkg_auditoria.actor_actual FROM dual

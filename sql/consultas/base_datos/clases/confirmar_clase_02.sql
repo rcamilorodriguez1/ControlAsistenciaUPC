@@ -1,0 +1,1 @@
+BEGIN pkg_clases.confirmar_clase(:c,:clave,:origen,:carga,:n); END;

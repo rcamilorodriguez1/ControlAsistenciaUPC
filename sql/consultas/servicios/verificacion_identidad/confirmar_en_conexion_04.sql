@@ -1,0 +1,1 @@
+INSERT INTO verificacion_estudiantes(estudiante_id) VALUES(:i)

@@ -1,0 +1,1 @@
+SELECT profesor_id FROM profesores WHERE LOWER(TRIM(usuario)) = :usuario

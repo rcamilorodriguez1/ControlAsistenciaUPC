@@ -1,0 +1,1 @@
+SELECT trigger_name,status FROM user_triggers ORDER BY trigger_name

@@ -4,6 +4,124 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 21 de noviembre de 2026 — Organización de consultas y separación de roadmaps
+
+El usuario confirma que solo tiene la base Autonomous, todavía sin VM Compute, y retoma
+Docker para ejecutar la aplicación. El primer roadmap queda enfocado en organizar y
+desplegar la versión actual; el [segundo roadmap](ROADMAP_2.md) registra las mejoras de
+frontend, paquetes, disparadores, tablas, vistas y el traslado posterior de reglas a Oracle.
+
+Se extraen 104 apariciones de SQL de nueve módulos a `sql/consultas/`, conservando sus
+cadenas, parámetros y transacciones. Las sentencias idénticas se agrupan en `compartidas/`:
+88 consultas únicas más dos plantillas de identificadores. El lector común valida rutas,
+mantiene caché y restringe las plantillas a nombres Oracle. La generación técnica de DDL
+de respaldos conserva su validación y queda identificada para la revisión posterior.
+
+Este cambio no traslada reglas de negocio a nuevos paquetes, no altera tablas ni vistas
+y no cambia el frontend. La conexión local sigue separada de cloud. Se actualizan la guía
+de despliegue, el índice y los dos roadmaps al uso vigente de Docker.
+
+**Verificación:** 182 pruebas aprobadas y 64 de integración omitidas; incluye cinco pruebas
+del catálogo. Las 104 cadenas extraídas coinciden con su origen y se conserva el AST de
+control/transacciones en la extracción. Se analizaron 65 consultas de lectura en Oracle
+Cloud sin ejecución, todas correctas. La imagen Docker aún no está construida en Linux;
+la VM, configuración de producción, permisos restantes y ensayo público siguen pendientes.
+
+Evidencias privadas: `.local/reorganizacion/extraccion_sql.json`, `pruebas.log` y
+`catalogo_cloud.json`. Guía del catálogo: [sql/consultas/README.md](../sql/consultas/README.md).
+
+## 21 de noviembre de 2026 — Recuperación de ORA-20021 e instalación cloud completada
+
+La primera ejecución se detuvo durante 002: `V_MATERIA_ESTUDIANTES` y
+`V_REGISTROS_ASISTENCIA` quedaron INVALID después de modificar tablas; USER_ERRORS no
+contenía errores de compilación. Se centraliza la recompilación del propio esquema en
+`sql/36_recompilar_esquema.sql` y se incorpora antes de verificar las migraciones 002–008.
+Se conserva el rechazo de objetos inválidos; no se relaja `04_verificar.sql`.
+
+El instalador añade `--continuar`: valida destino, cuentas, estado y versiones consecutivas,
+aplica solo migraciones pendientes y recupera los permisos si esa etapa quedó incompleta.
+No recrea usuarios ni vuelve a ejecutar las tablas de 001. El plan inicial actualizado
+tiene 229 sentencias. El diagnóstico utiliza consultas externas de objetos, errores y versiones.
+
+**Verificación real:** continuadas 002–008 en la base Autonomous del proyecto usando las
+claves técnicas originales. Instalación y permisos correctos; inventario: 14 tablas,
+11 vistas, 10 disparadores, 7 paquetes y 7 cuerpos válidos. Estado privado `completada`.
+Doce pruebas del instalador aprobadas, incluidas recuperación y rechazo de otro destino.
+No se cambió Oracle local ni la conexión de la aplicación.
+
+Evidencias privadas: `.local/oracle_cloud/diagnostico_ora20021.json`, `continuacion.log`
+y `instalacion.json`. La reorganización del acceso SQL/PLSQL y la instalación del backend
+sin Docker siguen pendientes.
+
+## 21 de noviembre de 2026 — Instalador de usuarios y esquema cloud preparado
+
+El usuario confirma la conexión TLS como ADMIN y una consulta de solo lectura correcta;
+el resultado privado registra Oracle `23.26.4.1.0`. Se prepara
+`scripts/preparar_oracle_cloud.py` para crear las dos cuentas técnicas, instalar las
+versiones 001–008 y verificar objetos y permisos en Autonomous. No cambia el acceso local.
+
+El SQL permanece en archivos externos. `_scripts_sql.py` expande `@`/`@@`, conserva bloques
+PL/SQL terminados por `/` y rechaza comandos no soportados, ciclos y rutas externas.
+El plan actual tiene 224 sentencias de instalación procedentes de 38 archivos fuente.
+Las claves técnicas se guardan en un TOML privado antes del DDL; ADMIN se pide sin eco
+y no se guarda. Una preparación existente no se sobrescribe ni se reinicia automáticamente.
+
+Se añaden aprovisionamiento parametrizado, consultas de inventario y verificadores de
+14 tablas, 11 vistas, 10 disparadores, 7 paquetes y los permisos de `UPC_ADMIN_APP`.
+Siete pruebas nuevas cubren lectura de scripts, controles de repetición y conservación
+de credenciales ante un fallo parcial. La suite completa considera 236 pruebas:
+172 aprobadas y 64 de integración Oracle omitidas, sin cargar secretos locales.
+La instalación real queda pendiente de ejecutar
+el comando interactivo, que necesita la contraseña ADMIN en la terminal.
+Procedimiento: [instalación cloud](INSTALACION.md#instalar-el-esquema-en-una-autonomous-nueva).
+
+## 21 de noviembre de 2026 — Primera conexión a Autonomous y plan sin Docker
+
+El usuario crea Autonomous `UPCAULA` en Ashburn, Always Free, 26ai, y confirma estado
+Available. Selecciona una lista de IPs permitidas y conexión TLS sin exigir mTLS. Se registra
+la decisión de instalar posteriormente el backend en una VM con Python y venv, sin Docker.
+El procedimiento anterior de contenedores queda identificado como una referencia descartada.
+
+Se guarda el descriptor aportado en `.local/oracle_cloud/dsn.txt`, eliminando una barra
+invertida antes de `.adb`. No contiene contraseña y no entra en Git. Se añade
+`scripts/probar_oracle_cloud.py`, que valida TCPS/verificación de servidor, limita reintentos,
+permite comprobar red sin credenciales y solicita la contraseña sin eco para el acceso real.
+La consulta está en `sql/cloud/02_comprobar_conexion.sql`, separada de Python. Solo consulta
+usuario/base/servicio; no crea usuarios, objetos ni cambia el acceso Oracle local.
+
+**Validación:** descriptor válido, DNS y puerto 1522 accesibles desde el PC y tres pruebas
+unitarias correctas. **Pendiente:** autenticar como ADMIN y comprobar la consulta real.
+La accesibilidad del puerto no se presenta como una conexión TLS/Oracle autenticada.
+Instrucciones: [instalación](INSTALACION.md#primera-comprobación-de-oracle-cloud-desde-windows).
+
+## 21 de noviembre de 2026 — Preparación para alojamiento en la nube
+
+Se añaden Dockerfile de dos etapas, Compose con Caddy y plantillas privadas para una
+instancia Linux con Oracle Autonomous Database. La aplicación se ejecuta sin root, el
+proxy publica HTTPS y el estado privado persiste fuera de la imagen. El arranque local
+Windows y el frontend conservan su configuración.
+
+Los dos pools comparten transporte Oracle TLS/mTLS, con verificación del servidor y
+rechazo de direcciones TCP en modo cloud. La configuración admite secretos por archivo
+`KEY_FILE`. El nuevo arranque comprueba dominio, credenciales, clave de identidad,
+versiones del esquema, objetos y permisos mediante consultas; no crea claves ni migra
+la base. Se preparan SQL para crear cuentas en una Autonomous nueva y una herramienta
+explícita de alta inicial administrativa, con contraseña sin eco y registro de auditoría.
+
+Se incluye un flujo manual de GitHub Actions para construir y comprobar Linux x64/ARM64,
+sin publicación ni despliegue. Guía y procedimientos: [DESPLIEGUE.md](DESPLIEGUE.md).
+
+**Validación local:** suite de 226 pruebas, 162 aprobadas y 64 de integración Oracle
+omitidas; incluye nueve pruebas nuevas. La suite también pasa sin cargar los secretos
+locales. Carga de modelos facial/voz en CPU y `pip check` correctos. Compose TLS y mTLS
+validados con la CLI oficial; preflight de configuración y servidor HTTP de prueba
+correctos, con respuestas 200. No se modificó la base local.
+
+**Pendiente:** construir/ejecutar el contenedor en Linux, ensayar los SQL y la conexión
+en Autonomous, preparar infraestructura y dominio, trasladar los datos y sus claves si
+corresponde y validar el recorrido público. Docker no está instalado en este PC; no se
+presenta la imagen ni el flujo de GitHub como ejecutados. El punto 5 del roadmap sigue abierto.
+
 ## 21 de noviembre de 2026 — Revisión de Firefox y Edge
 
 Se añade `scripts/verificar_firefox.py`, que automatiza el Firefox instalado mediante

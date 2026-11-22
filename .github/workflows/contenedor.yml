@@ -1,0 +1,54 @@
+name: Comprobar contenedor Linux
+
+# Ejecución explícita: construye y prueba; no publica imágenes ni despliega.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  construir:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Construir
+        run: |
+          docker compose --env-file deploy/.env.example -f deploy/compose.yaml config --quiet
+          docker compose --env-file deploy/.env.example -f deploy/compose.yaml -f deploy/compose.mtls.yaml config --quiet
+          docker run --rm -e APP_HOST=aula.example.com -e ACME_EMAIL=responsable@example.com \
+            -v "$PWD/deploy/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          docker build --tag upc-aula:ci .
+      - name: Comprobar dependencias y modelos sin datos personales
+        run: |
+          docker run --rm --read-only --tmpfs /tmp --entrypoint python upc-aula:ci scripts/comprobar_modelos.py
+          docker run --rm --entrypoint python upc-aula:ci -m pip check
+      - name: Ejecutar pruebas sin Oracle
+        run: |
+          docker run --rm --read-only --tmpfs /tmp -v "$PWD/tests:/app/tests:ro" --entrypoint python upc-aula:ci -m unittest discover -s tests
+      - name: Registrar versiones de la construcción
+        run: docker run --rm --entrypoint python upc-aula:ci -m pip freeze > versiones-linux.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: versiones-${{ matrix.runner }}
+          path: versiones-linux.txt
+      - name: Comprobar el servidor HTTP interno sin Oracle
+        shell: bash
+        run: |
+          docker run -d --name aula-smoke --read-only --tmpfs /tmp --entrypoint python upc-aula:ci \
+            -m streamlit run principal.py --server.address=0.0.0.0 --server.fileWatcherType=none --server.runOnSave=false
+          trap 'docker logs aula-smoke; docker rm -f aula-smoke' EXIT
+          for intento in $(seq 1 30); do
+            if docker exec aula-smoke python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=2).read()"; then
+              exit 0
+            fi
+            sleep 1
+          done
+          exit 1

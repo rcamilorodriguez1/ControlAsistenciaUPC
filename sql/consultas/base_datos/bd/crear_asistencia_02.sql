@@ -1,0 +1,1 @@
+SELECT profesor_id FROM materias WHERE materia_id = :m FOR UPDATE

@@ -1,0 +1,1 @@
+SELECT actor_id FROM sesiones_usuario WHERE rol='PROFESOR' AND actor_id=:i FOR UPDATE WAIT 5

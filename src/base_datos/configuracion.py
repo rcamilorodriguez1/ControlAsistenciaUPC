@@ -3,6 +3,7 @@ from threading import Lock
 import oracledb
 
 from src.configuracion import obtener_configuracion as _obtener_configuracion
+from src.base_datos.transporte import parametros_transporte
 
 
 ORACLE_USUARIO = _obtener_configuracion("ORACLE_USUARIO", "UPC_ASISTENCIA")
@@ -38,10 +39,11 @@ def obtener_pool():
                 min=ORACLE_POOL_MINIMO,
                 max=ORACLE_POOL_MAXIMO,
                 increment=1,
+                **parametros_transporte(),
             )
     return _grupo_conexiones
 
 
 def obtener_conexion():
-    """Obtiene una conexión del pool hacia Oracle Express XE 18c."""
+    """Obtiene una conexión del pool Oracle configurado, local o remoto."""
     return obtener_pool().acquire()

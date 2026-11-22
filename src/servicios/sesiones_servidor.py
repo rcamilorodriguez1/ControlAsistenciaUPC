@@ -3,6 +3,7 @@ from hashlib import sha256
 import secrets
 import oracledb
 from src.base_datos.configuracion import obtener_conexion
+from src.base_datos.consultas import cargar_sql
 
 
 class SesionInvalida(PermissionError):
@@ -63,7 +64,7 @@ def abrir(rol, actor_id, hash_credencial=None, *, prueba_identidad=None):
                 # El password pudo cambiar entre su verificacion y la apertura de sesion.
                 # Se comprueba con SESION bloqueada antes de CUENTA, igual que la recuperacion.
                 with conn.cursor() as cur:
-                    cur.execute('SELECT contrasena FROM profesores WHERE profesor_id=:i AND activo=1 FOR UPDATE WAIT 5',i=actor_id)
+                    cur.execute(cargar_sql('servicios/sesiones_servidor/abrir_01'),i=actor_id)
                     fila=cur.fetchone()
                     if fila is None or not secrets.compare_digest(str(fila[0]),str(hash_credencial)):
                         raise SesionInvalida('La contraseña cambió. Inicia sesión con la contraseña actual.')

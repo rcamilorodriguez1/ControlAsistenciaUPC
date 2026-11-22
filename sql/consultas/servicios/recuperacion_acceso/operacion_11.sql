@@ -1,0 +1,1 @@
+UPDATE profesores SET contrasena=:h WHERE profesor_id=:i

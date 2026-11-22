@@ -1,0 +1,1 @@
+INSERT INTO limites_acceso(clave) VALUES(:c)

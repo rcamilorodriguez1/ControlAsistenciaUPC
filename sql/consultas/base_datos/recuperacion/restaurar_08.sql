@@ -1,0 +1,1 @@
+SELECT name,type,line,text FROM user_errors ORDER BY name,sequence

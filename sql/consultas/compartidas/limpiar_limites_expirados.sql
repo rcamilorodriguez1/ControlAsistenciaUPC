@@ -1,0 +1,1 @@
+DELETE FROM limites_acceso WHERE ventana_en<SYSTIMESTAMP-INTERVAL '1' DAY AND (bloqueado_hasta IS NULL OR bloqueado_hasta<SYSTIMESTAMP)

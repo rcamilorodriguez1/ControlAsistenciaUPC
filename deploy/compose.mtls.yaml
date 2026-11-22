@@ -1,0 +1,10 @@
+# Usar junto con compose.yaml cuando ORACLE_TLS_MODO="mtls".
+services:
+  app:
+    volumes:
+      - type: bind
+        source: ./private/wallet
+        target: /run/oracle-wallet
+        read_only: true
+        bind:
+          create_host_path: false

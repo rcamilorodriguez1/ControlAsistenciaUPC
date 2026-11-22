@@ -1,0 +1,1 @@
+SELECT estudiante_id, nombre, codigo_institucional, embedding_facial, embedding_voz FROM estudiantes WHERE activo=1

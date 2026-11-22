@@ -20,6 +20,7 @@ import oracledb
 from src.base_datos.configuracion import obtener_conexion
 from src.configuracion import obtener_configuracion
 from src.servicios.autenticacion import exigir_acceso_disponible
+from src.base_datos.consultas import cargar_sql
 
 _logger = logging.getLogger(__name__)
 TIPOS_DOCUMENTO = ('CC', 'TI', 'CE', 'PA')
@@ -43,9 +44,9 @@ def preparar_clave():
     ruta = ruta_clave()
     if not ruta.exists():
         with obtener_conexion() as conn, conn.cursor() as cur:
-            cur.execute("SELECT COUNT(*) FROM user_tables WHERE table_name='VERIFICACION_ESTUDIANTES'")
+            cur.execute(cargar_sql('servicios/verificacion_identidad/preparar_clave_01'))
             if cur.fetchone()[0]:
-                cur.execute('SELECT COUNT(*) FROM verificacion_estudiantes WHERE documento_huella IS NOT NULL')
+                cur.execute(cargar_sql('servicios/verificacion_identidad/preparar_clave_02'))
                 if cur.fetchone()[0]:
                     raise ValueError('Falta la clave de identidad original. Restáurala desde su copia privada.')
         try:
@@ -79,8 +80,7 @@ def huella_documento(tipo, numero):
 
 
 def _evento(cur, estudiante_id, accion, motivo):
-    cur.execute('''INSERT INTO eventos_gestion(entidad,entidad_id,accion,motivo,actor_rol,actor_id)
-        VALUES('VERIFICACION',:i,:a,:m,'SISTEMA',NULL)''', i=estudiante_id or 0, a=accion, m=motivo)
+    cur.execute(cargar_sql('servicios/verificacion_identidad/evento_01'), i=estudiante_id or 0, a=accion, m=motivo)
 
 
 def registrar_fallo_biometrico(causa='NO_COINCIDE', *, metodo='BIOMETRIA', estudiante_id=0):
@@ -131,9 +131,7 @@ def acreditar_biometria(perfil):
     exigir_acceso_disponible()
     identificador = perfil['estudiante_id']
     with obtener_conexion() as conn, conn.cursor() as cur:
-        cur.execute('''SELECT e.activo,CASE WHEN e.embedding_facial IS NOT NULL THEN 1 ELSE 0 END,
-            NVL(v.version_credencial,0) FROM estudiantes e LEFT JOIN verificacion_estudiantes v
-            ON v.estudiante_id=e.estudiante_id WHERE e.estudiante_id=:i''', i=identificador)
+        cur.execute(cargar_sql('servicios/verificacion_identidad/acreditar_biometria_01'), i=identificador)
         fila = cur.fetchone()
         if not fila or fila[:2] != (1, 1):
             registrar_fallo_biometrico('PRUEBA_RECHAZADA', estudiante_id=identificador)
@@ -156,21 +154,15 @@ def autenticar_excepcion(tipo, numero, contrasena):
     huella, _ = huella_documento(tipo, numero)
     limite = sha256(('excepcion:' + huella).encode()).hexdigest()
     with obtener_conexion() as conn, conn.cursor() as cur:
-        cur.execute("DELETE FROM limites_acceso WHERE ventana_en<SYSTIMESTAMP-INTERVAL '1' DAY AND (bloqueado_hasta IS NULL OR bloqueado_hasta<SYSTIMESTAMP)")
+        cur.execute(cargar_sql('compartidas/limpiar_limites_expirados'))
         try:
-            cur.execute('INSERT INTO limites_acceso(clave) VALUES(:c)', c=limite)
+            cur.execute(cargar_sql('compartidas/crear_limite'), c=limite)
         except oracledb.IntegrityError as exc:
             if exc.args[0].code != 1:
                 raise
-        cur.execute('''SELECT intentos,CASE WHEN bloqueado_hasta>SYSTIMESTAMP THEN 1 ELSE 0 END,
-            CASE WHEN ventana_en<SYSTIMESTAMP-INTERVAL '15' MINUTE THEN 1 ELSE 0 END
-            FROM limites_acceso WHERE clave=:c FOR UPDATE WAIT 5''', c=limite)
+        cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_excepcion_02'), c=limite)
         intentos, bloqueado, expirada = cur.fetchone()
-        cur.execute('''SELECT e.estudiante_id,e.nombre,e.codigo_institucional,v.clave_hash,v.version_credencial,
-            CASE WHEN e.activo=1 AND v.excepcion_activa=1 AND
-            (v.expira_en IS NULL OR v.expira_en>SYSTIMESTAMP) THEN 1 ELSE 0 END
-            FROM verificacion_estudiantes v JOIN estudiantes e ON e.estudiante_id=v.estudiante_id
-            WHERE v.documento_huella=:d''', d=huella)
+        cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_excepcion_03'), d=huella)
         fila = cur.fetchone()
         valida = isinstance(contrasena, str) and 1 <= len(contrasena.encode('utf-8')) <= 72 and '\x00' not in contrasena
         # Comparación también para cuentas desconocidas, revocadas o bloqueadas.
@@ -179,13 +171,11 @@ def autenticar_excepcion(tipo, numero, contrasena):
         correcto = bool(valida and comparacion and fila and fila[5] and not bloqueado)
         if correcto:
             prueba = _emitir(fila[0], 'EXCEPCION', fila[4], fila[3])
-            cur.execute('DELETE FROM limites_acceso WHERE clave=:c', c=limite)
+            cur.execute(cargar_sql('compartidas/limpiar_limite'), c=limite)
             _evento(cur, fila[0], 'CREDENCIAL_VALIDADA', 'Método: EXCEPCION; pendiente de apertura de sesión.')
         else:
             if not bloqueado:
-                cur.execute('''UPDATE limites_acceso SET intentos=:n,
-                    ventana_en=CASE WHEN :e=1 THEN SYSTIMESTAMP ELSE ventana_en END,
-                    bloqueado_hasta=CASE WHEN :n>=5 THEN SYSTIMESTAMP+INTERVAL '15' MINUTE END WHERE clave=:c''',
+                cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_excepcion_06'),
                     n=(0 if expirada else intentos)+1, e=expirada, c=limite)
             _evento(cur, fila[0] if fila else 0, 'VALIDACION_FALLIDA',
                     'Método: EXCEPCION; resultado: ' + ('LIMITE_INTENTOS' if bloqueado else 'NO_VALIDADA'))
@@ -200,16 +190,13 @@ def confirmar_en_conexion(conn, estudiante_id, prueba):
     _validar_prueba(prueba, estudiante_id)
     with conn.cursor() as cur:
         try:
-            cur.execute('INSERT INTO verificacion_estudiantes(estudiante_id) VALUES(:i)', i=estudiante_id)
+            cur.execute(cargar_sql('servicios/verificacion_identidad/confirmar_en_conexion_04'), i=estudiante_id)
         except oracledb.IntegrityError as exc:
             if exc.args[0].code != 1:
                 raise
-        cur.execute('''SELECT version_credencial,clave_hash,excepcion_activa,
-            CASE WHEN expira_en IS NULL OR expira_en>SYSTIMESTAMP THEN 1 ELSE 0 END
-            FROM verificacion_estudiantes WHERE estudiante_id=:i FOR UPDATE WAIT 5''', i=estudiante_id)
+        cur.execute(cargar_sql('servicios/verificacion_identidad/confirmar_en_conexion_01'), i=estudiante_id)
         version, clave, activa, vigente = cur.fetchone()
-        cur.execute('''SELECT activo,CASE WHEN embedding_facial IS NOT NULL THEN 1 ELSE 0 END
-            FROM estudiantes WHERE estudiante_id=:i FOR UPDATE WAIT 5''', i=estudiante_id)
+        cur.execute(cargar_sql('servicios/verificacion_identidad/confirmar_en_conexion_02'), i=estudiante_id)
         cuenta = cur.fetchone()
         if version != prueba.version or not cuenta or cuenta[0] != 1:
             raise PermissionError('La cuenta o su autorización cambiaron. Repite la validación.')
@@ -222,8 +209,6 @@ def confirmar_en_conexion(conn, estudiante_id, prueba):
                 raise PermissionError('La cuenta ya no tiene una muestra facial disponible.')
             estado, factores = 'BIOMETRICA_COMPLETA', FACTORES_REQUERIDOS
         # Prueba de un solo uso. La versión también invalida pruebas concurrentes anteriores.
-        cur.execute('''UPDATE verificacion_estudiantes SET estado_verificacion=:e,verificado_en=SYSTIMESTAMP,
-            factores_verificados=:f,factores_requeridos=:r,version_credencial=version_credencial+1
-            WHERE estudiante_id=:i''', e=estado, f=factores, r=FACTORES_REQUERIDOS, i=estudiante_id)
+        cur.execute(cargar_sql('servicios/verificacion_identidad/confirmar_en_conexion_03'), e=estado, f=factores, r=FACTORES_REQUERIDOS, i=estudiante_id)
         _evento(cur, estudiante_id, 'ACCESO_VERIFICADO', 'Método: ' + prueba.metodo + '; estado: ' + estado +
                 '; factores comprobados: ' + str(factores) + '; requeridos: ' + str(FACTORES_REQUERIDOS))

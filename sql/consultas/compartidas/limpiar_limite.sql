@@ -1,0 +1,1 @@
+DELETE FROM limites_acceso WHERE clave=:c

@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM user_triggers WHERE status='DISABLED'

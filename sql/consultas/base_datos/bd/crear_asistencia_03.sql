@@ -1,0 +1,1 @@
+SELECT estudiante_id FROM materia_estudiantes WHERE materia_id = :m FOR UPDATE

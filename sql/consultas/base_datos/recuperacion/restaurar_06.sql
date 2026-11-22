@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM user_constraints WHERE status<>'ENABLED' OR validated<>'VALIDATED'

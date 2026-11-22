@@ -1,0 +1,1 @@
+SELECT index_name FROM user_indexes WHERE generated='N' AND index_name NOT IN (SELECT index_name FROM user_constraints WHERE index_name IS NOT NULL) ORDER BY index_name

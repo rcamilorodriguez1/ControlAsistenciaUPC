@@ -1,0 +1,71 @@
+name: upc-aula
+
+services:
+  app:
+    image: upc-aula:${AULA_VERSION:-local}
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      # Un solo dominio para el proxy, los QR y la protección del origen.
+      APP_BASE_URL: https://${APP_HOST:?Define APP_HOST en deploy/.env}
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,nosuid,size=512m,mode=1777
+    volumes:
+      - type: bind
+        source: ./private/secrets.toml
+        target: /app/.streamlit/secrets.toml
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./private/state
+        target: /app/.local
+        bind:
+          create_host_path: false
+    expose:
+      - "8501"
+    networks:
+      - servicio
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      APP_HOST: ${APP_HOST:?Define APP_HOST en deploy/.env}
+      ACME_EMAIL: ${ACME_EMAIL:?Define ACME_EMAIL en deploy/.env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - servicio
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  servicio:
+
+volumes:
+  caddy_data:
+  caddy_config:

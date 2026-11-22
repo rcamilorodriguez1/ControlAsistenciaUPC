@@ -1,0 +1,1 @@
+UPDATE sesiones_usuario SET revocada_en=SYSTIMESTAMP WHERE rol='PROFESOR' AND actor_id=:i

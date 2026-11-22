@@ -1,0 +1,1 @@
+SELECT usuario,activo FROM profesores WHERE profesor_id=:i FOR UPDATE WAIT 5

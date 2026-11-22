@@ -1,0 +1,1 @@
+SELECT constraint_name FROM user_constraints WHERE constraint_type='R' ORDER BY constraint_name

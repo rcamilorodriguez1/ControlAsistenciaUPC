@@ -1,0 +1,1 @@
+SELECT table_name,column_name,comments FROM user_col_comments WHERE comments IS NOT NULL

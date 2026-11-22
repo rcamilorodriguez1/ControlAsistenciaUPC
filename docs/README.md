@@ -10,9 +10,11 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 | Leer la memoria académica y técnica completa | [Documentación integral en PDF](UPC_Aula_Documentacion_Integral.pdf) |
 | Explorar las pantallas y sus recorridos por rol | [Mockup navegable](mockup/index.html) · [Alcance](mockup/README.md) |
 | Consultar los cambios realizados | [Registro de cambios](CAMBIOS.md) |
-| Saber qué está implementado y qué falta | [Roadmap](ROADMAP.md) |
+| Completar organización y despliegue de la versión actual | [Primer roadmap](ROADMAP.md) |
+| Consultar las mejoras posteriores de frontend y base de datos | [Segundo roadmap](ROADMAP_2.md) |
 | Distinguir lo probado de lo aprobado por el usuario | [Seguimiento del frontend](FRONTEND.md) |
 | Instalar, ejecutar y comprobar HTTPS | [Instalación](INSTALACION.md) |
+| Preparar Linux, HTTPS público y Oracle Cloud | [Despliegue en la nube](DESPLIEGUE.md) |
 | Entender cada tabla, relación, consulta y disparador actual | [Funcionamiento de la base de datos](BASE_DE_DATOS.md) |
 | Utilizar la última entrega de excepciones biométricas | [Excepciones biométricas](EXCEPCIONES_BIOMETRICAS.md) |
 

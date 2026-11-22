@@ -69,8 +69,7 @@ END;
 @sql/24_politicas_gestion.sql
 ALTER PACKAGE pkg_asistencia COMPILE BODY;
 ALTER PACKAGE pkg_clases COMPILE BODY;
-BEGIN DBMS_UTILITY.COMPILE_SCHEMA(schema=>USER,compile_all=>FALSE); END;
-/
+@sql/36_recompilar_esquema.sql
 @sql/04_verificar.sql
 COMMENT ON TABLE limites_acceso IS 'Ventana de intentos por SHA256 de usuario; no almacena claves ni nombres de acceso.';
 COMMENT ON COLUMN estudiantes.codigo_institucional IS 'Identificador unico. NULL solo para perfiles heredados/administrativos pendientes de completar.';

@@ -57,8 +57,7 @@ SELECT evento_id,entidad,entidad_id,accion,motivo,actor_rol,actor_id,ocurrido_en
 @sql/27_contexto_administrativo.sql
 @sql/31_versiones_edicion.sql
 @sql/28_paquete_administracion.sql
-BEGIN DBMS_UTILITY.COMPILE_SCHEMA(schema=>USER,compile_all=>FALSE); END;
-/
+@sql/36_recompilar_esquema.sql
 @sql/04_verificar.sql
 COMMENT ON TABLE administradores IS 'Administradores de aplicacion; alta privada, clave bcrypt y sin registro publico.';
 COMMENT ON COLUMN eventos_gestion.valores_anteriores IS 'Instantanea JSON administrativa sin hashes ni biometria.';

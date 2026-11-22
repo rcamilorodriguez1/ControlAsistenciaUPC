@@ -10,6 +10,7 @@ import oracledb
 from src.base_datos.configuracion import obtener_conexion, obtener_pool
 from src.utilidades.biometria import validar_vector_facial, normalizar_vector_voz
 from src.servicios.validaciones import texto, codigo, usuario as validar_usuario, clave as validar_clave
+from src.base_datos.consultas import cargar_sql
 
 
 _logger = logging.getLogger(__name__)
@@ -146,7 +147,7 @@ def existe_profesor(usuario):
     usuario = validar_usuario(usuario)
     def op(conn):
         with conn.cursor() as cur:
-            cur.execute("SELECT profesor_id FROM profesores WHERE LOWER(TRIM(usuario)) = :usuario", usuario=usuario)
+            cur.execute(cargar_sql('base_datos/bd/existe_profesor_01'), usuario=usuario)
             return cur.fetchall()
 
     return len(ejecutar_con_reintentos(op))
@@ -162,11 +163,7 @@ def crear_profesor(usuario, contrasena, nombre):
         with conn.cursor() as cur:
             out_id = cur.var(oracledb.NUMBER)
             cur.execute(
-                """
-                INSERT INTO profesores (usuario, contrasena, nombre)
-                VALUES (:usuario, :contrasena, :nombre)
-                RETURNING profesor_id INTO :out_id
-                """,
+                cargar_sql('base_datos/bd/crear_profesor_01'),
                 usuario=usuario,
                 contrasena=hash_nuevo,
                 nombre=nombre,
@@ -193,28 +190,24 @@ def iniciar_sesion_profesor(usuario, contrasena):
     identificador = sha256(usuario.encode('utf-8')).hexdigest()
     def op(conn):
         with conn.cursor() as cur:
-            cur.execute("DELETE FROM limites_acceso WHERE ventana_en<SYSTIMESTAMP-INTERVAL '1' DAY AND (bloqueado_hasta IS NULL OR bloqueado_hasta<SYSTIMESTAMP)")
+            cur.execute(cargar_sql('compartidas/limpiar_limites_expirados'))
             try:
-                cur.execute('INSERT INTO limites_acceso(clave) VALUES(:c)', c=identificador)
+                cur.execute(cargar_sql('compartidas/crear_limite'), c=identificador)
             except oracledb.IntegrityError as exc:
                 if getattr(exc.args[0], 'code', None) != 1: raise
-            cur.execute("""SELECT intentos,CASE WHEN bloqueado_hasta>SYSTIMESTAMP THEN 1 ELSE 0 END,
-                CASE WHEN ventana_en<SYSTIMESTAMP-INTERVAL '15' MINUTE THEN 1 ELSE 0 END
-                FROM limites_acceso WHERE clave=:c FOR UPDATE""", c=identificador)
+            cur.execute(cargar_sql('compartidas/consultar_limites'), c=identificador)
             intentos, bloqueado, expirada = cur.fetchone()
             if bloqueado:
                 conn.commit()
                 return None
             if expirada: intentos = 0
-            cur.execute('SELECT profesor_id,usuario,contrasena,nombre FROM profesores WHERE LOWER(TRIM(usuario))=:u AND activo=1', u=usuario)
+            cur.execute(cargar_sql('base_datos/bd/iniciar_sesion_profesor_03'), u=usuario)
             profesor = _fila_a_diccionario(cur, cur.fetchone())
             valido = profesor is not None and verificar_contrasena(contrasena, profesor['contrasena'])
             if valido:
-                cur.execute('DELETE FROM limites_acceso WHERE clave=:c', c=identificador)
+                cur.execute(cargar_sql('compartidas/limpiar_limite'), c=identificador)
             else:
-                cur.execute("""UPDATE limites_acceso SET intentos=:n,
-                    ventana_en=CASE WHEN :exp=1 THEN SYSTIMESTAMP ELSE ventana_en END,
-                    bloqueado_hasta=CASE WHEN :n>=5 THEN SYSTIMESTAMP+INTERVAL '15' MINUTE END WHERE clave=:c""",
+                cur.execute(cargar_sql('compartidas/registrar_fallo_acceso'),
                     n=intentos+1, exp=expirada, c=identificador)
         conn.commit()
         return profesor if valido else None
@@ -228,7 +221,7 @@ def iniciar_sesion_profesor(usuario, contrasena):
 def obtener_todos_estudiantes():
     def op(conn):
         with conn.cursor() as cur:
-            cur.execute("SELECT estudiante_id, nombre, codigo_institucional, embedding_facial, embedding_voz FROM estudiantes WHERE activo=1")
+            cur.execute(cargar_sql('base_datos/bd/obtener_todos_estudiantes_01'))
             return _filas_a_diccionarios(cur, cur.fetchall())
 
     estudiantes = ejecutar_con_reintentos(op)
@@ -249,11 +242,7 @@ def crear_estudiante(nuevo_nombre, embedding_facial=None, embedding_voz=None, *,
         with conn.cursor() as cur:
             out_id = cur.var(oracledb.NUMBER)
             cur.execute(
-                """
-                INSERT INTO estudiantes (nombre, codigo_institucional, embedding_facial, embedding_voz)
-                VALUES (:nombre, :codigo_institucional, :embedding_facial, :embedding_voz)
-                RETURNING estudiante_id INTO :out_id
-                """,
+                cargar_sql('base_datos/bd/crear_estudiante_01'),
                 nombre=nuevo_nombre,
                 codigo_institucional=codigo_institucional,
                 embedding_facial=_serializar_embedding(embedding_facial),
@@ -303,7 +292,7 @@ def obtener_materia_por_codigo(codigo_materia):
     def op(conn):
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT materia_id, nombre, codigo_materia FROM materias WHERE UPPER(TRIM(codigo_materia)) = :codigo_materia AND activo=1",
+                cargar_sql('base_datos/bd/obtener_materia_por_codigo_01'),
                 codigo_materia=codigo_materia,
             )
             return _fila_a_diccionario(cur, cur.fetchone())
@@ -315,17 +304,7 @@ def obtener_materias_profesor(profesor_id):
     def op(conn):
         with conn.cursor() as cur:
             cur.execute(
-                """
-                SELECT m.materia_id,m.codigo_materia,m.nombre,m.seccion,m.profesor_id,
-                       NVL(me.total,0) AS total_estudiantes,NVL(c.total,0) AS total_clases
-                FROM materias m
-                LEFT JOIN (SELECT materia_id,COUNT(*) total FROM materia_estudiantes GROUP BY materia_id) me
-                       ON me.materia_id=m.materia_id
-                LEFT JOIN (SELECT materia_id,COUNT(*) total FROM clases WHERE estado='CONFIRMADA' GROUP BY materia_id) c
-                       ON c.materia_id=m.materia_id
-                WHERE m.profesor_id=:profesor_id AND m.activo=1
-                ORDER BY m.materia_id
-                """,
+                cargar_sql('base_datos/bd/obtener_materias_profesor_01'),
                 profesor_id=profesor_id,
             )
             return _filas_a_diccionarios(cur, cur.fetchall())
@@ -352,7 +331,7 @@ def esta_estudiante_matriculado(materia_id, estudiante_id):
     def op(conn):
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT 1 FROM materia_estudiantes WHERE materia_id = :materia_id AND estudiante_id = :estudiante_id",
+                cargar_sql('base_datos/bd/esta_estudiante_matriculado_01'),
                 materia_id=materia_id,
                 estudiante_id=estudiante_id,
             )
@@ -365,13 +344,7 @@ def obtener_materias_estudiante(estudiante_id):
     def op(conn):
         with conn.cursor() as cur:
             cur.execute(
-                """
-                SELECT m.materia_id, m.codigo_materia, m.nombre, m.seccion, m.profesor_id
-                FROM materia_estudiantes me
-                JOIN materias m ON m.materia_id = me.materia_id
-                WHERE me.estudiante_id = :estudiante_id AND m.activo=1
-                ORDER BY m.materia_id
-                """,
+                cargar_sql('base_datos/bd/obtener_materias_estudiante_01'),
                 estudiante_id=estudiante_id,
             )
             filas = _filas_a_diccionarios(cur, cur.fetchall())
@@ -384,13 +357,7 @@ def obtener_estudiantes_matriculados(materia_id):
     def op(conn):
         with conn.cursor() as cur:
             cur.execute(
-                """
-                SELECT es.estudiante_id, es.nombre, es.embedding_facial, es.embedding_voz
-                FROM materia_estudiantes me
-                JOIN estudiantes es ON es.estudiante_id = me.estudiante_id
-                WHERE me.materia_id = :materia_id AND es.activo=1
-                ORDER BY es.nombre
-                """,
+                cargar_sql('base_datos/bd/obtener_estudiantes_matriculados_01'),
                 materia_id=materia_id,
             )
             return _filas_a_diccionarios(cur, cur.fetchall())
@@ -418,14 +385,14 @@ def crear_asistencia(registros, profesor_id=None, *, clase_id=None, clave_confir
                 if not registros or len({r["materia_id"] for r in registros}) != 1:
                     raise ValueError("La propuesta debe pertenecer a una única materia.")
                 materia_id = registros[0]["materia_id"]
-                cur.execute("SELECT profesor_id FROM materias WHERE materia_id = :m FOR UPDATE", m=materia_id)
+                cur.execute(cargar_sql('base_datos/bd/crear_asistencia_02'), m=materia_id)
                 materia = cur.fetchone()
                 if materia is None or int(materia[0]) != int(profesor_id):
                     raise PermissionError("Ya no tienes acceso a esta materia. Actualiza el panel.")
                 ids = [int(r["estudiante_id"]) for r in registros]
                 if len(ids) != len(set(ids)) or any(type(r.get("presente")) is not bool for r in registros):
                     raise ValueError("La propuesta contiene estudiantes duplicados o estados inválidos.")
-                cur.execute("SELECT estudiante_id FROM materia_estudiantes WHERE materia_id = :m FOR UPDATE", m=materia_id)
+                cur.execute(cargar_sql('base_datos/bd/crear_asistencia_03'), m=materia_id)
                 matriculados = {int(f[0]) for f in cur.fetchall()}
                 if set(ids) != matriculados:
                     raise ValueError("La matrícula cambió. Vuelve a ejecutar el análisis antes de confirmar.")
@@ -443,12 +410,7 @@ def crear_asistencia(registros, profesor_id=None, *, clase_id=None, clave_confir
             if profesor_id is not None and len({f["fecha_hora"] for f in filas}) != 1:
                 raise ValueError("Todos los registros deben pertenecer a una única toma.")
             cur.executemany(
-                """
-                INSERT INTO registros_asistencia (materia_id, estudiante_id, fecha_hora, presente)
-                VALUES (:materia_id, :estudiante_id,
-                        TO_TIMESTAMP_TZ(:fecha_hora, 'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM'),
-                        :presente)
-                """,
+                cargar_sql('base_datos/bd/crear_asistencia_01'),
                 filas,
             )
             conn.commit()
@@ -462,14 +424,7 @@ def obtener_asistencia_estudiante(estudiante_id):
     def op(conn):
         with conn.cursor() as cur:
             cur.execute(
-                """
-                SELECT ra.materia_id,ra.clase_id,ra.estudiante_id,
-                       TO_CHAR(ra.fecha_hora, 'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM') AS fecha_hora,
-                       TO_CHAR(c.fecha_hora, 'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM') AS fecha_clase,
-                       ra.presente,ra.estado_deteccion
-                FROM registros_asistencia ra JOIN clases c ON c.clase_id=ra.clase_id
-                WHERE ra.estudiante_id = :estudiante_id
-                """,
+                cargar_sql('base_datos/bd/obtener_asistencia_estudiante_01'),
                 estudiante_id=estudiante_id,
             )
             return _filas_a_diccionarios(cur, cur.fetchall())
@@ -486,17 +441,7 @@ def obtener_asistencia_profesor(profesor_id):
     def op(conn):
         with conn.cursor() as cur:
             cur.execute(
-                """
-                SELECT TO_CHAR(ra.fecha_hora, 'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM') AS fecha_hora,
-                       TO_CHAR(c.fecha_hora, 'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM') AS fecha_clase,
-                       ra.clase_id,c.origen,c.lote_legado,ra.presente,ra.corregido_manual,ra.estado_deteccion,
-                       m.nombre AS materia_nombre, m.codigo_materia AS codigo_materia
-                FROM registros_asistencia ra
-                JOIN materias m ON m.materia_id = ra.materia_id
-                JOIN clases c ON c.clase_id=ra.clase_id
-                WHERE m.profesor_id = :profesor_id
-                ORDER BY ra.fecha_hora DESC
-                """,
+                cargar_sql('base_datos/bd/obtener_asistencia_profesor_01'),
                 profesor_id=profesor_id,
             )
             return _filas_a_diccionarios(cur, cur.fetchall())
@@ -528,30 +473,19 @@ def obtener_resumen_profesor(profesor_id):
         with conn.cursor() as cur:
 
             cur.execute(
-                "SELECT COUNT(*) FROM materias WHERE profesor_id = :profesor_id AND activo=1",
+                cargar_sql('base_datos/bd/obtener_resumen_profesor_01'),
                 profesor_id=profesor_id,
             )
             total_materias = cur.fetchone()[0]
 
             cur.execute(
-                """
-                SELECT COUNT(DISTINCT me.estudiante_id)
-                FROM materia_estudiantes me
-                JOIN materias m ON m.materia_id = me.materia_id
-                JOIN estudiantes e ON e.estudiante_id=me.estudiante_id
-                WHERE m.profesor_id = :profesor_id AND m.activo=1 AND e.activo=1
-                """,
+                cargar_sql('base_datos/bd/obtener_resumen_profesor_02'),
                 profesor_id=profesor_id,
             )
             total_estudiantes = cur.fetchone()[0]
 
             cur.execute(
-                """
-                SELECT ROUND(AVG(CASE WHEN ra.presente = 1 THEN 100 ELSE 0 END))
-                FROM registros_asistencia ra
-                JOIN materias m ON m.materia_id = ra.materia_id
-                WHERE m.profesor_id = :profesor_id
-                """,
+                cargar_sql('base_datos/bd/obtener_resumen_profesor_03'),
                 profesor_id=profesor_id,
             )
             promedio = cur.fetchone()[0]
@@ -570,18 +504,13 @@ def obtener_resumen_estudiante(estudiante_id):
         with conn.cursor() as cur:
 
             cur.execute(
-                """SELECT COUNT(*) FROM materia_estudiantes me JOIN materias m ON m.materia_id=me.materia_id
-                   WHERE me.estudiante_id=:estudiante_id AND m.activo=1""",
+                cargar_sql('base_datos/bd/obtener_resumen_estudiante_01'),
                 estudiante_id=estudiante_id,
             )
             total_materias = cur.fetchone()[0]
 
             cur.execute(
-                """
-                SELECT COUNT(*), SUM(CASE WHEN presente = 1 THEN 1 ELSE 0 END)
-                FROM registros_asistencia
-                WHERE estudiante_id = :estudiante_id
-                """,
+                cargar_sql('base_datos/bd/obtener_resumen_estudiante_02'),
                 estudiante_id=estudiante_id,
             )
             total_clases, total_presentes = cur.fetchone()

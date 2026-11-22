@@ -43,6 +43,7 @@ END;
 @sql/19_integridad_estados.sql
 @sql/20_vistas_estados.sql
 ALTER PACKAGE pkg_asistencia COMPILE BODY;
+@sql/36_recompilar_esquema.sql
 @sql/04_verificar.sql
 COMMENT ON COLUMN registros_asistencia.estado_deteccion IS 'Resultado original: PRESENTE/AUSENTE o SIN_MUESTRA. Un fallo global no se confirma.';
 COMMENT ON COLUMN registros_asistencia.presente_detectado IS 'NULL cuando no hay muestra; nunca usar NVL para convertirlo en ausencia.';

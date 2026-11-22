@@ -1,0 +1,1 @@
+SELECT profesor_id,usuario,contrasena,nombre FROM profesores WHERE LOWER(TRIM(usuario))=:u AND activo=1

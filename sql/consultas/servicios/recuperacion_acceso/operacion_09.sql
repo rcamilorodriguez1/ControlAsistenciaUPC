@@ -1,0 +1,2 @@
+INSERT INTO sesiones_usuario(rol,actor_id,token_hash,creada_en,actividad_en,expira_en,revocada_en)
+                        VALUES('PROFESOR',:i,:h,SYSTIMESTAMP,SYSTIMESTAMP,SYSTIMESTAMP+INTERVAL '8' HOUR,SYSTIMESTAMP)

@@ -11,7 +11,9 @@ import oracledb
 
 from src.base_datos import bd
 from src.configuracion import obtener_configuracion
+from src.base_datos.transporte import parametros_transporte
 from src.servicios.validaciones import texto, codigo, usuario as validar_usuario
+from src.base_datos.consultas import cargar_sql, sql_con_identificadores
 
 _pool = None
 _lock = Lock()
@@ -30,8 +32,13 @@ def obtener_pool_admin():
             usuario = obtener_configuracion('ORACLE_ADMIN_USUARIO')
             clave = obtener_configuracion('ORACLE_ADMIN_CONTRASENA')
             if not usuario or not clave: raise ValueError('Falta preparar el acceso Oracle administrativo.')
+            minimo = int(obtener_configuracion('ORACLE_ADMIN_POOL_MINIMO', 0))
+            maximo = int(obtener_configuracion('ORACLE_ADMIN_POOL_MAXIMO', 4))
+            if minimo < 0 or maximo < max(1, minimo):
+                raise ValueError('Límites del pool administrativo no válidos.')
             _pool = oracledb.create_pool(user=usuario, password=clave,
-                dsn=obtener_configuracion('ORACLE_DSN', 'localhost:1521/XEPDB1'), min=0, max=4, increment=1)
+                dsn=obtener_configuracion('ORACLE_DSN', 'localhost:1521/XEPDB1'),
+                min=minimo, max=maximo, increment=1, **parametros_transporte())
     return _pool
 
 
@@ -48,29 +55,24 @@ def autenticar(usuario, contrasena):
     llave = sha256(('administrador:' + usuario).encode()).hexdigest()
     def op(conn):
         with conn.cursor() as cur:
-            cur.execute("DELETE FROM limites_acceso WHERE ventana_en<SYSTIMESTAMP-INTERVAL '1' DAY AND (bloqueado_hasta IS NULL OR bloqueado_hasta<SYSTIMESTAMP)")
-            try: cur.execute('INSERT INTO limites_acceso(clave) VALUES(:c)', c=llave)
+            cur.execute(cargar_sql('compartidas/limpiar_limites_expirados'))
+            try: cur.execute(cargar_sql('compartidas/crear_limite'), c=llave)
             except oracledb.IntegrityError as exc:
                 if exc.args[0].code != 1: raise
-            cur.execute("""SELECT intentos,CASE WHEN bloqueado_hasta>SYSTIMESTAMP THEN 1 ELSE 0 END,
-                CASE WHEN ventana_en<SYSTIMESTAMP-INTERVAL '15' MINUTE THEN 1 ELSE 0 END
-                FROM limites_acceso WHERE clave=:c FOR UPDATE""", c=llave)
+            cur.execute(cargar_sql('compartidas/consultar_limites'), c=llave)
             intentos, bloqueado, expirada = cur.fetchone()
             if bloqueado:
                 conn.commit(); return None
             if expirada: intentos = 0
-            cur.execute('SELECT administrador_id,usuario,nombre,contrasena FROM administradores WHERE LOWER(TRIM(usuario))=:u AND activo=1', u=usuario)
+            cur.execute(cargar_sql('base_datos/administracion/autenticar_03'), u=usuario)
             perfil = bd._fila_a_diccionario(cur, cur.fetchone())
             correcto = bd.verificar_contrasena(contrasena, perfil['contrasena'] if perfil else _hash_simulado()) and perfil is not None
             if correcto:
-                cur.execute('DELETE FROM limites_acceso WHERE clave=:c', c=llave)
-                cur.execute("""INSERT INTO eventos_gestion(entidad,entidad_id,accion,motivo,actor_rol,actor_id)
-                    VALUES('ADMINISTRADOR',:a,'ACCESO','Acceso a consola administrativa','ADMINISTRADOR',:a)""", a=perfil['administrador_id'])
+                cur.execute(cargar_sql('compartidas/limpiar_limite'), c=llave)
+                cur.execute(cargar_sql('base_datos/administracion/autenticar_06'), a=perfil['administrador_id'])
                 perfil.pop('contrasena', None)
             else:
-                cur.execute("""UPDATE limites_acceso SET intentos=:n,
-                    ventana_en=CASE WHEN :exp=1 THEN SYSTIMESTAMP ELSE ventana_en END,
-                    bloqueado_hasta=CASE WHEN :n>=5 THEN SYSTIMESTAMP+INTERVAL '15' MINUTE END WHERE clave=:c""", n=intentos+1, exp=expirada, c=llave)
+                cur.execute(cargar_sql('compartidas/registrar_fallo_acceso'), n=intentos+1, exp=expirada, c=llave)
         conn.commit()
         return perfil if correcto else None
     return bd.ejecutar_con_reintentos(op, reintentos=1)
@@ -140,9 +142,7 @@ def auditoria(tipo, desde, hasta, limite=500):
     if type(limite) is not int or not 1 <= limite <= 10000 or hasta <= desde: raise ValueError('Intervalo o límite no válido.')
     def op(conn):
         with conn.cursor() as cur, conn.cursor() as datos:
-            cur.execute('BEGIN ' + propietario() + '''.pkg_administracion.auditoria(:tipo,
-                TO_TIMESTAMP_TZ(:desde,'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM'),
-                TO_TIMESTAMP_TZ(:hasta,'YYYY-MM-DD"T"HH24:MI:SS.FF6TZH:TZM'),:limite,:salida); END;''',
+            cur.execute(sql_con_identificadores('base_datos/administracion/auditoria', esquema=propietario()),
                 tipo=tipo, desde=bd._fecha_hora_para_oracle(desde), hasta=bd._fecha_hora_para_oracle(hasta), limite=limite, salida=datos)
             return bd._filas_a_diccionarios(datos, datos.fetchall())
     return _ejecutar(op)

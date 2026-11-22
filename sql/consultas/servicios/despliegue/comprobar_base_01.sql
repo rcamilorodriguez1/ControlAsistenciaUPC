@@ -1,0 +1,1 @@
+SELECT version FROM versiones_esquema

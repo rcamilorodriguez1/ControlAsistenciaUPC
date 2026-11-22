@@ -1,0 +1,1 @@
+SELECT materia_id, nombre, codigo_materia FROM materias WHERE UPPER(TRIM(codigo_materia)) = :codigo_materia AND activo=1

@@ -14,6 +14,7 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives import hashes
 import oracledb
+from src.base_datos.consultas import cargar_sql
 
 IDENTIFICADOR = re.compile(r'^[A-Z][A-Z0-9_$#]{0,127}$')
 
@@ -45,11 +46,9 @@ def _claves(clave, backup_id):
 
 
 def _columnas(cur, tabla):
-    cur.execute('''SELECT column_name,data_type,virtual_column,identity_column
-        FROM user_tab_cols WHERE table_name=:t AND hidden_column='NO' ORDER BY column_id''', t=tabla)
+    cur.execute(cargar_sql('base_datos/recuperacion/columnas_01'), t=tabla)
     columnas = [{'nombre': n, 'tipo': t, 'virtual': v == 'YES', 'identidad': i == 'YES'} for n,t,v,i in cur]
-    cur.execute('''SELECT i.column_name,i.generation_type,s.last_number,s.increment_by
-        FROM user_tab_identity_cols i JOIN user_sequences s ON s.sequence_name=i.sequence_name WHERE i.table_name=:t''', t=tabla)
+    cur.execute(cargar_sql('base_datos/recuperacion/columnas_02'), t=tabla)
     identidades = {n: {'generacion': g, 'siguiente_seguro': str(s), 'incremento': str(i)} for n,g,s,i in cur}
     for c in columnas:
         if c['nombre'] in identidades: c.update(identidades[c['nombre']])
@@ -113,25 +112,20 @@ def respaldar(conexion, destino, clave):
         manifiesto['archivos'][archivo] = sha256(contenido).hexdigest()
 
     with conexion.cursor() as cur:
-        cur.execute('SET TRANSACTION READ ONLY')
-        cur.execute("SELECT USER,SYS_CONTEXT('USERENV','DB_NAME'),SYS_CONTEXT('USERENV','CON_NAME') FROM dual")
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_01'))
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_02'))
         manifiesto['origen'] = list(cur.fetchone())
-        cur.execute('SELECT version FROM versiones_esquema ORDER BY version')
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_03'))
         manifiesto['versiones'] = [r[0] for r in cur]
-        cur.execute('SELECT table_name FROM user_tables ORDER BY table_name')
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_04'))
         tablas = [r[0] for r in cur]
-        cur.execute("SELECT COUNT(*) FROM user_objects WHERE status<>'VALID'")
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_05'))
         manifiesto['objetos_invalidos_origen'] = cur.fetchone()[0]
-        cur.execute("SELECT object_type,COUNT(*) FROM user_objects WHERE object_type IN ('TABLE','INDEX','VIEW','PACKAGE','PACKAGE BODY','TRIGGER','SEQUENCE') GROUP BY object_type")
+        cur.execute(cargar_sql('compartidas/inventario_objetos'))
         manifiesto['inventario_objetos'] = dict(cur.fetchall())
-        cur.execute('SELECT trigger_name,status FROM user_triggers ORDER BY trigger_name')
+        cur.execute(cargar_sql('compartidas/estados_disparadores'))
         manifiesto['estados_disparadores'] = dict(cur.fetchall())
-        cur.execute("""BEGIN
-            DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR',FALSE);
-            DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'EMIT_SCHEMA',FALSE);
-            DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'REF_CONSTRAINTS',FALSE);
-            DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SEGMENT_ATTRIBUTES',FALSE);
-        END;""")
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_08'))
         ddl = {k: [] for k in ('tablas','indices','foraneas','vistas','specs','cuerpos','triggers','comentarios')}
         for tabla in tablas:
             nombre(tabla)
@@ -149,24 +143,24 @@ def respaldar(conexion, destino, clave):
                 total += len(filas); indice += 1
             manifiesto['tablas'].append({'nombre':tabla,'columnas':columnas,'filas':total,'partes':partes,
                                         'huella_datos':sha256(canonico(sorted(huellas))).hexdigest()})
-            cur.execute("SELECT DBMS_METADATA.GET_DDL('TABLE',:n) FROM dual",n=tabla)
+            cur.execute(cargar_sql('base_datos/recuperacion/respaldar_11'),n=tabla)
             ddl['tablas'].append(_transportar(cur.fetchone()[0]))
         consultas = [
-            ('indices','INDEX',"SELECT index_name FROM user_indexes WHERE generated='N' AND index_name NOT IN (SELECT index_name FROM user_constraints WHERE index_name IS NOT NULL) ORDER BY index_name"),
-            ('foraneas','REF_CONSTRAINT',"SELECT constraint_name FROM user_constraints WHERE constraint_type='R' ORDER BY constraint_name"),
-            ('vistas','VIEW','SELECT view_name FROM user_views ORDER BY view_name'),
-            ('specs','PACKAGE_SPEC',"SELECT object_name FROM user_objects WHERE object_type='PACKAGE' ORDER BY object_name"),
-            ('cuerpos','PACKAGE_BODY',"SELECT object_name FROM user_objects WHERE object_type='PACKAGE BODY' ORDER BY object_name"),
-            ('triggers','TRIGGER','SELECT trigger_name FROM user_triggers ORDER BY trigger_name')]
+            ('indices','INDEX',cargar_sql('base_datos/recuperacion/respaldar_12')),
+            ('foraneas','REF_CONSTRAINT',cargar_sql('base_datos/recuperacion/respaldar_13')),
+            ('vistas','VIEW',cargar_sql('base_datos/recuperacion/respaldar_14')),
+            ('specs','PACKAGE_SPEC',cargar_sql('base_datos/recuperacion/respaldar_15')),
+            ('cuerpos','PACKAGE_BODY',cargar_sql('base_datos/recuperacion/respaldar_16')),
+            ('triggers','TRIGGER',cargar_sql('base_datos/recuperacion/respaldar_17'))]
         for grupo,tipo,consulta in consultas:
             cur.execute(consulta)
             for n in [r[0] for r in cur]:
-                cur.execute('SELECT DBMS_METADATA.GET_DDL(:t,:n) FROM dual',t=tipo,n=n)
+                cur.execute(cargar_sql('base_datos/recuperacion/respaldar_18'),t=tipo,n=n)
                 ddl[grupo].append(_transportar(cur.fetchone()[0]))
-        cur.execute("SELECT table_name,comments FROM user_tab_comments WHERE comments IS NOT NULL")
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_09'))
         for t,comentario in cur.fetchall():
             ddl['comentarios'].append('COMMENT ON TABLE '+nombre(t)+" IS '"+comentario.replace("'","''")+"'")
-        cur.execute("SELECT table_name,column_name,comments FROM user_col_comments WHERE comments IS NOT NULL")
+        cur.execute(cargar_sql('base_datos/recuperacion/respaldar_10'))
         for t,c,comentario in cur.fetchall():
             ddl['comentarios'].append('COMMENT ON COLUMN '+nombre(t)+'.'+nombre(c)+" IS '"+comentario.replace("'","''")+"'")
         guardar('estructura.aes',ddl)
@@ -234,11 +228,11 @@ def restaurar(destino, clave, conexion, *, usuario_esperado):
     if manifiesto.get('objetos_invalidos_origen'):
         raise ValueError('La copia procede de un esquema invalido; use un respaldo completo anterior.')
     with conexion.cursor() as cur:
-        cur.execute("SELECT USER,SYS_CONTEXT('USERENV','CON_NAME') FROM dual")
+        cur.execute(cargar_sql('base_datos/recuperacion/restaurar_01'))
         usuario,pdb = cur.fetchone()
         if usuario != usuario_esperado.upper() or usuario in ('SYS','SYSTEM') or pdb=='CDB$ROOT':
             raise ValueError('Destino incorrecto o administrativo; restauracion rechazada.')
-        cur.execute('SELECT COUNT(*) FROM user_objects')
+        cur.execute(cargar_sql('base_datos/recuperacion/restaurar_02'))
         if cur.fetchone()[0] != 0: raise ValueError('El destino debe estar vacio; no se borraron ni reemplazaron objetos.')
         ddl=datos['estructura.aes']
         for tabla in manifiesto['tablas']:
@@ -297,20 +291,20 @@ def restaurar(destino, clave, conexion, *, usuario_esperado):
                         sql = sql[:coincidencia.start()]
                 cur.execute(_sql_limpio(sql,plsql=grupo in ('specs','cuerpos','triggers')))
                 if adicional: cur.execute(adicional)
-        cur.execute('BEGIN DBMS_UTILITY.COMPILE_SCHEMA(schema=>USER,compile_all=>FALSE); END;')
-        cur.execute("SELECT object_name,object_type FROM user_objects WHERE status<>'VALID'")
+        cur.execute(cargar_sql('base_datos/recuperacion/restaurar_03'))
+        cur.execute(cargar_sql('base_datos/recuperacion/restaurar_04'))
         invalidos = cur.fetchall()
         if invalidos:
-            cur.execute('SELECT name,type,line,text FROM user_errors ORDER BY name,sequence')
+            cur.execute(cargar_sql('base_datos/recuperacion/restaurar_08'))
             raise ValueError('El destino conserva objetos invalidos; no utilizarlo como base activa. ' + repr(invalidos) + ' ' + repr(cur.fetchall()))
-        cur.execute('SELECT COUNT(*) FROM user_errors')
+        cur.execute(cargar_sql('base_datos/recuperacion/restaurar_05'))
         if cur.fetchone()[0]: raise ValueError('Hay errores de compilacion en el destino.')
         if 'inventario_objetos' in manifiesto:
-            cur.execute("SELECT object_type,COUNT(*) FROM user_objects WHERE object_type IN ('TABLE','INDEX','VIEW','PACKAGE','PACKAGE BODY','TRIGGER','SEQUENCE') GROUP BY object_type")
+            cur.execute(cargar_sql('compartidas/inventario_objetos'))
             if dict(cur.fetchall()) != manifiesto['inventario_objetos']:
                 raise ValueError('El inventario de objetos restaurados difiere del origen.')
         if 'estados_disparadores' in manifiesto:
-            cur.execute('SELECT trigger_name,status FROM user_triggers ORDER BY trigger_name')
+            cur.execute(cargar_sql('compartidas/estados_disparadores'))
             if dict(cur.fetchall()) != manifiesto['estados_disparadores']:
                 raise ValueError('El estado de los disparadores difiere del origen.')
         for tabla in manifiesto['tablas']:
@@ -322,13 +316,13 @@ def restaurar(destino, clave, conexion, *, usuario_esperado):
                 huellas.extend(_huella_fila(f,tabla['columnas']) for f in filas)
             if len(huellas)!=tabla['filas'] or sha256(canonico(sorted(huellas))).hexdigest()!=tabla['huella_datos']:
                 raise ValueError('La verificacion posterior de datos fallo: '+tabla['nombre'])
-        cur.execute("SELECT COUNT(*) FROM user_constraints WHERE status<>'ENABLED' OR validated<>'VALIDATED'")
+        cur.execute(cargar_sql('base_datos/recuperacion/restaurar_06'))
         if cur.fetchone()[0]: raise ValueError('Hay restricciones sin validar en el destino.')
         # La copia de datos no debe resucitar credenciales de sesion ya revocadas despues del respaldo.
         sesiones_revocadas=0
-        cur.execute("SELECT COUNT(*) FROM user_tables WHERE table_name='SESIONES_USUARIO'")
+        cur.execute(cargar_sql('base_datos/recuperacion/restaurar_07'))
         if cur.fetchone()[0]:
-            cur.execute('UPDATE sesiones_usuario SET revocada_en=SYSTIMESTAMP WHERE revocada_en IS NULL')
+            cur.execute(cargar_sql('base_datos/recuperacion/restaurar_11'))
             sesiones_revocadas=cur.rowcount
     conexion.commit()
     return {'usuario':usuario,'tablas':len(manifiesto['tablas']),'versiones':manifiesto['versiones'],'verificado':True,'sesiones_revocadas':sesiones_revocadas}

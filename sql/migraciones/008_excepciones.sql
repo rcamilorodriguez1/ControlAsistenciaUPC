@@ -51,6 +51,7 @@ BEGIN
 EXCEPTION WHEN OTHERS THEN IF SQLCODE<>-1917 THEN RAISE; END IF;
 END;
 /
+@sql/36_recompilar_esquema.sql
 @sql/35_verificar_excepciones.sql
 INSERT INTO versiones_esquema(version,descripcion)
 SELECT '008','Excepciones biometricas autorizadas, credencial alternativa y estado auditable' FROM dual

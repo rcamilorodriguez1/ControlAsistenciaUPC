@@ -1,0 +1,1 @@
+SELECT 1 FROM materia_estudiantes WHERE materia_id = :materia_id AND estudiante_id = :estudiante_id
