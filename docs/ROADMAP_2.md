@@ -40,6 +40,12 @@ Es una alternativa a evaluar, sin una decisión de migrar el servicio ya despleg
   verificar compatibilidad, duración de conexiones, cuotas y costo del plan elegido.
 - Conservar el servicio Render/Oracle funcional mientras se compara y prueba la alternativa.
 
+El usuario comunica pruebas satisfactorias con un familiar y prioriza optimizar la
+versión Render existente. Se aplican almacenamiento de fotos comprimidas con miniaturas,
+reutilización del clasificador de voz y lectura de audio por bloques; se conservan modelos,
+pixeles de análisis y criterios de decisión. [Evidencia y límites](RECONOCIMIENTO.md#uso-de-memoria-de-las-capturas-en-render).
+Esto no inicia una migración a Vercel ni cierra el ensayo de recursos y biometría del roadmap.
+
 Referencias consultadas el 22/11:
 [backends Python y contenedores en Vercel](https://vercel.com/blog/backends-on-vercel-python-containers-and-daemons),
 [WebSockets en Vercel](https://vercel.com/changelog/websocket-support-is-now-in-public-beta),

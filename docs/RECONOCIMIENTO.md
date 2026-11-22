@@ -49,6 +49,28 @@ miniatura y original para garantizar que la IA recibe la imagen completa. Faltan
 en Render con varias capturas y usuarios; las pruebas iniciales que el usuario hizo con
 un familiar se comunican como satisfactorias, sin convertirlas en una tasa de precisión.
 
+## Reutilización y lectura de audio
+
+En una toma de voz se prepara un único clasificador de referencias y se reutiliza para
+todas las intervenciones. Se mantienen los mismos candidatos, normalizaciones, umbral,
+margen y puntajes; no se repite la construcción del clasificador por cada segmento.
+La función de identificación individual conserva su interfaz anterior.
+
+La lectura WAV conserva una onda mono y decodifica como máximo 65.536 muestras por
+bloque, evitando conservar además el audio estéreo completo. Se usa la misma media de
+canales, frecuencia final de 16 kHz, comprobación de señal y límites de duración/tamaño.
+Una prueba compara exactamente la onda resultante con la lectura completa anterior;
+otra comprueba varias intervenciones y un único clasificador. Se conservan los rechazos
+de silencio, saturación, muestras ausentes y análisis fallido.
+
+Regresión del conjunto: 276 pruebas, 207 aprobadas y 69 integraciones omitidas, sin fallos.
+Evidencia privada: `.local/hosting/pruebas_optimizacion.json` y su log. La comprobación
+con dlib real usa únicamente una imagen sintética sin rostros y no consulta Oracle.
+
+Las mejoras limitan almacenamiento temporal y trabajo repetido. No cambian dlib,
+Resemblyzer/PyTorch ni sus modelos; no acreditan memoria suficiente para cualquier
+concurrencia en Render. La medición del proceso y el ensayo con dispositivos siguen pendientes.
+
 ## Evaluar y proponer umbrales
 
 ```powershell

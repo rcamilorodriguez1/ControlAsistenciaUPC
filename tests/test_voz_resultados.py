@@ -64,6 +64,18 @@ class AnalisisVozTest(unittest.TestCase):
         self.encoder.embed_utterance.return_value = np.array([np.nan] + [0.] * 255)
         self.assertEqual(voz.procesar_audio_masivo(b'audio', self.candidatos).estado, 'FALLIDO')
 
+    def test_varias_intervenciones_reutilizan_referencias_y_conservan_las_coincidencias(self):
+        self.mock[1].return_value = np.ones(24000)
+        self.mock[2].return_value = np.array([[0, 8000], [8000, 16000], [16000, 24000]])
+        self.encoder.embed_utterance.side_effect = [self.eje0, self.eje1, -self.eje0]
+        clasificador = voz.ClasificadorReferencias
+        with patch.object(voz, 'ClasificadorReferencias', wraps=clasificador) as construir:
+            resultado = voz.procesar_audio_masivo(b'audio', self.candidatos)
+        self.assertEqual(resultado.estado, 'COMPLETADO')
+        self.assertEqual(resultado.puntajes, {7: 1.0, 8: 1.0})
+        self.assertEqual(self.encoder.embed_utterance.call_count, 3)
+        construir.assert_called_once()
+
 
 class EstadosVozTest(unittest.TestCase):
     def setUp(self):

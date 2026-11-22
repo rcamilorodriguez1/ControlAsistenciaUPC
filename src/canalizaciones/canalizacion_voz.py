@@ -49,6 +49,8 @@ def procesar_audio_masivo(audio_bytes, diccionario_candidatos, umbral=None):
         if not diccionario_candidatos:
             return ResultadoAudio('SIN_MUESTRAS')
         candidatos = {sid: normalizar_vector_voz(vector) for sid, vector in diccionario_candidatos.items()}
+        # Las referencias no cambian entre intervenciones de esta grabación.
+        modelo = ClasificadorReferencias(candidatos, 'voz')
         etapa = 'decodificacion'
         audio, sr = cargar_audio_seguro(audio_bytes), FRECUENCIA
         etapa = 'segmentacion'
@@ -81,7 +83,9 @@ def procesar_audio_masivo(audio_bytes, diccionario_candidatos, umbral=None):
             embedding = normalizar_vector_voz(codificador.embed_utterance(wav))
 
             etapa = 'comparacion'
-            id_candidato, puntaje = identificar_hablante(embedding, candidatos, umbral)
+            coincidencia = modelo.identificar(embedding, umbral=umbral)
+            id_candidato = coincidencia.identidad
+            puntaje = coincidencia.valor if id_candidato is not None and coincidencia.valor is not None else 0.0
             if not np.isfinite(puntaje):
                 return ResultadoAudio.fallido('PUNTAJE_INVALIDO')
             procesados += 1

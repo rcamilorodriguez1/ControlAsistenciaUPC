@@ -8,7 +8,7 @@ import soundfile as sf
 
 from src.utilidades.biometria import MuestraInvalida, validar_vector_facial, normalizar_vector_voz
 from src.utilidades.muestra_facial import leer_foto_registro
-from src.utilidades.muestra_voz import cargar_audio_seguro, validar_tramo_voz
+from src.utilidades.muestra_voz import cargar_audio_seguro, validar_tramo_voz, comprobar_senal, MUESTRAS_POR_BLOQUE
 from src.servicios import registro_estudiante as registro
 from src.base_datos import bd
 
@@ -84,6 +84,41 @@ class CalidadCapturaTest(unittest.TestCase):
         self.assertEqual(onda.shape, (48000,))
         self.assertEqual(onda.dtype, np.float32)
         self.assertTrue(np.isfinite(onda).all())
+
+    def test_lectura_por_bloques_conserva_exactamente_la_onda_mono(self):
+        tiempo = np.arange(160000) / 16000
+        estereo = np.column_stack((0.2 * np.sin(2 * np.pi * 220 * tiempo),
+                                   0.1 * np.sin(2 * np.pi * 430 * tiempo)))
+        salida = BytesIO()
+        sf.write(salida, estereo, 16000, format='WAV', subtype='PCM_24')
+        datos = salida.getvalue()
+        anterior, _ = sf.read(BytesIO(datos), dtype='float32', always_2d=True)
+        esperado = comprobar_senal(comprobar_senal(anterior.mean(axis=1)))
+        constructor = sf.SoundFile
+        lecturas = []
+
+        class ArchivoObservado:
+            def __init__(self, *args, **kwargs):
+                self.archivo = constructor(*args, **kwargs)
+
+            def __getattr__(self, nombre):
+                return getattr(self.archivo, nombre)
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                self.archivo.close()
+
+            def read(self, **kwargs):
+                lecturas.append(kwargs['frames'])
+                return self.archivo.read(**kwargs)
+
+        with patch('src.utilidades.muestra_voz.sf.SoundFile', ArchivoObservado):
+            obtenido = cargar_audio_seguro(datos)
+        np.testing.assert_array_equal(obtenido, esperado)
+        self.assertGreater(len(lecturas), 1)
+        self.assertLessEqual(max(lecturas), MUESTRAS_POR_BLOQUE)
 
     def test_actividad_vocal_es_obligatoria_aunque_haya_senal(self):
         onda = cargar_audio_seguro(audio_wav(), registro=True)

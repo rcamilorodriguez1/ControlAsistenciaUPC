@@ -4,6 +4,23 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 22 de noviembre de 2026 — Reutilización del clasificador y audio por bloques
+
+Se aplican dos mejoras acotadas para continuar usando Render tras las pruebas satisfactorias
+comunicadas por el usuario: un clasificador de voz por grabación, reutilizado entre
+intervenciones, y lectura WAV por bloques de hasta 65.536 muestras, conservando solo
+la onda mono completa. No se modifican los modelos ni los criterios de reconocimiento.
+
+Las pruebas específicas de voz/resultados y muestras validan varias intervenciones,
+coincidencias conservadas, rechazos y equivalencia exacta de la onda frente a la lectura
+anterior. También se comprobó dlib real con la lectura de una imagen sintética sin personas,
+sin conexión Oracle. Regresión general: 276 pruebas ejecutadas, 207 aprobadas y 69
+omitidas por integraciones no habilitadas; sin fallos. Evidencia privada:
+`.local/hosting/pruebas_optimizacion.json` y su log. [Detalle](RECONOCIMIENTO.md#reutilización-y-lectura-de-audio).
+
+Son los cambios menores cuarto y quinto desde 2c3baaf. Tras pasar las comprobaciones,
+corresponde commit de estos dos pendientes y push de todo el lote, según la cadencia.
+
 ## 22 de noviembre de 2026 — Fotos comprimidas y miniaturas para reducir memoria
 
 La sesión docente conserva los originales JPEG/PNG comprimidos y miniaturas, en lugar

@@ -65,9 +65,9 @@ Instrucci처n vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
 | Referencia | Estado |
 | --- | --- |
 | Base del lote | `2c3baaf`, rama `main` |
-| Cambios del lote | 3: requisitos de excepci처n/correo y alternativa Vercel; revisi처n de recursos; fotos comprimidas |
-| Commit | Corresponde agrupar los tres cambios menores comprobados |
-| Push | Pendiente: 3 de 5 cambios, sin otro punto del roadmap cerrado |
+| Cambios del lote | 5: requisitos de excepci처n/correo y alternativa Vercel; revisi처n de recursos; fotos comprimidas; reutilizaci처n del clasificador de voz; audio por bloques |
+| Commit | Los primeros tres se guardaron en fc2c29d; confirmar los dos pendientes tras las comprobaciones |
+| Push | Corresponde al completar los 5 cambios comprobados |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el

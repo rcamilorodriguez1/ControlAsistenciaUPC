@@ -18,6 +18,7 @@ MIN_VOZ_SEGMENTO = 0.5
 MIN_RMS = 10 ** (-50 / 20)  # -50 dBFS, antes de amplificar/normalizar.
 MAX_FRACCION_SATURADA = 0.05
 MIN_FRACCION_VOZ = 0.20
+MUESTRAS_POR_BLOQUE = 65536
 
 
 def comprobar_senal(audio):
@@ -52,14 +53,19 @@ def cargar_audio_seguro(datos, *, registro=False):
                 raise MuestraInvalida(f'La grabación debe durar entre {minimo:g} y {maximo:g} segundos.', 'DURACION_AUDIO')
             frecuencia = archivo.samplerate
             # El encabezado limita la lectura antes de descomprimir y reservar memoria.
-            onda = archivo.read(frames=archivo.frames, dtype='float32', always_2d=True)
-            if len(onda) != archivo.frames:
-                raise MuestraInvalida('La grabación está incompleta. Vuelve a grabar.', 'AUDIO_INVALIDO')
+            # Conservar solo la onda mono; el estéreo se decodifica por bloques acotados.
+            onda = np.empty(archivo.frames, dtype=np.float32)
+            for inicio in range(0, archivo.frames, MUESTRAS_POR_BLOQUE):
+                cantidad = min(MUESTRAS_POR_BLOQUE, archivo.frames - inicio)
+                bloque = archivo.read(frames=cantidad, dtype='float32', always_2d=True)
+                if len(bloque) != cantidad:
+                    raise MuestraInvalida('La grabación está incompleta. Vuelve a grabar.', 'AUDIO_INVALIDO')
+                onda[inicio:inicio + cantidad] = bloque.mean(axis=1)
     except (sf.LibsndfileError, RuntimeError, OSError, ValueError) as exc:
         if isinstance(exc, MuestraInvalida):
             raise
         raise MuestraInvalida('No se pudo leer la grabación WAV. Vuelve a grabar.', 'FORMATO_AUDIO') from exc
-    onda = comprobar_senal(onda.mean(axis=1))
+    onda = comprobar_senal(onda)
     if frecuencia != FRECUENCIA:
         onda = librosa.resample(onda, orig_sr=frecuencia, target_sr=FRECUENCIA)
     return comprobar_senal(onda)
