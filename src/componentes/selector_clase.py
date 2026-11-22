@@ -9,9 +9,9 @@ from src.utilidades.fecha_hora import convertir_a_hora_colombia, hora_actual_col
 def selector_clase(materia_id, profesor_id):
     clases = obtener_clases_profesor(materia_id, profesor_id)
     por_id = {c['clase_id']: c for c in clases}
-    clave = f'clase_selector_{materia_id}'
+    clave = f'clase_selector_{profesor_id}_{materia_id}'
     pendiente = st.session_state.get('clase_por_seleccionar')
-    if pendiente and pendiente['materia_id'] == materia_id:
+    if pendiente and pendiente['materia_id'] == materia_id and pendiente.get('profesor_id', profesor_id) == profesor_id:
         st.session_state[clave] = pendiente['clase_id'] if pendiente['clase_id'] in por_id else None
         del st.session_state['clase_por_seleccionar']
     if clave not in st.session_state:
@@ -28,7 +28,7 @@ def selector_clase(materia_id, profesor_id):
         fecha = convertir_a_hora_colombia(clase['fecha_hora']).strftime('%d/%m/%Y %H:%M')
         estado = 'Confirmada' if clase['estado'] == 'CONFIRMADA' else 'Pendiente'
         legado = f" · lote histórico {clase['lote_legado']}" if clase.get('lote_legado') else ''
-        return f'{fecha} · {estado} · #{clase_id}{legado}'
+        return f'{fecha} · {estado}{legado}'
 
     with st.container(key='selector_academico_clase'):
         seleccionado = st.selectbox('Clase de esta materia', options=[None, *por_id],
@@ -48,6 +48,6 @@ def selector_clase(materia_id, profesor_id):
             except (ValueError, PermissionError) as exc:
                 st.warning(str(exc))
             else:
-                st.session_state['clase_por_seleccionar'] = {'materia_id': materia_id, 'clase_id': clase_id}
+                st.session_state['clase_por_seleccionar'] = {'materia_id': materia_id, 'profesor_id': profesor_id, 'clase_id': clase_id}
                 st.rerun()
     return por_id.get(seleccionado)

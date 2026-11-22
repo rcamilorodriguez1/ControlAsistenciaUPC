@@ -1,5 +1,15 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Selector de clases independiente por docente y materia
+
+- Se retira #ID de la etiqueta: el ID era global de Oracle, no un contador de clases
+  pendientes por materia. Se conserva internamente para confirmar la clase correcta.
+- La clave del selector incluye docente y materia; se descarta una selección que ya
+  no esté en la lista autorizada. La consulta contrasta el docente con el contexto Oracle.
+- No se elimina ninguna clase ni registro académico.
+- Verificación: 2 pruebas de selección, cambio de docente/materia e ID ajeno aprobadas.
+
+
 ## 22/11/2026 — Roadmap general, créditos y encabezados
 
 - Se conserva el plan anterior como ROADMAP_HISTORICO y se enlazan dos ramas:
