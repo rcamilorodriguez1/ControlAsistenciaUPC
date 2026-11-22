@@ -1,5 +1,27 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Excepción docente con entrega manual y migración 009
+
+- El portal docente añade Excepciones de acceso: materia propia, alumno matriculado,
+  documento comprobado, clave confirmada, referencia y vigencia. La entrega es manual;
+  se sustituye la propuesta de correo. El alumno usa su documento y clave en el acceso alternativo.
+- El docente renueva/revoca sus autorizaciones; no sustituye las ajenas ni administrativas.
+  Administración conserva la capacidad de revisar/sustituirlas. Los campos sensibles
+  se limpian tras autorizar y no se pueden recuperar contraseñas desde Oracle.
+- 009 añade dos FK/columnas a VERIFICACION_ESTUDIANTES y PKG_EXCEPCIONES_DOCENTES,
+  con validación de contexto, propiedad, matrícula, versión y autoría. No añade tablas
+  ni borra registros existentes. El runtime conserva 53 permisos y la cuenta técnica
+  restringida pasa a cinco EXECUTE, sin DML directo de aprobación.
+- Migración aplicada en Oracle local y Autonomous tras respaldos cifrados verificados.
+  Inventario cloud: 14 tablas, 11 vistas, 10 triggers, 8 paquetes válidos; preflight con
+  la cuenta runtime real aprobado. Preparadores e instaladores actualizados a 009.
+- Verificación completa: 293 pruebas, 288 aprobadas y 5 omitidas (requieren un usuario
+  Oracle temporal limitado). Incluye 7 de excepciones docentes, 3 de su interfaz,
+  regresiones de acceso y pruebas reales Oracle con datos sintéticos y limpieza por ID.
+  Evidencias privadas: .local/revision_22nov/pruebas.json y .local/oracle_cloud/migracion_009.json.
+- Queda pendiente la aceptación funcional de estas pantallas con el usuario en Render.
+
+
 ## 22/11/2026 — Perfil y configuración del docente
 
 - El menú de cuenta abre Mi perfil y Configuración para docentes. Ambas rutas exigen

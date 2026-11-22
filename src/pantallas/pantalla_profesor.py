@@ -56,7 +56,7 @@ def panel_profesor():
         st.session_state.pestana_actual_profesor = "tomar_asistencia"
 
     with st.container(key='navegacion_docente'):
-        tab1, tab2, tab3 = st.columns(3)
+        tab1, tab2, tab3, tab4 = st.columns(4)
 
         with tab1:
             tipo1 = "primary" if st.session_state.pestana_actual_profesor == "tomar_asistencia" else "tertiary"
@@ -75,6 +75,11 @@ def panel_profesor():
             if st.button("Registros de Asistencia", type=tipo3, width="stretch", icon=":material/library_books:"):
                 st.session_state.pestana_actual_profesor = "registros_asistencia"
                 st.rerun()
+        with tab4:
+            tipo4 = 'primary' if st.session_state.pestana_actual_profesor == 'excepciones' else 'tertiary'
+            if st.button('Excepciones de acceso', type=tipo4, width='stretch', icon=':material/key:'):
+                st.session_state.pestana_actual_profesor = 'excepciones'
+                st.rerun()
 
     st.divider()
 
@@ -85,6 +90,9 @@ def panel_profesor():
         pestana_gestionar_materias()
     if st.session_state.pestana_actual_profesor == "registros_asistencia":
         pestana_registros_asistencia()
+    if st.session_state.pestana_actual_profesor == 'excepciones':
+        from src.componentes.excepciones_docentes import gestionar_excepciones_docentes
+        gestionar_excepciones_docentes()
 
 
     pie_pagina_panel()

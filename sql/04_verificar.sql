@@ -59,3 +59,4 @@ END;
 @@29_verificar_administracion.sql
 @@33_verificar_sesiones.sql
 @@35_verificar_excepciones.sql
+@@39_verificar_excepciones_docentes.sql

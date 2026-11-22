@@ -9,7 +9,7 @@ Depende del [roadmap general](ROADMAP.md). Solicitudes del 22/11/2026.
 | FB3 | Publicar los tres estudiantes y el docente indicados en el pie, con ajuste móvil | Implementado; revisión visual móvil |
 | FB4 | Perfil docente privado: todas sus materias, agenda mensual y próximas clases persistidas | Implementado; 5 pruebas; consulta compilada en Autonomous |
 | FB5 | Diferenciar portal de operaciones, perfil académico y configuración; acceso desde el menú de cuenta | Implementado; 8 pruebas de navegación |
-| FB6 | Autorizar/renovar/revocar contraseña alternativa por docente para alumnos de sus materias, con vigencia, auditoría y entrega manual | Pendiente |
+| FB6 | Autorizar/renovar/revocar contraseña alternativa por docente para alumnos de sus materias, con vigencia, auditoría y entrega manual | Implementado; Oracle local y Autonomous 009 verificados |
 | FB7 | Quitar iconos de ancla de encabezados manteniendo títulos y enlaces de navegación | Implementado; enlaces nativos de Inicio disponibles |
 
 ## Criterios transversales

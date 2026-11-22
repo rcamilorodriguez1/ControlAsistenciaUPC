@@ -28,8 +28,8 @@ def main():
     if not re.fullmatch(r'(localhost|127\.0\.0\.1):\d+/[A-Za-z][A-Za-z0-9_]*', dsn):
         parser.error('La preparación automática requiere Oracle local; en otro servidor ejecutar el script con el DBA.')
     with obtener_conexion() as conn, conn.cursor() as cur:
-        cur.execute("SELECT COUNT(*) FROM versiones_esquema WHERE version='008'")
-        if cur.fetchone()[0] != 1: parser.error('Instalar la migración 008 primero.')
+        cur.execute("SELECT COUNT(*) FROM versiones_esquema WHERE version='009'")
+        if cur.fetchone()[0] != 1: parser.error('Instalar la migración 009 primero.')
     if 'ORACLE_ADMIN_USUARIO' not in config:
         pendiente = RAIZ / '.local/provision_admin_pendiente.json'
         if pendiente.exists(): parser.error('Existe una preparación pendiente; revisar ese archivo privado y el estado Oracle antes de repetir.')

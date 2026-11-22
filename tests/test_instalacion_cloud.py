@@ -48,12 +48,12 @@ class LectorSQLTest(unittest.TestCase):
         self.assertIn('entrada.sql:1', str(error.exception))
         self.assertNotIn('fixture-no-publicar', str(error.exception))
 
-    def test_instalador_real_incluye_las_ocho_versiones_y_sus_verificadores(self):
+    def test_instalador_real_incluye_las_nueve_versiones_y_sus_verificadores(self):
         plan = list(leer_script(cloud.RAIZ / 'oracle_scripts.sql', cloud.RAIZ))
         archivos = {s.archivo.name for s in plan}
         self.assertTrue({'01_tablas.sql', '008_excepciones.sql', '35_verificar_excepciones.sql',
                          '28_paquete_administracion.sql', '32_paquete_sesiones.sql'} <= archivos)
-        self.assertEqual(len([s for s in plan if s.sql.upper().startswith('COMMIT')]), 8)
+        self.assertEqual(len([s for s in plan if s.sql.upper().startswith('COMMIT')]), 9)
         self.assertTrue(all(s.sql.strip() and not s.sql.startswith('@') for s in plan))
 
     def test_cada_migracion_recompila_antes_de_verificar_y_registrar_version(self):
@@ -62,7 +62,7 @@ class LectorSQLTest(unittest.TestCase):
                 plan = list(leer_script(cloud.RAIZ / 'sql/migraciones' / nombre, cloud.RAIZ))
                 recompilacion = next(i for i, s in enumerate(plan) if s.archivo.name == '36_recompilar_esquema.sql')
                 verificacion = next(i for i, s in enumerate(plan) if s.archivo.name in
-                    {'04_verificar.sql', '33_verificar_sesiones.sql', '35_verificar_excepciones.sql'})
+                    {'04_verificar.sql', '33_verificar_sesiones.sql', '35_verificar_excepciones.sql', '39_verificar_excepciones_docentes.sql'})
                 registro = next(i for i, s in enumerate(plan) if s.sql.upper().startswith('INSERT INTO VERSIONES_ESQUEMA'))
                 self.assertLess(recompilacion, verificacion)
                 self.assertLess(verificacion, registro)
@@ -123,8 +123,8 @@ class PreparacionCloudTest(unittest.TestCase):
 
     def test_continuacion_solo_selecciona_versiones_no_aplicadas(self):
         pendientes = cloud.migraciones_pendientes({'001', '002', '003'})
-        self.assertEqual([n for n, _ in pendientes], ['004', '005', '006', '007', '008'])
-        self.assertEqual(cloud.migraciones_pendientes({f'{n:03d}' for n in range(1, 9)}), [])
+        self.assertEqual([n for n, _ in pendientes], ['004', '005', '006', '007', '008', '009'])
+        self.assertEqual(cloud.migraciones_pendientes({f'{n:03d}' for n in range(1, 10)}), [])
         for versiones in (set(), {'002'}, {'001', '003'}, {'001', '009'}):
             with self.subTest(versiones=versiones), self.assertRaises(ValueError):
                 cloud.migraciones_pendientes(versiones)
@@ -147,13 +147,13 @@ class PreparacionCloudTest(unittest.TestCase):
                 self.assertNotIn('CREATE USER', sentencia.sql.upper())
         verificar.assert_called_once()
 
-    def test_continuacion_recupera_permisos_si_008_ya_quedo_registrada(self):
+    def test_continuacion_recupera_permisos_si_009_ya_quedo_registrada(self):
         config = {'ORACLE_USUARIO': 'UPC_ASISTENCIA', 'ORACLE_CONTRASENA': 'fixture',
                   'ORACLE_ADMIN_USUARIO': 'UPC_ADMIN_APP', 'ORACLE_ADMIN_CONTRASENA': 'fixture-limitada',
                   'ORACLE_DSN': (self.carpeta / 'dsn.txt').read_text()}
-        (self.carpeta / 'instalacion.json').write_text('{"fase":"migracion_en_curso","version":"008"}', encoding='utf-8')
+        (self.carpeta / 'instalacion.json').write_text('{"fase":"migracion_en_curso","version":"009"}', encoding='utf-8')
         conn = MagicMock()
-        conn.__enter__.return_value.cursor.return_value.__enter__.return_value.fetchall.return_value = [(f'{n:03d}',) for n in range(1, 9)]
+        conn.__enter__.return_value.cursor.return_value.__enter__.return_value.fetchall.return_value = [(f'{n:03d}',) for n in range(1, 10)]
         with patch.object(cloud.oracledb, 'connect', return_value=conn), \
                 patch.object(cloud, 'ejecutar_script') as ejecutar, patch.object(cloud, 'verificar'):
             cloud.continuar(MagicMock(), config)

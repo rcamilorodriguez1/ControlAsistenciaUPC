@@ -16,7 +16,7 @@ Se utiliza el servicio compartido de sesiones: mismo rol, caducidad, navegación
 
 El documento identifica la cuenta; **no autentica por sí solo**. La alternativa requiere:
 
-1. Comprobación institucional del documento por un administrador activo.
+1. Comprobación del documento por un docente autorizado o un administrador activo.
 2. Autorización explícita, categoría de excepción, referencia del expediente y vigencia.
 3. Documento más contraseña alternativa al iniciar sesión.
 
@@ -25,29 +25,36 @@ gubernamental ni certifica automáticamente la autenticidad de la cédula presen
 La categoría puede ser física, médica, técnica o administrativa. No se solicitan diagnósticos,
 fotocopias ni informes médicos en este formulario.
 
-## Requisito retomado: autorización docente y correo
+## Autorización docente y entrega manual (009)
 
-El usuario retoma este requisito el 22/11: incorporar en el portal de profesores un apartado
-para autorizar el acceso excepcional y enviar la contraseña al correo del estudiante que
-la solicita. El correo debe recogerse al registrar alumnos nuevos y poder añadirse o
-cambiarse desde el perfil de los ya registrados, con persistencia en Oracle.
+Decisión del 22/11: se sustituye el envío por correo por entrega manual de la clave.
+No se requiere correo del estudiante, proveedor de correo ni dominio remitente.
 
-Diseño en revisión: confirmar la propiedad del correo antes de enviar credenciales,
-limitar cada profesor a sus estudiantes matriculados y registrar aprobador, vigencia y
-revocación. La solicitud no debe permitir sustituir el destinatario guardado para otra cuenta.
-La excepción habilita el acceso al portal; no registra asistencia. La identidad del aprobador
-debe adaptarse mediante una migración nueva: la versión 008 solo admite administradores.
+En **Portal docente → Excepciones de acceso**, el profesor selecciona una materia
+propia activa y un alumno activo matriculado, comprueba su documento y establece
+una contraseña de al menos 12 caracteres. Indica categoría, referencia y vigencia
+(1 día por defecto; entre 1 y 365). Confirma la clave y la entrega personalmente.
+El formulario limpia documento y contraseña después de autorizar; el sistema guarda
+solo HMAC del documento, últimos cuatro caracteres y hash bcrypt de la contraseña.
 
-El usuario dispone de un buzón institucional como estudiante para pruebas y presentación;
-la aplicación y sus mensajes deben identificar el uso como demostración académica, sin
-atribuir carácter oficial a la universidad. Se estudia Brevo por API HTTPS, que permite
-verificar un remitente por código. No se ha creado/configurado ese proveedor, enviado
-correos ni modificado el esquema. El acceso al buzón no implica administrar el dominio.
+Puede renovar o revocar las autorizaciones que emitió. No puede sustituir las de
+Administración ni las de otro docente, incluso si comparte matrícula con el alumno.
+Administración puede revisar y sustituir una autorización docente. Una clave perdida
+se sustituye mediante renovación; no se recupera desde Oracle.
 
-El flujo administrativo descrito a continuación continúa siendo la implementación actual.
-Referencias: [verificación de remitente](https://help.brevo.com/hc/en-us/articles/208836149-Create-a-new-sender-From-name-and-From-email?source=search),
-[API de correo](https://developers.brevo.com/reference/send-transac-email) y
-[SMTP bloqueado en Render Free](https://render.com/docs/free).
+`PKG_EXCEPCIONES_DOCENTES` valida rol, cuenta activa, propiedad de materia, matrícula,
+versión y autoría. La cuenta técnica restringida recibe EXECUTE en el paquete; el
+runtime ordinario conserva sus 53 permisos y no recibe DML de autorización. La sesión
+real se vuelve a validar antes de usar esa conexión, sin adoptar el rol administrador.
+
+009 añade `autorizado_docente_por` y `materia_autorizacion_id`, con claves foráneas,
+y amplía la restricción de aprobación: administrador o docente con materia, nunca
+ambos. Conserva las aprobaciones previas. La renovación administrativa limpia el
+aprobador docente. No añade tablas ni elimina datos académicos.
+
+Se comprobaron acceso, vigencia, revocación, autoría, matrícula y sesión en Oracle
+local con cuentas sintéticas. Autonomous 009 y sus permisos se verificaron tras un
+respaldo cifrado. El ensayo con el profesor y estudiante en Render sigue pendiente.
 
 ## Operación
 
@@ -146,12 +153,12 @@ Actualización de una instalación existente (respaldo privado previo automátic
 .\.venv\Scripts\python.exe scripts\oracle.py verificar
 ```
 
-El instalador nuevo incluye 008. Si se ejecuta el SQL directamente con SQL*Plus, como propietario
-del proyecto y desde su raíz, aplicar `@sql/migraciones/008_excepciones.sql` después de 007 y
+El instalador nuevo incluye 009. Si se ejecuta el SQL directamente con SQL*Plus, como propietario
+del proyecto y desde su raíz, aplicar 008 después de 007 y `@sql/migraciones/009_excepciones_docentes.sql` después de 008;
 preparar la clave con `.\.venv\Scripts\python.exe scripts\preparar_identidad.py`.
 Una instalación con rol administrativo de nombre personalizado requiere EXECUTE sobre
-`pkg_excepciones` para dicho rol; `scripts/oracle.py` lo concede desde la configuración existente.
-El script de preparación administrativa exige ahora 008.
+`pkg_excepciones` y `pkg_excepciones_docentes` para dicho rol; `scripts/oracle.py` lo concede desde la configuración existente.
+El script de preparación administrativa exige ahora 009.
 
 Consultas de presentación en SQL*Plus/SQL Developer, como propietario:
 

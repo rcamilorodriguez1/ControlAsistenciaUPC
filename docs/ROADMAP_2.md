@@ -21,7 +21,7 @@ Es una alternativa a evaluar, sin una decisión de migrar el servicio ya despleg
   Separar las pantallas requiere diseñar una interfaz independiente y una API, con
   autenticación, sesiones, subida de muestras y comunicación entre los dos dominios.
 - Una distribución posible es interfaz en Vercel, API Python y biometría en Render,
-  Oracle Autonomous para los datos y un proveedor de correo por API HTTPS.
+  Oracle Autonomous para los datos. La excepción utiliza entrega manual de la clave.
 - Trasladar la interfaz no acredita una reducción suficiente de memoria: los modelos
   faciales y de voz seguirían consumiendo recursos donde se ejecute la inferencia.
   El usuario confirma que la prioridad es **memoria y CPU del reconocimiento facial y de
@@ -101,15 +101,9 @@ implementación forman parte de esta segunda etapa.
 - [ ] Actualizar diccionario de datos, diagrama, justificaciones y ejemplos de SQL/PLSQL.
 - [ ] Actualizar el mockup y la memoria académica cuando la nueva edición esté estabilizada.
 
-## Requisito retomado: excepción docente y correo estudiantil
+## Excepción docente: requisito trasladado a la rama vigente
 
-El 22/11 el usuario retoma expresamente el apartado de excepciones en el portal docente
-y el envío de la contraseña al correo del estudiante. Solicita recoger el correo en el
-registro de alumnos nuevos y permitir añadirlo o cambiarlo desde el perfil de cuentas
-existentes, conservándolo en Oracle. Es una demostración académica, no un servicio
-oficial de la universidad. Los permisos, la verificación del correo y la entrega deben
-implementarse y probarse; todavía no forman parte de la versión publicada.
-Detalle: [excepciones y correo](EXCEPCIONES_BIOMETRICAS.md#requisito-retomado-autorización-docente-y-correo).
-
-Este roadmap no está iniciado ni completado por registrar sus tareas. El progreso y las
-aceptaciones futuras se anotarán por separado en `CAMBIOS.md` y `FRONTEND.md`.
+La autorización docente y entrega manual se desarrollan en [FB6](ROADMAP_FRONT_BACK.md).
+La decisión posterior del 22/11 sustituye el correo por una clave entregada personalmente;
+no se requiere proveedor de correo ni registrar direcciones para este flujo.
+Véase [excepciones biométricas](EXCEPCIONES_BIOMETRICAS.md).

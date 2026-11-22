@@ -83,6 +83,10 @@ def renderizar_vista():
             'src.pantallas.pantalla_profesor.obtener_resumen_profesor': {'total_materias': 2, 'total_estudiantes': 41, 'asistencia_promedio': 91},
             'src.pantallas.pantalla_profesor.obtener_materias_profesor': materias,
             'src.componentes.gestion_cuenta.obtener_materias_profesor': materias,
+            'src.componentes.excepciones_docentes.obtener_materias_profesor': materias,
+            'src.servicios.excepciones_docentes.listar': [dict(estudiante_id=990007,
+                nombre='Estudiante de prueba', codigo_institucional='PREVIEW-7', excepcion_activa=0,
+                excepcion_vigente=0, expira_en=None, version_credencial=0, puede_autorizar=1, puede_revocar=0)],
             'src.pantallas.pantalla_profesor.obtener_asistencia_profesor': registros,
             'src.pantallas.pantalla_profesor.obtener_estudiantes_matriculados': estudiantes,
             'src.pantallas.pantalla_estudiante.obtener_resumen_estudiante': {'total_materias': 2, 'total_clases': 6, 'asistencia_promedio': 83},
@@ -100,6 +104,8 @@ def renderizar_vista():
                 for i, m in enumerate(materias)],
             'src.componentes.dialogo_asistencia_voz.obtener_estudiantes_matriculados': estudiantes}
         for destino, valor in lecturas.items(): parches.enter_context(patch(destino, return_value=valor))
+        for metodo in ('autorizar', 'revocar'):
+            parches.enter_context(patch('src.servicios.excepciones_docentes.'+metodo, side_effect=bloquear))
         parches.enter_context(patch('src.componentes.selector_clase.obtener_clases_profesor', side_effect=lambda m, p: [
             {'clase_id': 100 if m == 10 else 200, 'materia_id': m, 'estado': 'BORRADOR', 'origen': 'PENDIENTE',
              'lote_legado': 0, 'fecha_hora': '2026-11-11T08:00:00.000000-05:00'}]))

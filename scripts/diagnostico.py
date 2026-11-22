@@ -45,8 +45,8 @@ def main():
                     cur.execute('SELECT version FROM versiones_esquema ORDER BY version')
                     versiones = [f[0] for f in cur]
                     print('Versiones del esquema:', versiones)
-                    if not {'001', '002', '003', '004', '005', '006', '007', '008'}.issubset(versiones):
-                        raise ValueError('Falta alguna version 001–008. Ejecutar scripts/oracle.py migrar.')
+                    if not {'001', '002', '003', '004', '005', '006', '007', '008', '009'}.issubset(versiones):
+                        raise ValueError('Falta alguna version 001–009. Ejecutar scripts/oracle.py migrar.')
                     cur.execute("SELECT COUNT(*) FROM user_objects WHERE object_name='PKG_EXCEPCIONES' AND object_type IN ('PACKAGE','PACKAGE BODY') AND status='VALID'")
                     if cur.fetchone()[0] != 2: raise ValueError('Falta PKG_EXCEPCIONES válido.')
                     cur.execute("SELECT COUNT(*) FROM user_objects WHERE status <> 'VALID'")

@@ -156,7 +156,7 @@ class DespliegueTest(unittest.TestCase):
     def test_preflight_base_es_de_solo_lectura_y_revisa_permisos(self):
         propietario = MagicMock()
         consulta = propietario.__enter__.return_value.cursor.return_value.__enter__.return_value
-        consulta.__iter__.return_value = iter([(f'{n:03d}',) for n in range(1, 9)])
+        consulta.__iter__.return_value = iter([(f'{n:03d}',) for n in range(1, 10)])
         consulta.fetchone.side_effect = [('UPC_AULA_APP', 'UPC_ASISTENCIA'), (0,), (0,)]
         from src.base_datos.permisos_ejecucion import contrato_permisos
         contrato = contrato_permisos()
@@ -164,7 +164,7 @@ class DespliegueTest(unittest.TestCase):
             [(o, p, 'NO') for o, p, c in contrato if c is None],
             [(o, c, p, 'NO') for o, p, c in contrato if c is not None]]
         limitada = MagicMock()
-        limitada.acquire.return_value.__enter__.return_value.cursor.return_value.__enter__.return_value.fetchone.return_value = (4,)
+        limitada.acquire.return_value.__enter__.return_value.cursor.return_value.__enter__.return_value.fetchone.return_value = (5,)
         with patch('src.base_datos.configuracion.obtener_conexion', return_value=propietario), \
                 patch('src.base_datos.administracion.obtener_pool_admin', return_value=limitada):
             comprobar_base()

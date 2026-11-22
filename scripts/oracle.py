@@ -31,7 +31,7 @@ def main():
         parser.error('Usa un DSN host:puerto/servicio.')
     rutas = {'instalar': 'oracle_scripts.sql', 'verificar': 'sql/04_verificar.sql',
              'demostrar': 'sql/05_demostracion.sql', 'exportar': 'sql/06_exportar_ddl.sql',
-             'migrar': 'sql/migraciones/008_excepciones.sql',
+             'migrar': 'sql/migraciones/009_excepciones_docentes.sql',
              'demostrar-clases': 'sql/17_demostracion_clases.sql',
              'demostrar-estados': 'sql/22_demostracion_estados.sql',
              'demostrar-disparadores': 'sql/12_demostracion_disparadores.sql'}
@@ -57,11 +57,14 @@ def main():
             pre_migracion += '@sql/migraciones/006_administracion.sql\n'
         if '007' not in versiones:
             pre_migracion += '@sql/migraciones/007_sesiones.sql\n'
+        if '008' not in versiones:
+            pre_migracion += '@sql/migraciones/008_excepciones.sql\n'
     post_migracion = ''
     if args.accion in ('migrar','instalar') and obtener_configuracion('ORACLE_ADMIN_ROL'):
         rol_admin = identificador(obtener_configuracion('ORACLE_ADMIN_ROL'))
         post_migracion = f'GRANT EXECUTE ON pkg_sesiones TO {rol_admin};\n'
         post_migracion += f'GRANT EXECUTE ON pkg_excepciones TO {rol_admin};\n'
+        post_migracion += f'GRANT EXECUTE ON pkg_excepciones_docentes TO {rol_admin};\n'
     if args.accion in ('migrar','instalar'):
         from src.servicios.verificacion_identidad import preparar_clave
         preparar_clave()

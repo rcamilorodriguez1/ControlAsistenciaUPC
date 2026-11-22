@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 def acceso_excepcional(*, deshabilitado=False):
     token = st.session_state.sesion_token
     with st.expander('No puedo completar la validación biométrica'):
-        st.caption('Acceso alternativo previamente autorizado por Gestión académica. Si aún no tienes autorización, contacta con el responsable institucional.')
+        st.caption('Usa tu documento y la clave que te entregue tu docente o Gestión académica. Si aún no tienes autorización, solicítala a tu docente.')
         with st.form('acceso_excepcional'):
             tipo = st.selectbox('Tipo de documento', TIPOS_DOCUMENTO, disabled=deshabilitado, key=f'auth_estudiante_tipo_{token}')
             documento = st.text_input('Número de documento', max_chars=40, disabled=deshabilitado, key=f'auth_estudiante_documento_{token}')

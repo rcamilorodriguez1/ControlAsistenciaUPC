@@ -17,4 +17,5 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK
 @sql/migraciones/006_administracion.sql
 @sql/migraciones/007_sesiones.sql
 @sql/migraciones/008_excepciones.sql
+@sql/migraciones/009_excepciones_docentes.sql
 PROMPT Instalacion inicial completada. No se insertaron personas ni muestras biometricas.
