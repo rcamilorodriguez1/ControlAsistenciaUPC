@@ -4,8 +4,9 @@ Documentación: [índice de guías](README.md) y [registro de cambios](CAMBIOS.m
 
 Actualización: 22 de noviembre de 2026. Objetivo vigente: completar la organización y el
 despliegue de la versión actual antes de iniciar el [segundo roadmap](ROADMAP_2.md).
-El usuario confirma que tiene Autonomous Database y **todavía no tiene una VM Compute**.
-La decisión vigente es ejecutar la aplicación **con Docker** en Oracle Cloud.
+El usuario tiene Autonomous Database y **todavía no tiene una VM Compute**.
+Tras la falta de capacidad en OCI, se prepara **Docker en Render**, manteniendo Oracle
+Autonomous como base. La VM de OCI queda como alternativa registrada.
 
 Objetivo: una instalación reproducible por PC, datos consistentes en Oracle, asistencia revisable,
 HTTPS local y una presentación final del esquema y de PL/SQL con SQL Developer.
@@ -19,9 +20,9 @@ SQL*Plus y SQL Developer son clientes de la misma base Oracle; pasar al segundo 
 | 2 | Organizar las consultas y el acceso a datos existente | Completado: catálogo SQL compartido, sin cambiar reglas ni transacciones. |
 | 3 | Comprobar la reorganización | Completado: 182 pruebas aprobadas, 64 de integración omitidas y 65 consultas de lectura analizadas en Oracle Cloud. |
 | 4 | Separar ejecución y administración del esquema | Completado: UPC_AULA_APP creado y verificado en Autonomous, propietario separado, 53 permisos comprobados, 55 sentencias analizadas y cero objetos propios. |
-| 5 | Preparar la configuración de la aplicación para cloud | Pendiente: cuentas web iniciales, autorización docente, claves y traslado de datos si corresponde. |
-| 6 | Crear VM Compute y construir/ejecutar Docker | Creación detenida por falta de capacidad A1.Flex en AD-1, AD-2 y AD-3 de Ashburn; imagen preparada, sin construcción Linux real validada. |
-| 7 | Dominio, HTTPS, QR y persistencia del servidor | Red preparada según capturas y confirmaciones; conectividad, dominio, HTTPS, QR y persistencia pendientes de ensayo con la VM. |
+| 5 | Preparar la configuración de la aplicación para cloud | En curso: variables cloud importadas en Render y clave original preparada como Secret File Base64. Cuentas web iniciales, datos y acceso desde Render a Oracle todavía pendientes de comprobación. |
+| 6 | Construir y ejecutar Docker en el alojamiento elegido | Render construyó la imagen de b775e9a; el arranque se detuvo por APP_BASE_URL y luego por la clave. Corrección Base64 local en de3e471, con 18 pruebas aprobadas; publicación y arranque actual pendientes. VM OCI sin capacidad A1.Flex. |
+| 7 | Dominio, HTTPS, QR y persistencia del servidor | URL asignada: https://controlasistenciaupc.onrender.com. Servicio todavía sin arranque aceptado; HTTPS, QR, persistencia y recorridos pendientes de ensayo. Se conserva la red OCI preparada. |
 | 8 | Ensayo completo, recuperación y presentación en SQL Developer | Pendiente. |
 
 Guías: [despliegue](DESPLIEGUE.md), [instalación](INSTALACION.md) y
@@ -33,7 +34,24 @@ Las mejoras de frontend y el rediseño de paquetes, disparadores, tablas, vistas
 que deban trasladarse de Python a Oracle quedan para el **segundo roadmap**. No se crea
 una migración de negocio nueva ni se da esa segunda etapa por iniciada.
 
+## Continuación inmediata en Render
+
+Orden acordado: **MD con los cambios → commit local → push**, explicado en el
+[índice de documentación](README.md#contexto-del-proyecto-y-orden-de-publicación).
+Estado registrado tras el primer intento: Render construye `b775e9a`; el código de
+cuentas separadas (`aaad858`) y de lectura Base64 (`de3e471`) permanece en commits locales.
+El usuario solicita completar primero los MD y el commit local; no ejecutar el push todavía.
+
+Después de publicar: comprobar que Render construya el commit esperado, revisar
+APP_BASE_URL, PORT=8501, ruta/formato de la clave y autorización de sus IP de salida en
+Autonomous. Verificar el arranque y los portales antes de cerrar los entregables 5–7.
+La imagen antigua construida no acredita que la versión actual funcione en producción.
+Los secretos y el perfil local no se sustituyen. Guía: [Render y Autonomous](DESPLIEGUE.md#alternativa-preparada-render-y-oracle-autonomous).
+
 ## Continuación mientras no haya capacidad Compute
+
+Este apartado conserva los intentos y la red de OCI como referencia. La continuación
+actual utiliza Render, según el apartado anterior; no requiere esperar una VM.
 
 El usuario confirmó errores `Out of capacity` para `VM.Standard.A1.Flex` en los tres
 dominios de disponibilidad de Ashburn. La VM no está creada. Esto describe los intentos

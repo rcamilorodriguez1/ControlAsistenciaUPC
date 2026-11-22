@@ -4,6 +4,25 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 22 de noviembre de 2026 — Contexto de Render y orden de registro y publicación
+
+Se conserva la organización documental existente: CAMBIOS.md para entregas y evidencias,
+ROADMAP.md para estado y continuación, DESPLIEGUE.md para la configuración operativa,
+y README.md como índice. Se registra el orden de trabajo acordado: **MD con los
+cambios → commit local → push**. El contexto se mantiene en esos documentos del proyecto.
+
+Se actualizan el roadmap y la portada del proyecto con Render como continuación de
+alojamiento y Autonomous como base. El primer intento construyó b775e9a y se detuvo
+al arrancar por APP_BASE_URL ausente; los registros posteriores avanzan a la validación
+de la clave, incompatible con el lector binario de esa versión. URL asignada:
+https://controlasistenciaupc.onrender.com; todavía no hay un servicio aceptado como operativo.
+
+La separación Oracle está en el commit local aaad858 y la adaptación Base64 en de3e471,
+con 12 pruebas de despliegue y 6 de identidad aprobadas. El perfil privado de Render
+incluye la URL real y la copia Base64 conserva la clave original. Los secretos permanecen
+en `.local/` y Render; no se incorporan al commit. Esta continuación guarda documentación
+y commit local; el push y el ensayo de la versión actual quedan para el paso posterior.
+
 ## 22 de noviembre de 2026 — Preparación alternativa para Render
 
 Se prepara la configuración privada para un Web Service Docker en Render, manteniendo

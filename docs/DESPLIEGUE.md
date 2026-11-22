@@ -4,14 +4,22 @@
 
 El 22/11 se prepara Render como alojamiento alternativo a la VM de OCI. Autonomous
 conserva la base de datos y sus cuentas técnicas. La importación de variables y el soporte
-de la clave en texto no equivalen a un despliegue publicado ni a una construcción Linux
-verificada. La configuración local conserva su destino y su clave binaria.
+de la clave en texto no acreditan el arranque de la versión actual en producción.
+La configuración local conserva su destino y su clave binaria.
 
 Primer intento en Render con `b775e9a`: la imagen se construyó y exportó correctamente.
 El arranque se detuvo primero por APP_BASE_URL ausente y luego por la clave Base64,
 que esa versión anterior solo podía leer como bytes binarios. La URL asignada es
 `https://controlasistenciaupc.onrender.com`. Este resultado todavía no valida el
 arranque de la versión actual, los permisos cloud ni los recorridos de los portales.
+
+La corrección está guardada localmente en `de3e471`; `aaad858` contiene la separación
+de cuentas Oracle. El `.env` privado ya incorpora APP_BASE_URL con la URL asignada.
+Los registros posteriores pasan esa comprobación y se detienen en la lectura de la clave,
+con el mensaje «Falta la clave de identidad original de 32 bytes en una ruta absoluta
+legible». El soporte Base64 todavía no está en el repositorio que usa Render.
+Completar primero los MD y el commit local, y publicar después según el
+[orden acordado](README.md#contexto-del-proyecto-y-orden-de-publicación).
 
 Crear un **Web Service**, región **Virginia**, repositorio del proyecto, rama `main`,
 runtime **Docker**, Root Directory vacío y Dockerfile `./Dockerfile`. Mantener el comando
@@ -34,8 +42,8 @@ de arranque de la imagen; Render termina HTTPS, sin ejecutar el Compose de Caddy
 - Publicar en GitHub los cambios de código que el servicio deba construir. Un commit
   únicamente local no está disponible para Render. Las credenciales permanecen privadas.
 
-Pendientes: confirmar plan y memoria para los motores biométricos, construir y arrancar
-la imagen, verificar Oracle desde Render, revisar archivos que necesiten persistencia y
+Pendientes: confirmar plan y memoria para los motores biométricos, publicar los commits,
+construir y arrancar la imagen actual, verificar Oracle desde Render, revisar persistencia y
 ensayar los portales, HTTPS, cámara y micrófono. No se considera validado el servicio Free
 para la aplicación completa. El endpoint de salud comprueba Streamlit; Oracle se valida
 durante el arranque y no se consulta en cada petición de salud.
@@ -49,7 +57,8 @@ Referencias: [Docker en Render](https://render.com/docs/docker),
 
 Estado del 22 de noviembre de 2026: Autonomous UPCAULA ya tiene usuarios y esquema
 001–008 instalados, con TLS y permisos administrativos verificados. El usuario confirma
-que todavía no tiene una VM Compute. La aplicación se ejecutará con Docker en esa VM.
+que todavía no tiene una VM Compute. El plan original era ejecutar Docker en esa VM;
+la continuación actual con Render se describe arriba.
 
 La cuenta de ejecución UPC_AULA_APP ya está creada y verificada, separada del propietario
 UPC_ASISTENCIA y de la cuenta administrativa UPC_ADMIN_APP: 53 permisos comprobados,

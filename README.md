@@ -71,8 +71,9 @@ introducir un documento por sí solo no autentica ni registra asistencia.
 
 Las dependencias directas están en [requirements.txt](requirements.txt). El archivo
 [requirements-lock-windows-py311.txt](requirements-lock-windows-py311.txt) registra el entorno
-Windows auditado. Se incluye preparación de contenedor Linux x64/ARM64 con PyTorch CPU;
-su construcción y el ensayo en la infraestructura de destino siguen pendientes.
+Windows auditado. Se incluye preparación de contenedor Linux x64/ARM64 con PyTorch CPU.
+La imagen inicial se construyó en Render; la versión actual y el ensayo funcional en
+la infraestructura de destino siguen pendientes.
 
 ## Puesta en marcha
 
@@ -133,13 +134,17 @@ recuperarse por un canal privado su clave original de identidad. Los procedimien
 
 ### Alojamiento en la nube
 
-El plan vigente utiliza Oracle Autonomous Database y una máquina Linux de OCI con
-**Docker**, Python 3.11 y procesamiento en CPU. La base cloud está instalada y verificada;
-la máquina virtual todavía no está creada. Servidor, dominio, HTTPS y traslado de datos
-siguen pendientes.
+La continuación actual utiliza **Render con Docker** para la aplicación y **Oracle
+Autonomous Database** para los datos, con Python 3.11 y procesamiento en CPU. Render
+construyó la imagen de una versión anterior; los cambios de cuentas separadas y lectura
+Base64 de la clave están guardados localmente, pendientes de push y ensayo de arranque.
+La VM de OCI sigue como alternativa, sin capacidad disponible en los intentos registrados.
+El servicio, HTTPS, QR, persistencia y traslado de datos todavía requieren validación.
 
-La [guía de despliegue](docs/DESPLIEGUE.md) describe la VM, el contenedor y la configuración
-privada. `scripts/probar_oracle_cloud.py` comprueba la nueva conexión TLS
+La [guía de despliegue](docs/DESPLIEGUE.md) describe Render, el plan de VM y la configuración
+privada. El [índice documental](docs/README.md#contexto-del-proyecto-y-orden-de-publicación)
+conserva el orden acordado: MD con los cambios, commit local y después push.
+`scripts/probar_oracle_cloud.py` comprueba la nueva conexión TLS
 de forma independiente de Oracle local y solicita la contraseña en la terminal, sin mostrarla.
 
 ## Oracle y PL/SQL

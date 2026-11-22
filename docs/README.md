@@ -14,10 +14,34 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 | Consultar las mejoras posteriores de frontend y base de datos | [Segundo roadmap](ROADMAP_2.md) |
 | Distinguir lo probado de lo aprobado por el usuario | [Seguimiento del frontend](FRONTEND.md) |
 | Instalar, ejecutar y comprobar HTTPS | [Instalación](INSTALACION.md) |
-| Preparar Linux, HTTPS público y Oracle Cloud | [Despliegue en la nube](DESPLIEGUE.md) |
+| Preparar Render o una VM Linux con Oracle Autonomous | [Despliegue en la nube](DESPLIEGUE.md) |
 | Separar la cuenta de ejecución del propietario Oracle | [Cuenta de ejecución, permisos y preparación cloud](CUENTA_EJECUCION.md) |
 | Entender cada tabla, relación, consulta y disparador actual | [Funcionamiento de la base de datos](BASE_DE_DATOS.md) |
 | Utilizar la última entrega de excepciones biométricas | [Excepciones biométricas](EXCEPCIONES_BIOMETRICAS.md) |
+
+## Contexto del proyecto y orden de publicación
+
+Al retomar el trabajo, leer este índice, las entradas recientes de [CAMBIOS.md](CAMBIOS.md),
+la secuencia actual de [ROADMAP.md](ROADMAP.md) y la guía del área modificada. Estos
+documentos mantienen el contexto dentro del proyecto; las copias antiguas de
+`.local/publicacion/` y `.local/README.upc.md` son material histórico, no la documentación
+vigente. El PDF conserva la edición indicada hasta que se regenere expresamente.
+
+Orden aclarado por el usuario el 22 de noviembre de 2026:
+
+1. **MD con los cambios:** registrar qué cambió, motivo, pruebas y límites en CAMBIOS.md;
+   actualizar la guía correspondiente y ROADMAP.md si cambia el estado o la continuación.
+   Guardar las evidencias privadas en `.local/`, sin copiar sus secretos a los MD.
+2. **Commit local:** revisar el diff y los archivos preparados, ejecutar las comprobaciones
+   que correspondan y guardar código y documentación juntos en Git. Un commit deja un
+   punto de referencia local y todavía no publica nada en GitHub ni en Render.
+3. **Push:** publicar los commits en la rama de GitHub cuando se decida continuar con esa
+   etapa. Con Auto-Deploy **On Commit**, Render construye la versión publicada en `main`.
+   Confirmar el commit desplegado y su resultado antes de registrar el servicio como operativo.
+
+En la continuación actual se solicitan los MD y el commit local; el push queda para el
+paso posterior. Variables y archivos secretos se administran por separado en Render y
+permanecen fuera del repositorio.
 
 ## Memoria integral del proyecto
 
