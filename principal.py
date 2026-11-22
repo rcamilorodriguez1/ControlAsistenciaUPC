@@ -36,9 +36,15 @@ def mostrar_portal():
 
     match st.session_state["tipo_sesion"]:
         case "profesor":
-            with st.spinner('Abriendo el portal del profesor...'):
-                from src.pantallas.pantalla_profesor import pantalla_profesor
-            pantalla_profesor()
+            vista = st.session_state.get('_vista_profesor')
+            if vista in ('perfil', 'configuracion') and sesion_activa('profesor'):
+                from src.pantallas.perfil_docente import pantalla_perfil_docente, pantalla_configuracion_docente
+                if vista == 'perfil': pantalla_perfil_docente()
+                else: pantalla_configuracion_docente()
+            else:
+                with st.spinner('Abriendo el portal del profesor...'):
+                    from src.pantallas.pantalla_profesor import pantalla_profesor
+                pantalla_profesor()
 
         case "estudiante":
             if st.session_state.get('_vista_estudiante') == 'perfil' and sesion_activa('estudiante'):

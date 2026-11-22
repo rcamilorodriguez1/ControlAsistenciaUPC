@@ -1,4 +1,3 @@
-from src.componentes.gestion_cuenta import gestion_cuenta
 import streamlit as st
 
 
@@ -47,19 +46,11 @@ def panel_profesor():
 
     encabezado_panel('profesor', autenticado=True)
     introduccion('Portal del profesor', f"Bienvenido, {datos_profesor['nombre']}",
-                 'Tus materias, tus clases y cada registro de asistencia en un solo lugar.')
+                 'Toma asistencia, gestiona tus materias y revisa los registros de cada clase.')
 
-    resumen = obtener_resumen_profesor(datos_profesor["profesor_id"])
-
-    with st.container(border=True, key='resumen_panel'):
-        k1, k2, k3 = st.columns(3)
-        k1.metric("Materias Activas", resumen["total_materias"])
-        k2.metric("Estudiantes Matriculados", resumen["total_estudiantes"])
-        k3.metric("Asistencia Promedio", f"{resumen['asistencia_promedio']:.0f}%")
-
-    st.space()
-
-    # st.space()
+    from src.interfaz.navegacion import abrir_perfil
+    st.button('Consultar mi agenda', key='abrir_agenda_docente', type='tertiary',
+              icon=':material/calendar_month:', on_click=abrir_perfil)
 
     if "pestana_actual_profesor" not in st.session_state:
         st.session_state.pestana_actual_profesor = "tomar_asistencia"
@@ -96,7 +87,6 @@ def panel_profesor():
         pestana_registros_asistencia()
 
 
-    gestion_cuenta()
     pie_pagina_panel()
 
 

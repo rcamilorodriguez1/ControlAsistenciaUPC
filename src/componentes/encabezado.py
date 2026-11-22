@@ -3,7 +3,7 @@ from functools import lru_cache
 from html import escape
 import streamlit as st
 from src.interfaz.diseno_base import RAIZ
-from src.interfaz.navegacion import abrir_perfil_estudiante
+from src.interfaz.navegacion import abrir_perfil, abrir_configuracion_docente
 from src.utilidades.sesiones import salir_al_portal, seleccionar_portal, ir_al_inicio, obtener_actor
 
 
@@ -75,11 +75,13 @@ def _acciones_cuenta(*, es_inicio=False):
             with st.popover(nombres[actor[0]], icon=':material/account_circle:', type='tertiary', key='menu_cuenta'):
                 with st.container(key='opciones_cuenta', gap=None):
                     st.button('Mi perfil', icon=':material/person:', type='tertiary',
-                              disabled=actor[0] != 'estudiante', key='mi_perfil_cuenta',
-                              help='Ver mi actividad académica' if actor[0] == 'estudiante' else 'Próximamente',
-                              width='stretch', on_click=abrir_perfil_estudiante)
+                              disabled=actor[0] not in ('estudiante', 'profesor'), key='mi_perfil_cuenta',
+                              help='Ver mi actividad académica',
+                              width='stretch', on_click=abrir_perfil)
                     st.button('Configuración', icon=':material/settings:', type='tertiary',
-                              disabled=True, help='Próximamente', width='stretch')
+                              disabled=actor[0] != 'profesor', key='configuracion_cuenta',
+                              help='Administrar cuenta y materias' if actor[0] == 'profesor' else 'Próximamente',
+                              width='stretch', on_click=abrir_configuracion_docente)
                     with st.container(key='cierre_cuenta', gap=None):
                         st.divider()
                         st.button('Cerrar sesión', icon=':material/logout:', type='tertiary',

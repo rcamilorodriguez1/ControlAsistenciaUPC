@@ -29,18 +29,12 @@ def panel_estudiante(inscripcion_pendiente=False):
 
     encabezado_panel('estudiante', autenticado=True)
     introduccion('Portal del estudiante', f"Bienvenido, {datos_estudiante['nombre']}",
-                 'Consulta tus materias y sigue tu participación en cada clase.')
+                 'Inscríbete con el código de tu docente o administra tus matrículas actuales.')
     mostrar_estado_verificacion(datos_estudiante.get('estado_verificacion'))
 
-    resumen = obtener_resumen_estudiante(id_estudiante)
-
-    with st.container(border=True, key='resumen_panel'):
-        k1, k2, k3 = st.columns(3)
-        k1.metric("Materias Inscritas", resumen["total_materias"])
-        k2.metric("Clases Registradas", resumen["total_clases"])
-        k3.metric("Asistencia Promedio", f"{resumen['asistencia_promedio']:.0f}%")
-
-    st.space() 
+    from src.interfaz.navegacion import abrir_perfil
+    st.button('Ver mi asistencia y calendario', key='abrir_historial_estudiante', type='tertiary',
+        icon=':material/calendar_month:', on_click=abrir_perfil)
 
     c1, c2 = st.columns(2)
     with c1:

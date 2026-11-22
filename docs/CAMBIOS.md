@@ -1,5 +1,21 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Perfil y configuración del docente
+
+- El menú de cuenta abre Mi perfil y Configuración para docentes. Ambas rutas exigen
+  la sesión vigente; el repositorio contrasta el actor con el contexto Oracle.
+- Perfil: identidad, materias propias activas/archivadas, calendario mensual, detalle
+  de clases por día y próximas sesiones. No se inventan clases recurrentes ni asistencia.
+- Archivo de materias y cuenta se traslada del portal docente a Configuración. Se
+  conserva el historial; no se añade eliminación física de cuentas.
+- Los portales priorizan operaciones y enlazan el perfil; el estudiante conserva su
+  historial y porcentajes en su perfil. La agenda docente usa una estética propia.
+- Verificación: 5 pruebas de perfil y 8 de navegación aprobadas; consulta compilada en
+  Autonomous con ID inexistente, sin leer datos personales. Revisión Orca con datos
+  sintéticos a 390 px sin desbordamiento horizontal; comprobación de escritorio.
+- Falta la aceptación del usuario en Render y la autorización docente de excepciones.
+
+
 ## 22/11/2026 — Selector de clases independiente por docente y materia
 
 - Se retira #ID de la etiqueta: el ID era global de Oracle, no un contador de clases

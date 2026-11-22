@@ -135,12 +135,12 @@ class NavegacionGlobalTest(unittest.TestCase):
                     if solicitado == 'estudiante': self.assertFalse(at.camera_input[0].disabled)
                     else: self.assertFalse(next(b for b in at.button if b.label == etiqueta).disabled)
 
-    def test_menu_reserva_dos_opciones_y_no_incluye_inicio(self):
+    def test_menu_docente_habilita_perfil_y_configuracion_sin_duplicar_inicio(self):
         at, _ = self.crear('profesor')
         menu = at.get('popover')[0]
         self.assertEqual([b.label for b in menu.button], ['Mi perfil', 'Configuración', 'Cerrar sesión'])
-        self.assertTrue(menu.button[0].disabled)
-        self.assertTrue(menu.button[1].disabled)
+        self.assertFalse(menu.button[0].disabled)
+        self.assertFalse(menu.button[1].disabled)
 
     def test_servicios_rechazan_login_alta_y_apertura_con_actor_vigente(self):
         from src.servicios import sesiones_servidor, registro_estudiante

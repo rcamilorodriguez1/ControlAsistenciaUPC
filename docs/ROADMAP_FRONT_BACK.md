@@ -5,12 +5,12 @@ Depende del [roadmap general](ROADMAP.md). Solicitudes del 22/11/2026.
 | ID | Tarea y criterio de cierre | Estado |
 | --- | --- | --- |
 | FB1 | Retirar #ID del selector; separar selección por docente/materia; conservar clases e historial | Implementado; 2 pruebas aisladas aprobadas |
-| FB2 | Mover archivo de cuenta/materias a Configuración del docente; exigir su sesión | Pendiente |
-| FB3 | Publicar los tres estudiantes y el docente indicados en el pie, con ajuste móvil | En ejecución |
-| FB4 | Perfil docente privado: todas sus materias, agenda mensual y próximas clases persistidas | Pendiente |
-| FB5 | Diferenciar portal de operaciones, perfil académico y configuración; acceso desde el menú de cuenta | Pendiente |
+| FB2 | Mover archivo de cuenta/materias a Configuración del docente; exigir su sesión | Implementado; navegación y sesión comprobadas |
+| FB3 | Publicar los tres estudiantes y el docente indicados en el pie, con ajuste móvil | Implementado; revisión visual móvil |
+| FB4 | Perfil docente privado: todas sus materias, agenda mensual y próximas clases persistidas | Implementado; 5 pruebas; consulta compilada en Autonomous |
+| FB5 | Diferenciar portal de operaciones, perfil académico y configuración; acceso desde el menú de cuenta | Implementado; 8 pruebas de navegación |
 | FB6 | Autorizar/renovar/revocar contraseña alternativa por docente para alumnos de sus materias, con vigencia, auditoría y entrega manual | Pendiente |
-| FB7 | Quitar iconos de ancla de encabezados manteniendo títulos y enlaces de navegación | En ejecución |
+| FB7 | Quitar iconos de ancla de encabezados manteniendo títulos y enlaces de navegación | Implementado; enlaces nativos de Inicio disponibles |
 
 ## Criterios transversales
 

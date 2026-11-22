@@ -395,3 +395,36 @@ button:focus-visible, a:focus-visible, summary:focus-visible {
 /* Los títulos conservan su semántica; se oculta solo el control de enlace al ancla. */
 [data-testid="stHeaderActionElements"] { display: none !important; }
 .academic-footer-credits li, .academic-footer-record dd { overflow-wrap: anywhere; }
+
+/* El perfil docente usa una agenda editorial distinta del historial estudiantil. */
+.docente-portada { background: #113e46; color: white; padding: 2rem; border-radius: 1rem;
+  display: flex; gap: 1.5rem; align-items: center; margin: 1rem 0; }
+.docente-portada h1 { color: white; margin: .2rem 0; font-size: clamp(1.5rem, 3vw, 2.5rem); }
+.docente-portada p { letter-spacing: .15em; font-size: .72rem; color: #bfdfce; }
+.docente-avatar { flex-shrink: 0; background: #e3efdf; color: #113e46; border-radius: 50%;
+  width: 4rem; height: 4rem; display: grid; place-items: center; font-size: 1.5rem; }
+.docente-portada aside { margin-left: auto; display: grid; text-align: right; }
+.docente-portada aside strong { font-size: 2.5rem; }
+.docente-resumen { display: flex; gap: 2rem; flex-wrap: wrap; padding: .5rem 0 1.5rem; color: #38544a; }
+.docente-resumen strong { font-size: 1.4rem; margin-right: .3rem; }
+.agenda-calendario { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: .25rem; }
+.agenda-calendario th { padding: .5rem 0; font-size: .75rem; text-align: center; color: #52695c; }
+.agenda-calendario td { background: #f5f7f4; border-radius: .4rem; height: 3.8rem; padding: .4rem; }
+.agenda-calendario td:empty { background: transparent; }
+.agenda-dia strong, .agenda-dia span { display: block; }
+.agenda-dia span { font-size: .7rem; color: #52695c; }
+.agenda-calendario .agenda-dia-con-clase { background: #e0eee7; border-bottom: 3px solid #277d5b; }
+.agenda-calendario [aria-current="date"] { outline: 2px solid #22724f; }
+.agenda-sesiones { list-style: none; padding: 0; }
+.agenda-sesiones li { display: grid; grid-template-columns: auto 1fr; gap: .2rem .8rem;
+  border-left: 3px solid #8eb9a5; padding: .65rem .8rem; background: #f4f7f3; margin: .5rem 0; }
+.agenda-sesiones time { font-variant-numeric: tabular-nums; color: #3c5e50; }
+.agenda-sesiones span { grid-column: 2; font-size: .8rem; color: #586c63; }
+@media (max-width: 640px) {
+  .docente-portada { padding: 1.2rem; flex-wrap: wrap; gap: .8rem; }
+  .docente-portada aside { margin-left: 0; width: 100%; text-align: left; }
+  .docente-resumen { gap: 1rem; }
+  .agenda-calendario { border-spacing: .12rem; }
+  .agenda-calendario td { padding: .2rem; height: 3.4rem; }
+  .agenda-dia span { font-size: .58rem; }
+}

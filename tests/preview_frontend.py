@@ -92,6 +92,12 @@ def renderizar_vista():
                 [{'estudiante_id': 990007, 'nombre_estudiante': 'Estudiante de prueba',
                   'codigo_institucional': None, 'materia_id': None, 'clase_id': None}]
                 if st.query_params.get('perfil-vacio') == '1' else filas_perfil()),
+            'src.servicios.perfil_docente.consultar_datos': [dict(
+                profesor_id=990001, nombre_profesor='Docente de prueba', usuario='preview',
+                materia_id=m['materia_id'], nombre_materia=m['nombre'], codigo_materia=m['codigo_materia'],
+                seccion=m['seccion'], materia_activa=1, total_estudiantes=m['total_estudiantes'],
+                clase_id=100+i, estado='BORRADOR', fecha_clase='2026-11-25T08:00:00-05:00')
+                for i, m in enumerate(materias)],
             'src.componentes.dialogo_asistencia_voz.obtener_estudiantes_matriculados': estudiantes}
         for destino, valor in lecturas.items(): parches.enter_context(patch(destino, return_value=valor))
         parches.enter_context(patch('src.componentes.selector_clase.obtener_clases_profesor', side_effect=lambda m, p: [
@@ -108,6 +114,7 @@ def renderizar_vista():
         fixture = st.query_params.get('fixture')
         if fixture in ('profesor', 'estudiante', 'administrador'):
             del st.query_params['fixture']
+            rutas = {k: st.session_state[k] for k in st.session_state if k.startswith(('_pagina', '_vista'))}
             pagina_inicio=st.session_state.get('_pagina_inicio')
             paginas_portal=st.session_state.get('_paginas_portal')
             pagina_perfil=st.session_state.get('_pagina_perfil_estudiante')
@@ -122,6 +129,7 @@ def renderizar_vista():
             st.session_state['_paginas_portal']=paginas_portal
             st.session_state['_pagina_perfil_estudiante']=pagina_perfil
             st.session_state['_vista_estudiante']=vista_estudiante
+            st.session_state.update(rutas)
             st.session_state['tipo_sesion']=rol
             if fixture == 'estudiante':
                 from datetime import date
@@ -133,7 +141,11 @@ def renderizar_vista():
                     [{'materia_id': 10, 'estudiante_id': e['estudiante_id'], 'fecha_hora': '2026-11-11T08:15:00-05:00',
                       'presente': True if i == 0 else None, 'estado_deteccion': 'PRESENTE' if i == 0 else 'SIN_MUESTRA'} for i, e in enumerate(estudiantes)], 'facial')
         st.caption('VISTA DE PRUEBA · DATOS SINTÉTICOS · ORACLE BLOQUEADO')
-        if rol == 'profesor': pantalla_profesor()
+        if rol == 'profesor' and st.session_state.get('_vista_profesor') in ('perfil', 'configuracion'):
+            from src.pantallas.perfil_docente import pantalla_perfil_docente, pantalla_configuracion_docente
+            if st.session_state['_vista_profesor'] == 'perfil': pantalla_perfil_docente()
+            else: pantalla_configuracion_docente()
+        elif rol == 'profesor': pantalla_profesor()
         elif rol == 'administrador':
             from src.pantallas.pantalla_administrador import pantalla_administrador
             pantalla_administrador()
