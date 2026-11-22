@@ -5,8 +5,8 @@ Documentación: [índice de guías](README.md) y [registro de cambios](CAMBIOS.m
 Actualización: 22 de noviembre de 2026. Objetivo vigente: completar la organización y el
 despliegue de la versión actual antes de iniciar el [segundo roadmap](ROADMAP_2.md).
 El usuario tiene Autonomous Database y **todavía no tiene una VM Compute**.
-Tras la falta de capacidad en OCI, se prepara **Docker en Render**, manteniendo Oracle
-Autonomous como base. La VM de OCI queda como alternativa registrada.
+Tras la falta de capacidad en OCI, **Docker ya está ejecutándose en Render**, manteniendo
+Oracle Autonomous como base. La VM de OCI queda como alternativa registrada.
 
 Objetivo: una instalación reproducible por PC, datos consistentes en Oracle, asistencia revisable,
 HTTPS local y una presentación final del esquema y de PL/SQL con SQL Developer.
@@ -20,9 +20,9 @@ SQL*Plus y SQL Developer son clientes de la misma base Oracle; pasar al segundo 
 | 2 | Organizar las consultas y el acceso a datos existente | Completado: catálogo SQL compartido, sin cambiar reglas ni transacciones. |
 | 3 | Comprobar la reorganización | Completado: 182 pruebas aprobadas, 64 de integración omitidas y 65 consultas de lectura analizadas en Oracle Cloud. |
 | 4 | Separar ejecución y administración del esquema | Completado: UPC_AULA_APP creado y verificado en Autonomous, propietario separado, 53 permisos comprobados, 55 sentencias analizadas y cero objetos propios. |
-| 5 | Preparar la configuración de la aplicación para cloud | En curso: variables cloud importadas en Render y clave original preparada como Secret File Base64. Cuentas web iniciales, datos y acceso desde Render a Oracle todavía pendientes de comprobación. |
-| 6 | Construir y ejecutar Docker en el alojamiento elegido | Render construyó la imagen de b775e9a; el arranque se detuvo por APP_BASE_URL y luego por la clave. Corrección Base64 local en de3e471, con 18 pruebas aprobadas; publicación y arranque actual pendientes. VM OCI sin capacidad A1.Flex. |
-| 7 | Dominio, HTTPS, QR y persistencia del servidor | URL asignada: https://controlasistenciaupc.onrender.com. Servicio todavía sin arranque aceptado; HTTPS, QR, persistencia y recorridos pendientes de ensayo. Se conserva la red OCI preparada. |
+| 5 | Preparar la configuración de la aplicación para cloud | En curso: variables y clave original configuradas; Oracle y permisos comprobados desde Render. Cuentas web iniciales y decisión o traslado de datos pendientes. |
+| 6 | Construir y ejecutar Docker en el alojamiento elegido | Completado: despliegue manual de 20ed6be Live en Render, comprobación Oracle superada y Streamlit en 0.0.0.0:8501. Salud HTTPS 200/ok y raíz HTML 200 verificados. La VM OCI sigue como alternativa. |
+| 7 | Dominio, HTTPS, QR y persistencia del servidor | URL https://controlasistenciaupc.onrender.com con HTTPS y salud verificados. QR, persistencia y validación de dispositivos pendientes; dominio propio opcional sin configurar. |
 | 8 | Ensayo completo, recuperación y presentación en SQL Developer | Pendiente. |
 
 Guías: [despliegue](DESPLIEGUE.md), [instalación](INSTALACION.md) y
@@ -38,14 +38,19 @@ una migración de negocio nueva ni se da esa segunda etapa por iniciada.
 
 Orden acordado: **MD con los cambios → commit local → push**, explicado en el
 [índice de documentación](README.md#contexto-del-proyecto-y-orden-de-publicación).
-Estado registrado tras el primer intento: Render construye `b775e9a`; el código de
-cuentas separadas (`aaad858`) y de lectura Base64 (`de3e471`) permanece en commits locales.
-El usuario solicita completar primero los MD y el commit local; no ejecutar el push todavía.
+Tras el primer intento con `b775e9a`, se publicaron las cuentas separadas (`aaad858`),
+la lectura Base64 (`de3e471`), la documentación (`2c6662f`) y el ajuste de VS Code (`20ed6be`).
+El último push se verificó contra GitHub. Rige la nueva cadencia: commit cada 3 cambios
+menores y push cada 5 cambios o al completar un punto, sin pedir confirmación de nuevo.
 
-Después de publicar: comprobar que Render construya el commit esperado, revisar
-APP_BASE_URL, PORT=8501, ruta/formato de la clave y autorización de sus IP de salida en
-Autonomous. Verificar el arranque y los portales antes de cerrar los entregables 5–7.
-La imagen antigua construida no acredita que la versión actual funcione en producción.
+Tras añadir `74.220.49.0/24` y `74.220.57.0/24` a la ACL, conservando las entradas del
+PC, el despliegue manual de `20ed6be` queda Live. Los logs acreditan Oracle y permisos;
+el endpoint de salud HTTPS devuelve 200/ok y la raíz entrega el HTML de Streamlit.
+Se cierra el punto 6 y corresponde push del registro documental por la cadencia acordada.
+
+Continuación: comprobar las cuentas web iniciales en cloud y definir el inicio o traslado
+de datos (punto 5); revisar persistencia y QR (punto 7), y ensayar los portales y biometría
+(punto 8). La salud del servidor y la entrega del HTML no prueban esos recorridos.
 Los secretos y el perfil local no se sustituyen. Guía: [Render y Autonomous](DESPLIEGUE.md#alternativa-preparada-render-y-oracle-autonomous).
 
 ## Continuación mientras no haya capacidad Compute

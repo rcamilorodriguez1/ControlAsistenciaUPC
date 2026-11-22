@@ -2,10 +2,15 @@
 
 ## Alternativa preparada: Render y Oracle Autonomous
 
-El 22/11 se prepara Render como alojamiento alternativo a la VM de OCI. Autonomous
-conserva la base de datos y sus cuentas técnicas. La importación de variables y el soporte
-de la clave en texto no acreditan el arranque de la versión actual en producción.
-La configuración local conserva su destino y su clave binaria.
+El 22/11 el despliegue de `20ed6be` en Render queda **Live**, con Oracle y permisos
+comprobados durante el arranque y Streamlit escuchando en `0.0.0.0:8501`. Autonomous
+conserva la base de datos y sus cuentas técnicas; la configuración local conserva su
+destino y su clave binaria. Se cierra el punto 6 del primer roadmap.
+
+Comprobación externa: `https://controlasistenciaupc.onrender.com/_stcore/health`
+responde HTTP 200 con `ok`; la raíz HTTPS responde HTTP 200 con el HTML de Streamlit.
+Evidencia privada: `.local/render/despliegue_verificado.json`. Esto verifica salud y
+entrega del HTML, no los recorridos de los portales ni los motores biométricos.
 
 Primer intento en Render con `b775e9a`: la imagen se construyó y exportó correctamente.
 El arranque se detuvo primero por APP_BASE_URL ausente y luego por la clave Base64,
@@ -13,13 +18,18 @@ que esa versión anterior solo podía leer como bytes binarios. La URL asignada 
 `https://controlasistenciaupc.onrender.com`. Este resultado todavía no valida el
 arranque de la versión actual, los permisos cloud ni los recorridos de los portales.
 
-La corrección está guardada localmente en `de3e471`; `aaad858` contiene la separación
-de cuentas Oracle. El `.env` privado ya incorpora APP_BASE_URL con la URL asignada.
-Los registros posteriores pasan esa comprobación y se detienen en la lectura de la clave,
+La corrección se guardó en `de3e471`; `aaad858` contiene la separación de cuentas Oracle.
+Ambos cambios están publicados; el último push verificado es `20ed6be` en `main`.
+El `.env` privado ya incorpora APP_BASE_URL con la URL asignada. Los registros del intento
+antiguo pasan esa comprobación y se detienen en la lectura de la clave,
 con el mensaje «Falta la clave de identidad original de 32 bytes en una ruta absoluta
-legible». El soporte Base64 todavía no está en el repositorio que usa Render.
-Completar primero los MD y el commit local, y publicar después según el
-[orden acordado](README.md#contexto-del-proyecto-y-orden-de-publicación).
+legible». Ese diagnóstico corresponde a la versión anterior al push. El siguiente
+intento pasó URL y clave, pero falló en Oracle con OperationalError. Desde el PC se
+verificaron por TLS las dos cuentas, los 53 permisos y las tres vistas administrativas.
+Después del ajuste de la ACL, el despliegue manual de `20ed6be` supera la comprobación
+Oracle y Render informa Live. Los antiguos avisos de puertos correspondían a un arranque
+interrumpido antes de iniciar Streamlit. Se conserva el
+[orden y la cadencia acordados](README.md#contexto-del-proyecto-y-orden-de-publicación).
 
 Crear un **Web Service**, región **Virginia**, repositorio del proyecto, rama `main`,
 runtime **Docker**, Root Directory vacío y Dockerfile `./Dockerfile`. Mantener el comando
@@ -39,12 +49,16 @@ de arranque de la imagen; Render termina HTTPS, sin ejecutar el Compose de Caddy
   formato se sigue leyendo la clave binaria habitual. No se regeneran claves de texto ausentes.
 - Completar `APP_BASE_URL` con la URL HTTPS real asignada al servicio. Autorizar en
   Autonomous los rangos de salida mostrados en **Connect > Outbound** para ese servicio.
+  La captura del 22/11 muestra `74.220.49.0/24` y `74.220.57.0/24`. Añadir ambos como
+  **CIDR block** en la ACL de UPCAULA, conservando el acceso del PC. Tras ese ajuste,
+  el nuevo intento quedó Live. Los rangos pueden cambiar:
+  volver a consultar Connect > Outbound al revisar la configuración en otra fecha.
 - Publicar en GitHub los cambios de código que el servicio deba construir. Un commit
   únicamente local no está disponible para Render. Las credenciales permanecen privadas.
 
-Pendientes: confirmar plan y memoria para los motores biométricos, publicar los commits,
-construir y arrancar la imagen actual, verificar Oracle desde Render, revisar persistencia y
-ensayar los portales, HTTPS, cámara y micrófono. No se considera validado el servicio Free
+Pendientes: confirmar plan y memoria para los motores biométricos, preparar o comprobar
+las cuentas web, decidir el inicio o traslado de datos, revisar persistencia y QR y
+ensayar los portales, cámara y micrófono. No se considera validado el servicio Free
 para la aplicación completa. El endpoint de salud comprueba Streamlit; Oracle se valida
 durante el arranque y no se consulta en cada petición de salud.
 

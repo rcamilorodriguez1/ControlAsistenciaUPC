@@ -35,13 +35,47 @@ Orden aclarado por el usuario el 22 de noviembre de 2026:
 2. **Commit local:** revisar el diff y los archivos preparados, ejecutar las comprobaciones
    que correspondan y guardar código y documentación juntos en Git. Un commit deja un
    punto de referencia local y todavía no publica nada en GitHub ni en Render.
-3. **Push:** publicar los commits en la rama de GitHub cuando se decida continuar con esa
-   etapa. Con Auto-Deploy **On Commit**, Render construye la versión publicada en `main`.
+3. **Push:** publicar los commits en la rama de GitHub con la cadencia indicada abajo.
+   Con Auto-Deploy **On Commit**, Render construye la versión publicada en `main`.
    Confirmar el commit desplegado y su resultado antes de registrar el servicio como operativo.
 
-En la continuación actual se solicitan los MD y el commit local; el push queda para el
-paso posterior. Variables y archivos secretos se administran por separado en Render y
-permanecen fuera del repositorio.
+Variables y archivos secretos se administran por separado en Render y permanecen fuera
+del repositorio.
+
+### Cadencia de commits y push
+
+Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmación para cada push:
+
+- **Commit cada 3 cambios menores** terminados y comprobados. Un cambio es una unidad
+  lógica de trabajo, no cada archivo, línea, prueba o MD actualizado para documentarla.
+- Los cambios menores incluyen ajustes acotados de documentación, editor o presentación,
+  sin alterar los flujos, las reglas de negocio ni los contratos de acceso o despliegue.
+- Un cambio mayor modifica comportamiento relevante, seguridad, esquema, dependencias
+  o despliegue. Se guarda en un commit propio al terminar y comprobarlo, sin esperar
+  a acumular otros dos cambios. El agente clasifica cada cambio según su impacto.
+- **Push cada 5 cambios terminados desde el último push, o al completar un punto del
+  roadmap**, lo que ocurra primero. Al llegar al umbral, confirmar también los cambios
+  pendientes aunque todavía no sumen tres menores, respetando MD → commit → push.
+- La cadencia autoriza esas publicaciones sin pedir otra confirmación. Una petición
+  explícita de commit o push puede adelantar el paso. Si una comprobación falla, corregirla
+  antes de publicar y registrar el bloqueo; no marcar un punto como completo sin su evidencia.
+
+Último lote preparado, contado desde `20ed6be`:
+
+| Referencia | Estado |
+| --- | --- |
+| Base del lote | `20ed6be`, rama `main` |
+| Cambios del lote | 3: cadencia; diagnóstico Oracle desde el PC; registro de ACL y Render Live |
+| Commit | Corresponde agrupar los tres cambios documentales |
+| Push | Corresponde por el cierre comprobado del punto 6 del roadmap |
+
+Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
+los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el
+contador de menores pendientes; tras cada push verificado, reiniciar el de cambios sin
+publicar. Este MD conserva el corte del lote antes de confirmarlo: consultar Git y el
+seguimiento privado para conocer el estado posterior sin crear un commit solo para
+referenciar su propio hash. Actualizar ambos al completar una nueva unidad de trabajo;
+el seguimiento pertenece al mismo cambio que registra.
 
 ## Memoria integral del proyecto
 

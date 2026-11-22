@@ -72,8 +72,8 @@ introducir un documento por sí solo no autentica ni registra asistencia.
 Las dependencias directas están en [requirements.txt](requirements.txt). El archivo
 [requirements-lock-windows-py311.txt](requirements-lock-windows-py311.txt) registra el entorno
 Windows auditado. Se incluye preparación de contenedor Linux x64/ARM64 con PyTorch CPU.
-La imagen inicial se construyó en Render; la versión actual y el ensayo funcional en
-la infraestructura de destino siguen pendientes.
+La imagen se construyó y arrancó en Render con Oracle y permisos comprobados;
+el ensayo funcional de los portales y los motores biométricos sigue pendiente.
 
 ## Puesta en marcha
 
@@ -135,11 +135,11 @@ recuperarse por un canal privado su clave original de identidad. Los procedimien
 ### Alojamiento en la nube
 
 La continuación actual utiliza **Render con Docker** para la aplicación y **Oracle
-Autonomous Database** para los datos, con Python 3.11 y procesamiento en CPU. Render
-construyó la imagen de una versión anterior; los cambios de cuentas separadas y lectura
-Base64 de la clave están guardados localmente, pendientes de push y ensayo de arranque.
+Autonomous Database** para los datos, con Python 3.11 y procesamiento en CPU. El despliegue
+de `20ed6be` está **Live**, con Oracle y permisos comprobados. Se verificaron HTTP 200
+en la raíz HTTPS y 200/ok en el endpoint de salud; el punto 6 del roadmap queda completado.
 La VM de OCI sigue como alternativa, sin capacidad disponible en los intentos registrados.
-El servicio, HTTPS, QR, persistencia y traslado de datos todavía requieren validación.
+Los recorridos de los portales, QR, persistencia y decisión o traslado de datos siguen pendientes.
 
 La [guía de despliegue](docs/DESPLIEGUE.md) describe Render, el plan de VM y la configuración
 privada. El [índice documental](docs/README.md#contexto-del-proyecto-y-orden-de-publicación)

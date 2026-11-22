@@ -4,6 +4,65 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 22 de noviembre de 2026 — Render Live y punto 6 completado
+
+Tras añadir los rangos `74.220.49.0/24` y `74.220.57.0/24` a la ACL de Autonomous,
+conservando las entradas del PC, el usuario ejecuta un despliegue manual de `20ed6be`.
+Render informa Deploy succeeded / Live. Los logs confirman «Configuración de producción
+comprobada; Oracle y permisos comprobados» y el servidor en `0.0.0.0:8501`.
+
+Comprobación independiente por HTTPS: `/_stcore/health` devuelve HTTP 200 y `ok`;
+`/` devuelve HTTP 200 con el HTML de Streamlit. Evidencia privada:
+`.local/render/despliegue_verificado.json`. No se ejecutan operaciones académicas ni
+se considera que recibir el HTML valide los portales, cámara, voz o concurrencia.
+
+Se cierra el punto 6 del primer roadmap: imagen Docker construida y ejecutada en Render.
+El punto 5 conserva las cuentas web y la decisión sobre datos pendientes; el punto 7
+conserva QR y persistencia; el ensayo integral y SQL Developer permanecen en el punto 8.
+La instalación Oracle local y la clave de identidad original permanecen intactas.
+
+Se agrupan tres cambios documentales: cadencia, diagnóstico de conexión y registro del
+arranque correcto. Corresponde guardar el commit y hacer push por el cierre del punto 6,
+según la autorización vigente, sin esperar cinco cambios. Esta publicación modifica MD;
+el código del servicio que pasó los controles corresponde a `20ed6be`.
+
+## 22 de noviembre de 2026 — Diagnóstico Oracle tras el arranque en Render
+
+Los logs posteriores al push pasan las comprobaciones de URL y clave de identidad, pero
+el arranque termina con OperationalError al comprobar Oracle. Streamlit todavía no se
+inicia; los avisos «No open ports detected» son consecuencia de esa interrupción y no
+acreditan por sí solos un fallo de puerto.
+
+Se comprueban las credenciales cloud desde el PC mediante conexiones TLS y consultas de
+solo lectura: UPC_AULA_APP sobre UPC_ASISTENCIA con 53 permisos, y UPC_ADMIN_APP con
+acceso a las tres vistas administrativas. Evidencia privada:
+`.local/oracle_cloud/render_diagnostico_pc.json`. No se cambian cuentas, claves ni datos.
+Esto no acredita acceso desde Render ni que sus variables coincidan con el perfil del PC.
+
+La captura de Connect > Outbound comunica `74.220.49.0/24` y `74.220.57.0/24`.
+Continuación: revisar su autorización como bloques CIDR en Autonomous, conservando la
+entrada del PC. La aplicación de la ACL y la conexión desde Render siguen pendientes;
+la ACL es una hipótesis de red pendiente de comprobar.
+El mensaje de OperationalError no incluye el código Oracle ni distingue su causa.
+Esta unidad de diagnóstico y documentación es el segundo cambio menor desde 20ed6be;
+no se crea otro commit o push todavía.
+
+## 22 de noviembre de 2026 — Cadencia de commits y publicación
+
+El usuario autoriza commit cada 3 cambios menores y push cada 5 cambios terminados o al
+completar un punto del roadmap, lo que suceda primero. El agente clasifica el impacto;
+los cambios mayores se guardan en commits propios. Se conserva MD → commit → push y
+se documentan los criterios y contadores en el [índice](README.md#cadencia-de-commits-y-push).
+Una unidad lógica cuenta una vez aunque incluya código, pruebas y documentación.
+
+El último push verificado publicó `20ed6be` en `main`, incluido el ajuste de VS Code.
+La captura más reciente de Render sigue esperando el control de salud en el puerto 10000;
+ese aviso no identifica la causa ni confirma un arranque correcto. Revisar el commit y
+los registros de la ejecución actual antes de diagnosticarlo o cerrar el despliegue.
+
+Esta actualización documental cuenta como 1 cambio menor desde ese push y queda guardada
+en los MD, pendiente de agruparse en el siguiente commit según la nueva cadencia.
+
 ## 22 de noviembre de 2026 — Configuración de variables en terminales de VS Code
 
 Se incorpora el cambio pendiente de `.vscode/settings.json`: `python.terminal.useEnvFile=true`,
