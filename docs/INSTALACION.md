@@ -42,6 +42,14 @@ snapshot completo del entorno Windows auditado, no un lock universal multiplataf
 VS Code recibe `${workspaceFolder}/.venv` como intérprete inicial. Si ya eligió otro intérprete
 anteriormente, usar **Python: Select Interpreter** y seleccionar el de `.venv` una vez.
 
+La configuración compartida habilita `python.terminal.useEnvFile` para inyectar las
+variables del archivo indicado por `python.envFile` en las terminales de Python. Si no
+se configura otra ruta, se utiliza `${workspaceFolder}/.env`; los valores reales de ese
+archivo permanecen fuera de Git. `.local/render/.env` es el archivo de importación a
+Render y no se selecciona automáticamente para las terminales locales. Este ajuste de
+VS Code no configura el contenedor ni sustituye las variables guardadas en Render.
+Referencia: [configuración de Python Environments](https://github.com/microsoft/vscode-python-environments/blob/main/README.md).
+
 ## 2. Preparar Oracle y los secretos
 
 Consultar [SQLPLUS_Y_SQLDEVELOPER.md](SQLPLUS_Y_SQLDEVELOPER.md). En el servidor local con permisos SYSDBA:

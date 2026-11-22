@@ -4,6 +4,19 @@ Este archivo resume las entregas y enlaza su documentación. Para localizar toda
 consultar el [índice](README.md); para trabajo pendiente, el [roadmap](ROADMAP.md).
 Los resultados indicados corresponden a las verificaciones registradas en cada entrega.
 
+## 22 de noviembre de 2026 — Configuración de variables en terminales de VS Code
+
+Se incorpora el cambio pendiente de `.vscode/settings.json`: `python.terminal.useEnvFile=true`,
+conservando el intérprete y la activación del entorno virtual existentes. Permite cargar
+el `.env` configurado para las terminales Python; no incluye valores privados ni selecciona
+el perfil `.local/render/.env` como configuración local. Se documenta en
+[instalación](INSTALACION.md). Comprobaciones: JSON válido, cambio de configuración
+revisado y exclusión de los archivos privados conservada.
+
+El push anterior ya publicó aaad858, de3e471 y 2c6662f; se verificó que `main` de GitHub
+apunta a 2c6662f. Todavía no se ha confirmado el resultado del nuevo despliegue en Render.
+Este ajuste del editor se guarda en un commit local separado.
+
 ## 22 de noviembre de 2026 — Contexto de Render y orden de registro y publicación
 
 Se conserva la organización documental existente: CAMBIOS.md para entregas y evidencias,
