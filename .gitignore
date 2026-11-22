@@ -55,4 +55,5 @@ secrets.toml
 *.npy
 *.npz
 ALTA_DOCENTE.md
+ALTA_ESTUDIANTE.md
 CREDENCIALES_LOCALES.md

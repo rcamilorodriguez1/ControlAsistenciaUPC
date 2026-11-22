@@ -1,5 +1,17 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Archivo privado de clave estudiantil para pruebas
+
+- Se crea `.local/ALTA_ESTUDIANTE.md`, equivalente al de alta docente, con una clave
+  compartida para autorizar las excepciones de los alumnos de prueba.
+- El docente asigna esa clave al autorizar a cada alumno; el acceso sigue utilizando
+  su propio documento, autorización vigente y contraseña registrada mediante hash.
+- Se protege también el nombre `ALTA_ESTUDIANTE.md` en `.gitignore` y se documenta
+  su uso sin incluir la clave. No se modifican cuentas ni credenciales existentes.
+- Verificación técnica: formato de contraseña válido, clave distinta a la de alta
+  docente, archivo ignorado por Git y ausencia de la clave en los archivos publicados.
+
+
 ## 22/11/2026 — Alcance de pruebas y alojamiento confirmado
 
 - Instrucción expresa: el usuario realiza las pruebas de la página, cámara y

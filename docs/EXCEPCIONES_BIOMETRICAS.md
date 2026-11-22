@@ -1,4 +1,4 @@
-# Excepciones de verificación de identidad — esquema 008
+# Excepciones de verificación de identidad — esquema 009
 
 Implementado el 17 de noviembre de 2026. Aplicación: UPC | Aula.
 
@@ -29,6 +29,15 @@ fotocopias ni informes médicos en este formulario.
 
 Decisión del 22/11: se sustituye el envío por correo por entrega manual de la clave.
 No se requiere correo del estudiante, proveedor de correo ni dominio remitente.
+
+### Clave compartida para las pruebas
+
+Por petición del usuario, se prepara una clave de pruebas en
+`.local/ALTA_ESTUDIANTE.md`, equivalente al archivo privado de alta docente.
+El docente utiliza esa misma clave al autorizar individualmente a los alumnos de
+prueba en **Excepciones de acceso**. Cada alumno accede con su propio documento y
+la clave acordada; se mantienen su autorización, vigencia y revocación en Oracle.
+La contraseña queda en el archivo privado, excluido del repositorio.
 
 En **Portal docente → Excepciones de acceso**, el profesor selecciona una materia
 propia activa y un alumno activo matriculado, comprueba su documento y establece
