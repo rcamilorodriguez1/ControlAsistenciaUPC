@@ -1,6 +1,12 @@
 # Base de datos de UPC | Aula: funcionamiento y consulta
 
-Estado vigente al **22 de noviembre de 2026**: Oracle local y Autonomous UPCAula
+Actualización 010 del 22/11: [acceso académico temporal](PRUEBA_ACADEMICA.md) mediante
+código institucional y clave común a estudiantes activos. Amplía dos CHECK de
+VERIFICACION_ESTUDIANTES para `PRUEBA_ACADEMICA`, con cero factores biométricos.
+Conserva las 14 tablas, 140 columnas y 11 FK. El catálogo y los PDF 009 siguientes
+son la instantánea anterior; la ampliación no cambia sus columnas ni relaciones.
+
+Estado documentado antes de 010 al **22 de noviembre de 2026**: Oracle local y Autonomous UPCAula
 en versiones **001–009**, con 14 tablas, 140 columnas, 11 FK, 11 vistas, 10 triggers
 y 8 paquetes compilados. El catálogo actual procede del diccionario de Autonomous;
 la guía funcional y las consultas se mantienen desde la revisión del 18/11.

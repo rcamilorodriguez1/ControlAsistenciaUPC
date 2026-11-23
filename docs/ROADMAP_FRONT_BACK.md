@@ -11,6 +11,7 @@ Depende del [roadmap general](ROADMAP.md). Solicitudes del 22/11/2026.
 | FB5 | Diferenciar portal de operaciones, perfil académico y configuración; acceso desde el menú de cuenta | Implementado; 8 pruebas de navegación |
 | FB6 | Autorizar/renovar/revocar contraseña alternativa por docente para alumnos de sus materias, con vigencia, auditoría y entrega manual | Implementado; Oracle local y Autonomous 009 verificados |
 | FB6.1 | Preparar una clave común para alumnos de prueba, en un archivo privado equivalente a alta docente | Terminado: `.local/ALTA_ESTUDIANTE.md`; se utiliza al autorizar a cada alumno |
+| FB6.2 | Clave maestra temporal para cualquier estudiante activo, incluso sin excepción; código/ID, vigencia y auditoría diferenciada | Implementado y verificado: 63 pruebas aisladas, 25 con Oracle local y 7 con runtime de Autonomous; importar dos variables en Render para activar |
 | FB7 | Quitar iconos de ancla de encabezados manteniendo títulos y enlaces de navegación | Implementado; enlaces nativos de Inicio disponibles |
 
 ## Criterios transversales

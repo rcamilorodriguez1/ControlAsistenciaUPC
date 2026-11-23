@@ -1,5 +1,25 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Clave maestra temporal para demostración estudiantil
+
+- Petición explícita: acceso a cualquier estudiante activo, incluso sin una excepción
+  autorizada. Se añade formulario académico por código institucional y clave común,
+  disponible únicamente mientras existen secreto y fecha de cierre válidos.
+- Nuevo método/estado PRUEBA_ACADEMICA: cero factores biométricos, auditoría propia y
+  sin confirmación de asistencia. Conserva las credenciales y aprobaciones normales.
+- Migración 010 amplía dos CHECK y conserva 14 tablas, 140 columnas y 11 FK.
+  Instalador, migradores y preflight se actualizan. Aplicación con respaldo cifrado.
+- Pruebas de identidad firmadas y tokens de sesión ligados a cuenta, clave y vigencia;
+  desactivar/rotar el secreto o cambiar/vencer el plazo invalida las sesiones de prueba.
+  Se mantienen cuenta activa, sesión única y bloqueo de cinco fallos/quince minutos.
+- Generador de clave e instrucciones privadas en .local, con archivo .env de dos
+  variables para Render. No se publica ni imprime la clave. La prueba de la página
+  y cámara queda al usuario; evidencias técnicas en .local/oracle_cloud/*010*.
+- Verificación aprobada: 63 pruebas aisladas, 25 integraciones locales y 7 con la
+  cuenta de ejecución limitada de Autonomous (95 ejecuciones, sin fallos ni omisiones).
+  Ambos esquemas 010 y respaldos cifrados verificados. Activación del modo en Render
+  pendiente de importar el .env privado; no se ha probado la página desde este PC.
+
 ## 22/11/2026 — Aclaración de las 14 tablas en el material de exposición
 
 - El inventario de la presentación enumera las ocho tablas conectadas por FK y las

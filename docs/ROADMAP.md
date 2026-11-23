@@ -26,6 +26,8 @@ registro histórico, incluidos los pendientes de despliegue que siguen abiertos.
 
 - Solo Render para la aplicación; Oracle Autonomous para los datos. Vercel descartado.
 - Las pruebas de la página, cámara y reconocimiento quedan a cargo del usuario. Este PC no tiene cámara.
+- Para la presentación: [clave maestra académica temporal](PRUEBA_ACADEMICA.md), código
+  institucional y acceso a cualquier estudiante activo, con estado y auditoría propios.
 
 - El portal sirve para operar; el perfil presenta identidad y actividad académica.
 - El docente tendrá su agenda mensual y la configuración de su cuenta por separado.

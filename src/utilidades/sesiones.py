@@ -181,7 +181,8 @@ def iniciar_sesion(rol, perfil, estado=None):
         datos['codigo_institucional'] = perfil['codigo_institucional']
     if rol == 'estudiante':
         prueba = perfil.get('_prueba_identidad')
-        datos['estado_verificacion'] = ('EXCEPCIONAL' if prueba.metodo=='EXCEPCION' else 'BIOMETRICA_COMPLETA') if prueba else 'PENDIENTE'
+        datos['estado_verificacion'] = ({'EXCEPCION':'EXCEPCIONAL', 'BIOMETRIA':'BIOMETRICA_COMPLETA',
+                                       'PRUEBA_ACADEMICA':'PRUEBA_ACADEMICA'}.get(prueba.metodo, 'PENDIENTE')) if prueba else 'PENDIENTE'
     if rol in ("profesor", "administrador"):
         datos["usuario"] = perfil["usuario"]
     estado = _estado(estado)

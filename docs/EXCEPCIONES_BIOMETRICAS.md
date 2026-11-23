@@ -1,5 +1,10 @@
 # Excepciones de verificación de identidad — esquema 009
 
+Actualización 010: se añade un [modo académico temporal con clave común](PRUEBA_ACADEMICA.md)
+para cualquier estudiante activo, incluso sin excepción. Utiliza código institucional,
+estado `PRUEBA_ACADEMICA` y auditoría diferenciada. El flujo autorizado por documento
+descrito a continuación conserva sus reglas.
+
 Implementado el 17 de noviembre de 2026. Aplicación: UPC | Aula.
 
 ## Política y alcance

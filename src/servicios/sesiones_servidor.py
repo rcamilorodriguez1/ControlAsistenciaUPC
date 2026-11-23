@@ -21,11 +21,15 @@ MENSAJES = {
 }
 
 
-def _parametros(rol, actor_id, token):
+def _parametros(rol, actor_id, token, *, comprobar_pruebas=True):
     if rol not in ('profesor','estudiante','administrador') or type(actor_id) is not int or actor_id<1:
         raise SesionInvalida(MENSAJES[20200])
     if not isinstance(token,str) or not 16<=len(token)<=128:
         raise SesionInvalida(MENSAJES[20200])
+    if comprobar_pruebas and token.startswith('prueba.'):
+        from src.servicios.clave_maestra_pruebas import validar_token_pruebas
+        if not validar_token_pruebas(rol, actor_id, token):
+            raise SesionInvalida('El acceso académico de prueba terminó. Inicia sesión mediante un método autorizado.')
     return [rol.upper(), actor_id, sha256(token.encode('utf-8')).hexdigest()]
 
 
@@ -53,7 +57,11 @@ def _operar(nombre, parametros):
 def abrir(rol, actor_id, hash_credencial=None, *, prueba_identidad=None):
     from src.servicios.autenticacion import exigir_acceso_disponible
     exigir_acceso_disponible()
-    token=secrets.token_urlsafe(32)
+    if rol == 'estudiante' and getattr(prueba_identidad, 'metodo', None) == 'PRUEBA_ACADEMICA':
+        from src.servicios.clave_maestra_pruebas import emitir_token_pruebas
+        token = emitir_token_pruebas(actor_id)
+    else:
+        token=secrets.token_urlsafe(32)
     with obtener_conexion() as conn:
         try:
             _llamar(conn,'abrir',_parametros(rol,actor_id,token))
@@ -89,4 +97,4 @@ def validar_en_conexion(conn, rol, actor_id, token, *, esquema=''):
 
 
 def cerrar(rol, actor_id, token):
-    _operar('cerrar',_parametros(rol,actor_id,token))
+    _operar('cerrar',_parametros(rol,actor_id,token,comprobar_pruebas=False))

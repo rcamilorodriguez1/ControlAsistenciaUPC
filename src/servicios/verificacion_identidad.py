@@ -2,6 +2,7 @@
 
 El documento es un identificador: una excepción requiere aprobación y contraseña.
 La política facial existente exige un factor; la voz no se cuenta como prueba de acceso.
+La clave común temporal registra el método independiente PRUEBA_ACADEMICA.
 """
 from dataclasses import dataclass, replace
 from functools import lru_cache
@@ -23,13 +24,16 @@ from src.servicios.autenticacion import exigir_acceso_disponible
 from src.base_datos.consultas import cargar_sql
 from src.base_datos.esquema import esquema_propietario
 from src.utilidades.claves_identidad import leer_clave
+from src.servicios.clave_maestra_pruebas import configuracion_pruebas
+from src.servicios.validaciones import codigo as validar_codigo
 
 _logger = logging.getLogger(__name__)
 TIPOS_DOCUMENTO = ('CC', 'TI', 'CE', 'PA')
 CATEGORIAS = ('FISICA', 'MEDICA', 'TECNICA', 'ADMINISTRATIVA')
 ESTADOS = {'PENDIENTE': 'Verificación pendiente',
            'BIOMETRICA_COMPLETA': 'Verificación biométrica completa',
-           'EXCEPCIONAL': 'Verificación excepcional / biometría incompleta'}
+           'EXCEPCIONAL': 'Verificación excepcional / biometría incompleta',
+           'PRUEBA_ACADEMICA': 'Acceso académico de prueba / sin validación biométrica'}
 FACTORES_REQUERIDOS = 1  # Política real actual: rostro. No incluye plantillas simplemente almacenadas.
 VIGENCIA_PRUEBA = 90
 
@@ -90,7 +94,7 @@ def registrar_fallo_biometrico(causa='NO_COINCIDE', *, metodo='BIOMETRIA', estud
     # Lista cerrada: nunca almacenar imágenes, nombres, documentos ni mensajes del motor.
     if causa not in ('NO_COINCIDE', 'MUESTRA_INVALIDA', 'ERROR_TECNICO', 'PRUEBA_RECHAZADA', 'DOCUMENTO_INVALIDO'):
         causa = 'MUESTRA_INVALIDA'
-    if metodo not in ('BIOMETRIA', 'EXCEPCION'):
+    if metodo not in ('BIOMETRIA', 'EXCEPCION', 'PRUEBA_ACADEMICA'):
         metodo = 'BIOMETRIA'
     try:
         with obtener_conexion() as conn, conn.cursor() as cur:
@@ -124,7 +128,7 @@ def _emitir(estudiante_id, metodo, version, credencial=''):
 
 def _validar_prueba(prueba, estudiante_id):
     if not isinstance(prueba, PruebaIdentidad) or prueba.estudiante_id != estudiante_id or \
-            prueba.metodo not in ('BIOMETRIA', 'EXCEPCION') or not 0 <= time.time() - prueba.emitida <= VIGENCIA_PRUEBA or \
+            prueba.metodo not in ('BIOMETRIA', 'EXCEPCION', 'PRUEBA_ACADEMICA') or not 0 <= time.time() - prueba.emitida <= VIGENCIA_PRUEBA or \
             not hmac.compare_digest(prueba.firma, _firma(prueba)):
         raise PermissionError('Repite la verificación de identidad para iniciar sesión.')
 
@@ -188,6 +192,55 @@ def autenticar_excepcion(tipo, numero, contrasena):
     return {'estudiante_id': fila[0], 'nombre': fila[1], 'codigo_institucional': fila[2], '_prueba_identidad': prueba}
 
 
+def autenticar_prueba_academica(codigo, contrasena, *, por_id=False):
+    """Acceso temporal a cualquier alumno activo, sin conceder una excepción normal."""
+    exigir_acceso_disponible()
+    config = configuracion_pruebas()
+    if config is None:
+        return None
+    try:
+        if por_id:
+            if not isinstance(codigo, str) or not re.fullmatch(r'[1-9][0-9]{0,17}', codigo.strip(), re.ASCII):
+                raise ValueError('ID de estudiante no válido.')
+            codigo = 'ID:' + str(int(codigo.strip()))
+        else:
+            codigo = validar_codigo(codigo, 'Código institucional')
+    except ValueError:
+        registrar_fallo_biometrico('MUESTRA_INVALIDA', metodo='PRUEBA_ACADEMICA')
+        return None
+    limite = sha256(('prueba_academica:' + codigo).encode()).hexdigest()
+    with obtener_conexion() as conn, conn.cursor() as cur:
+        cur.execute(cargar_sql('compartidas/limpiar_limites_expirados'))
+        try:
+            cur.execute(cargar_sql('compartidas/crear_limite'), c=limite)
+        except oracledb.IntegrityError as exc:
+            if exc.args[0].code != 1:
+                raise
+        cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_excepcion_02'), c=limite)
+        intentos, bloqueado, expirada = cur.fetchone()
+        if por_id:
+            cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_prueba_academica_por_id_01'), i=int(codigo[3:]))
+        else:
+            cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_prueba_academica_01'), c=codigo)
+        fila = cur.fetchone()
+        coincide = config.coincide(contrasena)
+        correcto = bool(coincide and fila and fila[4] == 1 and not bloqueado)
+        if correcto:
+            prueba = _emitir(fila[0], 'PRUEBA_ACADEMICA', fila[3], config.marca)
+            cur.execute(cargar_sql('compartidas/limpiar_limite'), c=limite)
+            _evento(cur, fila[0], 'CREDENCIAL_VALIDADA', 'Método: PRUEBA_ACADEMICA; pendiente de apertura de sesión.')
+        else:
+            if not bloqueado:
+                cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_excepcion_06'),
+                            n=(0 if expirada else intentos)+1, e=expirada, c=limite)
+            _evento(cur, fila[0] if fila else 0, 'VALIDACION_FALLIDA',
+                    'Método: PRUEBA_ACADEMICA; resultado: ' + ('LIMITE_INTENTOS' if bloqueado else 'NO_VALIDADA'))
+        conn.commit()
+    if not correcto:
+        return None
+    return {'estudiante_id': fila[0], 'nombre': fila[1], 'codigo_institucional': fila[2], '_prueba_identidad': prueba}
+
+
 def confirmar_en_conexion(conn, estudiante_id, prueba):
     """Después de bloquear SESIONES_USUARIO y antes de commit. No hace commits propios."""
     _validar_prueba(prueba, estudiante_id)
@@ -203,7 +256,12 @@ def confirmar_en_conexion(conn, estudiante_id, prueba):
         cuenta = cur.fetchone()
         if version != prueba.version or not cuenta or cuenta[0] != 1:
             raise PermissionError('La cuenta o su autorización cambiaron. Repite la validación.')
-        if prueba.metodo == 'EXCEPCION':
+        if prueba.metodo == 'PRUEBA_ACADEMICA':
+            config = configuracion_pruebas()
+            if config is None or not hmac.compare_digest(config.marca, prueba.credencial):
+                raise PermissionError('El modo académico cambió o terminó. Repite la validación.')
+            estado, factores = 'PRUEBA_ACADEMICA', 0
+        elif prueba.metodo == 'EXCEPCION':
             if not activa or not vigente or not clave or not hmac.compare_digest(clave, prueba.credencial):
                 raise PermissionError('La excepción ya no está vigente. Contacta con Gestión académica.')
             estado, factores = 'EXCEPCIONAL', 0

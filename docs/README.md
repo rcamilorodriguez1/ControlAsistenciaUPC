@@ -23,6 +23,7 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 | Explicar la conexión y el aporte del proyecto | [Conexión](CONEXION_BASE_DATOS.md) · [goodwill](GOODWILL.md) |
 | Consultar el perfil y la configuración del docente | [Perfil docente](PERFIL_DOCENTE.md) |
 | Utilizar la última entrega de excepciones biométricas | [Excepciones biométricas](EXCEPCIONES_BIOMETRICAS.md) |
+| Entrar con clave común durante la presentación académica | [Modo temporal de prueba estudiantil, esquema 010](PRUEBA_ACADEMICA.md) |
 
 ## Contexto del proyecto y orden de publicación
 
@@ -65,14 +66,14 @@ Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
   explícita de commit o push puede adelantar el paso. Si una comprobación falla, corregirla
   antes de publicar y registrar el bloqueo; no marcar un punto como completo sin su evidencia.
 
-Último lote preparado, contado desde `505b419`:
+Último lote preparado, contado desde `52bb08d`:
 
 | Referencia | Estado |
 | --- | --- |
-| Base del lote | `505b419`, rama `main` |
-| Cambios del lote | Memoria integral 1.2 y presentación comercial con sus fuentes, generadores y guía de exposición |
-| Verificación | 87 páginas y 20 diapositivas; 154 enlaces locales; diccionario de 140 columnas; maquetación y secretos revisados |
-| Commit/push | Corresponden al cierre de la rama de documentación/presentación; el hash final queda en Git y el seguimiento privado |
+| Base del lote | `52bb08d`, rama `main` |
+| Cambios del lote | Clave maestra temporal estudiantil, estado académico diferenciado, migración 010, generador y documentación privada de activación |
+| Verificación | 95 pruebas técnicas aprobadas; Oracle local y Autonomous 010 con respaldo; runtime limitado y preflight correctos |
+| Commit/push | Cierre de FB6.2; el hash final queda en Git y el seguimiento privado. Falta importar dos variables en Render para activar el modo |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el
