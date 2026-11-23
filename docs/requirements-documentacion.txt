@@ -1,5 +1,7 @@
 # Herramientas opcionales para generar la memoria, separadas del runtime de la aplicación.
-# Versiones utilizadas para la edición documental 1.1.
+# Versiones utilizadas para la edición documental 1.2 y la presentación comercial.
 Markdown==3.11.3
 PyMuPDF==2.1
 websockets==17.4
+python-pptx==1.0.2
+reportlab==5.1.0

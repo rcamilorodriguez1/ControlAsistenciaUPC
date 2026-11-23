@@ -233,6 +233,7 @@ el detalle y distingue implementación, prueba automática y aceptación del usu
 
 - [Índice de documentación](docs/README.md)
 - [Memoria integral del proyecto en PDF](docs/UPC_Aula_Documentacion_Integral.pdf)
+- [Presentación comercial: PowerPoint, PDF y guion](docs/PRESENTACION_COMERCIAL.md)
 - [Mockup navegable de pantallas](docs/mockup/index.html)
 - [Registro de cambios](docs/CAMBIOS.md)
 - [Roadmap y pendientes](docs/ROADMAP.md)

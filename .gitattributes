@@ -1,0 +1,3 @@
+# Los artefactos se conservan byte por byte, incluidos sus offsets y archivos ZIP.
+*.pdf binary
+*.pptx binary

@@ -8,6 +8,7 @@ registro histórico, incluidos los pendientes de despliegue que siguen abiertos.
 | --- | --- | --- |
 | [Frontend y backend](ROADMAP_FRONT_BACK.md) | Selector de clases, créditos, perfiles, configuración y excepciones docentes | Implementado y probado; aceptación en Render pendiente |
 | [Base de datos y aporte académico](ROADMAP_BASE_DATOS.md) | Visualización, diccionario, conexión y goodwill | Entregables terminados; revisión académica del equipo pendiente |
+| [Memoria y presentación](ROADMAP_DOCUMENTACION_PRESENTACION.md) | PDF 1.2 y presentación comercial con identidad UPC | Terminados y revisados: 87 páginas y 20 diapositivas |
 | [Arquitectura y evolución](ROADMAP_2.md) | Calidad, recursos y ampliaciones posteriores dentro de Render | Propuestas; Vercel descartado |
 | [Instalación y despliegue originales](ROADMAP_HISTORICO.md) | Completar las verificaciones funcionales pendientes de los puntos 5, 7 y 8 | Render Live; aceptación funcional pendiente |
 

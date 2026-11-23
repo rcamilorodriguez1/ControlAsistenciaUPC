@@ -7,7 +7,8 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 
 | Necesidad | Documento |
 | --- | --- |
-| Leer la memoria académica y técnica completa | [Documentación integral en PDF](UPC_Aula_Documentacion_Integral.pdf) |
+| Leer la memoria académica y técnica completa | [Documentación integral 1.2 en PDF](UPC_Aula_Documentacion_Integral.pdf) |
+| Presentar el producto a aliados o posibles inversionistas | [Presentación comercial y guion](PRESENTACION_COMERCIAL.md) |
 | Explorar las pantallas y sus recorridos por rol | [Mockup navegable](mockup/index.html) · [Alcance](mockup/README.md) |
 | Consultar los cambios realizados | [Registro de cambios](CAMBIOS.md) |
 | Consultar el plan general y sus ramas | [General](ROADMAP.md), [frontend/backend](ROADMAP_FRONT_BACK.md), [base de datos](ROADMAP_BASE_DATOS.md) |
@@ -63,14 +64,14 @@ Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
   explícita de commit o push puede adelantar el paso. Si una comprobación falla, corregirla
   antes de publicar y registrar el bloqueo; no marcar un punto como completo sin su evidencia.
 
-Último lote preparado, contado desde `bd00c7f`:
+Último lote preparado, contado desde `505b419`:
 
 | Referencia | Estado |
 | --- | --- |
-| Base del lote | `bd00c7f`, rama `main` |
-| Cambios del lote | Roadmaps, créditos, anclas de títulos, selección de clases, perfil/configuración docente, excepción manual 009 y cuatro entregables de base de datos |
-| Commit | `ab2a415`, `20eda13`, `64e91fd` y `e35e98a` publicados; documentación de la rama de base de datos preparada para confirmar |
-| Push | Se ha publicado al cerrar los puntos de frontend/backend; corresponde publicar los entregables documentales terminados |
+| Base del lote | `505b419`, rama `main` |
+| Cambios del lote | Memoria integral 1.2 y presentación comercial con sus fuentes, generadores y guía de exposición |
+| Verificación | 87 páginas y 20 diapositivas; 154 enlaces locales; diccionario de 140 columnas; maquetación y secretos revisados |
+| Commit/push | Corresponden al cierre de la rama de documentación/presentación; el hash final queda en Git y el seguimiento privado |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el
@@ -82,26 +83,31 @@ el seguimiento pertenece al mismo cambio que registra.
 
 ## Memoria integral del proyecto
 
-La [edición 1.1 en PDF](UPC_Aula_Documentacion_Integral.pdf), del 21 de noviembre de 2026,
-reúne el planteamiento, la justificación, los objetivos, los requisitos, la arquitectura,
-los flujos por rol, la seguridad, la interfaz, la instalación, las evidencias y el roadmap.
-Su anexo incorpora íntegra la guía de base de datos, con diccionario, relaciones,
-disparadores, paquetes y consultas. Distingue implementación, verificación y aceptación.
+La [edición 1.2 en PDF](UPC_Aula_Documentacion_Integral.pdf), del 22 de noviembre de 2026,
+actualiza la edición 1.1. Contiene **87 páginas** con portada y créditos completos,
+índice numerado/navegable, marcadores y tablas A4 apaisadas para el diccionario.
 
-Son **76 páginas**, con portada institucional, índice numerado y navegable, marcadores,
-diagramas y tablas A4 apaisadas para el diccionario y las restricciones. El logotipo se
-conserva tal como fue extraído del manual UPC; la captura corresponde a la portada local.
-No contiene credenciales, registros personales ni claves privadas.
+Incluye Oracle 001–009, Render como alojamiento elegido, las tres cuentas técnicas,
+53 permisos de runtime, perfiles/agenda docente, configuración y excepciones de
+entrega manual. Distingue la evidencia Live anterior, las publicaciones posteriores
+y las pruebas de la página/biometría que corresponden al usuario.
 
-Fuentes editables: [memoria principal en Markdown](INFORME_PROYECTO.md),
-[guía de base de datos](BASE_DE_DATOS.md) y [maquetación completa en HTML](UPC_Aula_Documentacion_Integral.html).
-El HTML incorpora las imágenes y los diagramas, sin depender de rutas absolutas del equipo.
-La edición 1.1 incorpora el catálogo SQL, Autonomous 001–008, Docker/Caddy preparados,
-las pruebas entre navegadores y ambos roadmaps. Registra la falta de capacidad Compute
-en los tres dominios de Ashburn; la aplicación aún no está publicada. Conserva la
-procedencia del diccionario local del 18/11 y distingue las verificaciones cloud posteriores.
-El PDF es una fotografía documental de esta edición; las guías temáticas registran
-la evolución posterior y no se consideran incluidas hasta regenerar la memoria.
+La memoria principal desarrolla problema, objetivos, arquitectura, seguridad, operación,
+evidencia y valor. El anexo A explica funcionamiento y PL/SQL; el anexo B contiene
+las 140 columnas y sus restricciones, desde el catálogo de Autonomous 009. Se
+conserva la procedencia de cada evidencia, sin presentar los resultados históricos
+como una nueva ejecución. No se incluyen valores de contraseñas ni documentos personales.
+
+Fuentes editables: [memoria principal](INFORME_PROYECTO.md),
+[guía funcional Oracle](BASE_DE_DATOS.md), [diccionario vigente](DICCIONARIO_DATOS.md)
+y [maquetación HTML](UPC_Aula_Documentacion_Integral.html). La generación lee archivos
+locales; no conecta con Oracle, abre la página de la aplicación ni utiliza una cámara.
+
+También está disponible la [presentación comercial](PRESENTACION_COMERCIAL.md):
+[PowerPoint editable](UPC_Aula_Presentacion_Comercial.pptx) y
+[PDF de 20 diapositivas](UPC_Aula_Presentacion_Comercial.pdf). Usa identidad UPC,
+notas para exponer, evidencia del producto y una propuesta de piloto; los beneficios
+y el modelo comercial todavía no medidos se identifican como hipótesis.
 
 ### Regenerar la memoria
 

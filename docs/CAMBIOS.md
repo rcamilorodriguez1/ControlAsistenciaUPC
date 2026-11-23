@@ -1,5 +1,22 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Presentación comercial profesional con identidad UPC
+
+- Se entrega una presentación de 20 diapositivas en PowerPoint editable con notas y
+  PDF 16:9. Explica problema, solución, valor, evidencia, hipótesis de negocio y piloto.
+  No atribuye ingresos, clientes ni valoración sin medición.
+- Se aplica el manual UPC: Arial, verdes institucionales, reserva y posición superior
+  izquierda del logosímbolo original, con proporción y bytes conservados en PowerPoint.
+- Verificación: 20 notas y objetos dentro de sus límites; PDF con 20 marcadores y dos
+  enlaces; 154 enlaces documentales locales correctos. Se comparan nueve secretos
+  privados contra PDF, HTML y XML del PowerPoint, con cero coincidencias.
+- Se incluyen generador reproducible, guía de exposición y dependencias opcionales
+  fuera del runtime de Render. La nueva rama se enlaza desde el roadmap general.
+  PDF y PowerPoint se marcan como binarios en Git para conservar sus bytes al copiar
+  o descargar el repositorio en Windows.
+  Evidencia privada: .local/presentacion/validacion_final.json.
+
+
 ## 22/11/2026 — Memoria integral 1.2 actualizada a Oracle 009
 
 - Se revisa el PDF 1.1 (76 páginas) y se genera la edición 1.2 (87 páginas), con Oracle
