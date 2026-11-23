@@ -177,8 +177,9 @@ def iniciar_sesion(rol, perfil, estado=None):
     token = servidor.abrir(rol, actor_id, perfil.get('contrasena') if rol=='profesor' else None, **opciones) if estado is None else uuid4().hex
     # El panel no necesita guardar el hash ni los vectores biométricos en sesión.
     datos = {f"{rol}_id": actor_id, "nombre": perfil["nombre"]}
-    if rol == 'estudiante' and perfil.get('codigo_institucional'):
-        datos['codigo_institucional'] = perfil['codigo_institucional']
+    if rol == 'estudiante' and perfil.get('tipo_documento') and perfil.get('documento_final'):
+        datos['tipo_documento'] = perfil['tipo_documento']
+        datos['documento_final'] = perfil['documento_final']
     if rol == 'estudiante':
         prueba = perfil.get('_prueba_identidad')
         datos['estado_verificacion'] = ({'EXCEPCION':'EXCEPCIONAL', 'BIOMETRIA':'BIOMETRICA_COMPLETA',

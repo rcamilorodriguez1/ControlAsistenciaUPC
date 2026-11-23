@@ -43,7 +43,7 @@ def _ejecutar(nombre, parametros, *, lectura=False):
             raise PermissionError('La materia o la autorización no te pertenece, o la matrícula ya no está vigente.') from exc
         if codigo == 1:
             raise ValueError('El documento ya está asociado a otra cuenta.') from exc
-        if codigo in (20301, 20302, 20303):
+        if codigo in (20301, 20302, 20303, 20313):
             raise ValueError(str(exc.args[0]).splitlines()[0].split(': ', 1)[-1]) from exc
         raise
     finally:

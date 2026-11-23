@@ -1,14 +1,18 @@
 # Clave común para la demostración estudiantil
 
+Actualización 011: se utiliza **tipo y número de documento registrado + clave común**.
+Se retiran código institucional e ID del acceso de prueba. Las cuentas existentes
+completan el documento desde Mi perfil o Gestión académica; ver
+[Documento estudiantil](DOCUMENTO_ESTUDIANTIL.md).
+
 Decisión del 22/11/2026: durante la presentación se permite entrar a cualquier
-estudiante activo mediante código institucional o ID interno y una clave común, incluso sin
+estudiante activo mediante documento registrado y una clave común, incluso sin
 documento registrado, biometría o autorización excepcional individual.
 
 ## Preparación y uso
 
-Oracle debe tener la migración `010_prueba_academica.sql`. Conserva las 14 tablas,
-140 columnas y 11 FK; amplía dos CHECK para el estado `PRUEBA_ACADEMICA`.
-El instalador y los migradores incluyen 010; el arranque comprueba 001–010.
+Oracle debe tener 001–011. La migración 010 incorpora `PRUEBA_ACADEMICA` y 011
+utiliza documento como identidad. Se conservan las 14 tablas, 140 columnas y 11 FK.
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\preparar_prueba_academica.py --activar-local
@@ -27,12 +31,12 @@ Add from .env, guardar las variables y desplegar el commit actualizado:
 - `ESTUDIANTE_CLAVE_MAESTRA_HASTA`: límite ISO 8601 con zona horaria.
 
 En Portal del estudiante → **No puedo completar la validación biométrica** aparece
-**Demostración académica** mientras ambos valores son válidos. Seleccionar código
-institucional o ID interno, introducirlo y utilizar la clave común. No se necesita
-cámara ni documento. Las cuentas archivadas se rechazan; las heredadas sin código
-pueden acceder por su ID interno.
+**Demostración académica** mientras ambos valores son válidos. Introducir tipo y
+número de documento y utilizar la clave común. No se necesita cámara. Las cuentas
+archivadas se rechazan; las que no tengan documento deben completarlo en Mi perfil
+o en Gestión académica.
 Quien conoce la clave puede acceder al portal de cualquier estudiante activo cuyo
-código conozca durante la vigencia configurada.
+documento conozca durante la vigencia configurada.
 
 ## Sesión y auditoría
 

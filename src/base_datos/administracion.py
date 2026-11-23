@@ -106,7 +106,7 @@ def _ejecutar(operacion, *, escritura=False):
         cod = getattr(exc.args[0], 'code', None)
         if cod in (20101, 20064): raise PermissionError('La cuenta administrativa ya no está activa o no tiene permiso.') from exc
         if cod == 1: raise ValueError('El usuario, el código o el documento ya está en uso.') from exc
-        if cod in (20102, 20103, 20106, 20301, 20302, 20303, 1403):
+        if cod in (20102, 20103, 20106, 20301, 20302, 20303, 20313, 1403):
             mensaje = 'El registro ya no existe.' if cod == 1403 else str(exc.args[0]).splitlines()[0].split(': ', 1)[-1]
             raise ValueError(mensaje) from exc
         raise

@@ -19,7 +19,7 @@ from src.utilidades.sesiones import sesion_incompatible
 from src.componentes.conflicto_sesion import mostrar_conflicto_sesion
 from src.componentes.acceso_excepcional import acceso_excepcional
 from src.componentes.estado_verificacion import mostrar_estado_verificacion
-from src.servicios.verificacion_identidad import acreditar_biometria, registrar_fallo_biometrico
+from src.servicios.verificacion_identidad import acreditar_biometria, registrar_fallo_biometrico, TIPOS_DOCUMENTO
 
 _logger = logging.getLogger(__name__)
 
@@ -166,7 +166,8 @@ def pantalla_estudiante(inscripcion_pendiente=False):
             with st.container(border=True):
                 st.header("Registrar nuevo perfil")
                 nuevo_nombre = st.text_input("Ingresa tu nombre", placeholder=" Ej. Mihir Gupta", key=f"auth_estudiante_nombre_{token}")
-                codigo_institucional = st.text_input('Código institucional', key=f'auth_estudiante_codigo_{token}', max_chars=50)
+                tipo_documento = st.selectbox('Tipo de documento', TIPOS_DOCUMENTO, key=f'auth_estudiante_tipo_registro_{token}')
+                documento = st.text_input('Número de documento', key=f'auth_estudiante_documento_registro_{token}', max_chars=40)
 
                 st.subheader("(Opcional): Inscripción de voz")
                 st.info('La voz es opcional. Si la grabas, habla de 3 a 30 segundos, con al menos 1,6 segundos de voz clara. Una grabación inválida debe repetirse o eliminarse antes de continuar.')
@@ -187,7 +188,7 @@ def pantalla_estudiante(inscripcion_pendiente=False):
                             try:
                                 datos_respuesta = registrar_estudiante(nuevo_nombre, fuente_foto,
                                     audio_grabado.getvalue() if audio_grabado is not None else None,
-                                    codigo_institucional=codigo_institucional)
+                                    tipo_documento=tipo_documento, documento=documento)
                             except (ValueError, PermissionError) as exc:
                                 st.warning(str(exc))
                             except Exception as exc:

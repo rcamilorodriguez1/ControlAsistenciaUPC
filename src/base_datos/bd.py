@@ -231,38 +231,35 @@ def obtener_todos_estudiantes():
     return estudiantes
 
 
-def crear_estudiante(nuevo_nombre, embedding_facial=None, embedding_voz=None, *, codigo_institucional=None):
+def crear_estudiante(nuevo_nombre, embedding_facial=None, embedding_voz=None, *, tipo_documento='CC', documento=None):
     # Defensa del acceso Python a Oracle, incluso sin pasar por el formulario de registro.
     embedding_facial = validar_vector_facial(embedding_facial).tolist()
     if embedding_voz is not None:
         embedding_voz = normalizar_vector_voz(embedding_voz).tolist()
     nuevo_nombre = texto(nuevo_nombre, 'Nombre', 200)
-    codigo_institucional = codigo(codigo_institucional, 'Código institucional')
+    from src.servicios.verificacion_identidad import huella_documento
+    huella, final = huella_documento(tipo_documento, documento)
     def op(conn):
         with conn.cursor() as cur:
             out_id = cur.var(oracledb.NUMBER)
-            cur.execute(
-                cargar_sql('base_datos/bd/crear_estudiante_01'),
-                nombre=nuevo_nombre,
-                codigo_institucional=codigo_institucional,
-                embedding_facial=_serializar_embedding(embedding_facial),
-                embedding_voz=_serializar_embedding(embedding_voz),
-                out_id=out_id,
-            )
+            cur.callproc('pkg_gestion.registrar_estudiante', [nuevo_nombre, huella, tipo_documento, final,
+                _serializar_embedding(embedding_facial), _serializar_embedding(embedding_voz), out_id])
+            identificador = int(out_id.getvalue())
             conn.commit()
-            return int(out_id.getvalue()[0])
+            return identificador
 
     try:
         estudiante_id = ejecutar_con_reintentos(op, reintentos=1)
     except oracledb.IntegrityError as exc:
         if getattr(exc.args[0], 'code', None) == 1:
-            raise ValueError('El código institucional ya tiene un perfil registrado.') from exc
+            raise ValueError('El documento ya tiene un perfil registrado. Inicia con esa cuenta o solicita su revisión.') from exc
         raise
     return [
         {
             "estudiante_id": estudiante_id,
             "nombre": nuevo_nombre,
-            "codigo_institucional": codigo_institucional,
+            "tipo_documento": tipo_documento,
+            "documento_final": final,
             "embedding_facial": embedding_facial,
             "embedding_voz": embedding_voz,
         }

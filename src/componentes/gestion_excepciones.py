@@ -8,7 +8,7 @@ from src.servicios.verificacion_identidad import CATEGORIAS, TIPOS_DOCUMENTO, ES
 def gestion_excepciones():
     st.subheader('Verificación de identidad')
     st.caption('La aprobación habilita el método alternativo. El estado refleja la última verificación realizada, no la presencia de plantillas almacenadas.')
-    busqueda = st.text_input('Buscar estudiante por nombre o código', max_chars=100, key='admin_verificacion_busqueda')
+    busqueda = st.text_input('Buscar estudiante por nombre o últimos cuatro caracteres del documento', max_chars=100, key='admin_verificacion_busqueda')
     filas = servicio.listar(busqueda)
     filtro = st.selectbox('Mostrar verificaciones', ['Todas', 'Excepción vigente', 'Último acceso excepcional', 'Verificación pendiente'])
     visibles = [f for f in filas if filtro == 'Todas' or
@@ -17,7 +17,7 @@ def gestion_excepciones():
                 (filtro == 'Verificación pendiente' and f['estado_verificacion'] == 'PENDIENTE')]
     st.caption(f"{sum(f['estado_verificacion']=='EXCEPCIONAL' for f in filas)} estudiantes con última verificación excepcional · "
                f"{sum(bool(f['excepcion_vigente']) for f in filas)} autorizaciones vigentes")
-    tabla = [{'Estudiante': f['nombre'], 'Código': f['codigo_institucional'],
+    tabla = [{'Estudiante': f['nombre'],
               'Verificación': ESTADOS.get(f['estado_verificacion'], ESTADOS['PENDIENTE']),
               'Excepción vigente': 'Sí' if f['excepcion_vigente'] else 'No',
               'Documento': f.get('documento'), 'Categoría': f.get('categoria'),
@@ -29,7 +29,7 @@ def gestion_excepciones():
         st.download_button('Descargar verificaciones CSV', csv, 'verificaciones.csv', 'text/csv')
     opciones = {int(f['estudiante_id']): f for f in filas}
     elegido = st.selectbox('Cuenta para gestionar', [None, *opciones],
-        format_func=lambda i: 'Crear estudiante sin biometría' if i is None else f"{opciones[i]['nombre']} · {opciones[i]['codigo_institucional'] or i}")
+        format_func=lambda i: 'Crear estudiante sin biometría' if i is None else f"{opciones[i]['nombre']} · {opciones[i].get('documento') or 'Documento pendiente'}")
     fila = opciones.get(elegido)
     version = int(fila['version_credencial']) if fila else 0
     if fila:
@@ -38,7 +38,6 @@ def gestion_excepciones():
     with st.form(f'admin_autorizar_excepcion_{elegido}_{version}', clear_on_submit=True):
         st.markdown('**Autorizar o renovar acceso alternativo**')
         nombre = st.text_input('Nombre del estudiante', max_chars=200) if fila is None else ''
-        codigo = st.text_input('Código institucional', max_chars=50) if fila is None else ''
         tipo = st.selectbox('Tipo de documento oficial', TIPOS_DOCUMENTO)
         documento = st.text_input('Número del documento comprobado', max_chars=40)
         categoria = st.selectbox('Motivo de excepción', CATEGORIAS)
@@ -55,7 +54,7 @@ def gestion_excepciones():
             st.warning('Las contraseñas no coinciden.')
         else:
             servicio.autorizar(elegido, tipo, documento, clave, categoria, referencia, int(dias),
-                version=version, documento_comprobado=comprobado, nombre=nombre, codigo_institucional=codigo)
+                version=version, documento_comprobado=comprobado, nombre=nombre)
             st.success('Excepción autorizada. El primer acceso alternativo registrará el estado excepcional.')
             st.rerun()
     if fila and fila['excepcion_activa']:

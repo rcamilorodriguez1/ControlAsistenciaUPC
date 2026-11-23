@@ -9,7 +9,7 @@
                     UNION
                     SELECT materia_id FROM asistencias
                 )
-                SELECT e.estudiante_id, e.nombre AS nombre_estudiante, e.codigo_institucional,
+                SELECT e.estudiante_id, e.nombre AS nombre_estudiante, v.tipo_documento,v.documento_final,
                        NVL(v.estado_verificacion,'PENDIENTE') estado_verificacion,
                        m.materia_id, m.nombre AS nombre_materia, m.codigo_materia, m.seccion,
                        CASE WHEN me.estudiante_id IS NOT NULL AND m.activo=1 THEN 1 ELSE 0 END matriculada,
@@ -23,4 +23,3 @@
                 LEFT JOIN asistencias a ON a.materia_id=m.materia_id AND a.estudiante_id=e.estudiante_id
                 WHERE e.estudiante_id=:estudiante_id AND e.activo=1
                 ORDER BY matriculada DESC, m.nombre, m.materia_id, a.fecha_hora, a.clase_id
-            

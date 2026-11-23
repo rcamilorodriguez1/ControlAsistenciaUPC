@@ -1,5 +1,10 @@
 # Base de datos de UPC | Aula: funcionamiento y consulta
 
+Actualización 011: [documento estudiantil en registro, perfil y acceso](DOCUMENTO_ESTUDIANTIL.md).
+El código institucional queda como legado; las identidades y los datos académicos se
+conservan. Registro y documento se guardan como una unidad; completar/corregir la
+identidad exige sesión propia o administrativa y revoca sesiones/credencial anteriores.
+
 Actualización 010 del 22/11: [acceso académico temporal](PRUEBA_ACADEMICA.md) mediante
 código institucional y clave común a estudiantes activos. Amplía dos CHECK de
 VERIFICACION_ESTUDIANTES para `PRUEBA_ACADEMICA`, con cero factores biométricos.

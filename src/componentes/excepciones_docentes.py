@@ -33,7 +33,7 @@ def gestionar_excepciones_docentes():
         return
     sid = st.selectbox('Estudiante que solicita la excepción', list(alumnos),
         key=f'excepcion_estudiante_{actor[2]}_{mid}',
-        format_func=lambda i: alumnos[i]['nombre']+' · '+str(alumnos[i]['codigo_institucional'] or 'Sin código'))
+        format_func=lambda i: alumnos[i]['nombre']+' · '+str(alumnos[i].get('documento') or 'Documento pendiente'))
     alumno = alumnos[sid]
     generacion = st.session_state.get('excepcion_docente_formulario', '')
     prefijo = f'excepcion_docente_{actor[2]}_{mid}_{sid}_{alumno["version_credencial"]}_{generacion}'

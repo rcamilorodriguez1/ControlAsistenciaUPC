@@ -1,5 +1,9 @@
 # Excepciones de verificación de identidad — esquema 009
 
+Actualización 011: el [documento identifica al alumno desde el registro](DOCUMENTO_ESTUDIANTIL.md).
+Se retira el código institucional de los formularios y el acceso de prueba usa documento.
+Las cuentas anteriores completan su documento desde el perfil o Gestión académica.
+
 Actualización 010: se añade un [modo académico temporal con clave común](PRUEBA_ACADEMICA.md)
 para cualquier estudiante activo, incluso sin excepción. Utiliza código institucional,
 estado `PRUEBA_ACADEMICA` y auditoría diferenciada. El flujo autorizado por documento

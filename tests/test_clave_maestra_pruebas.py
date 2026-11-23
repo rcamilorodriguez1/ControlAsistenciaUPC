@@ -11,6 +11,7 @@ from src.servicios import verificacion_identidad as identidad
 class ClaveMaestraPruebasTest(unittest.TestCase):
     def setUp(self):
         self.clave = 'ClaveSinteticaAcademica!2026'
+        p=patch.object(identidad,'_clave',return_value=b't'*32);p.start();self.addCleanup(p.stop)
         self.config = {'ESTUDIANTE_CLAVE_MAESTRA': self.clave,
             'ESTUDIANTE_CLAVE_MAESTRA_HASTA': (datetime.now(timezone.utc)+timedelta(hours=3)).isoformat()}
         p = patch.object(claves, 'obtener_configuracion', side_effect=lambda k, d=None:self.config.get(k,d))
@@ -66,7 +67,7 @@ class ClaveMaestraPruebasTest(unittest.TestCase):
     def test_modo_apagado_no_consulta_cuentas(self):
         self.config.clear()
         with patch.object(identidad,'obtener_conexion') as conectar:
-            self.assertIsNone(identidad.autenticar_prueba_academica('TEST-7',self.clave))
+            self.assertIsNone(identidad.autenticar_prueba_academica('CC','123456789',self.clave))
         conectar.assert_not_called()
 
     def test_credencial_acepta_alumno_activo_sin_excepcion_y_audita_metodo(self):
@@ -74,7 +75,7 @@ class ClaveMaestraPruebasTest(unittest.TestCase):
         conn=MagicMock();conn.cursor.return_value.__enter__.return_value=cur
         with patch.object(identidad,'obtener_conexion') as conexion,patch.object(identidad,'_clave',return_value=b't'*32):
             conexion.return_value.__enter__.return_value=conn
-            perfil=identidad.autenticar_prueba_academica(' test-7 ',self.clave)
+            perfil=identidad.autenticar_prueba_academica('CC',' 123.456.789 ',self.clave)
         self.assertEqual(perfil['estudiante_id'],7)
         self.assertEqual(perfil['_prueba_identidad'].metodo,'PRUEBA_ACADEMICA')
         auditadas=[k for _,k in cur.execute.call_args_list if k.get('a')=='CREDENCIAL_VALIDADA']
@@ -89,17 +90,19 @@ class ClaveMaestraPruebasTest(unittest.TestCase):
             conn=MagicMock();conn.cursor.return_value.__enter__.return_value=cur
             with patch.object(identidad,'obtener_conexion') as conexion:
                 conexion.return_value.__enter__.return_value=conn
-                self.assertIsNone(identidad.autenticar_prueba_academica('TEST-7',clave))
+                self.assertIsNone(identidad.autenticar_prueba_academica('CC','123456789',clave))
 
-    def test_id_interno_permite_cuenta_sin_codigo_y_rechaza_formatos_invalidos(self):
-        cur=MagicMock();cur.fetchone.side_effect=[(0,0,0),(7,'Fixture',None,0,1)]
+    def test_documento_se_normaliza_y_rechaza_tipo_o_numero_invalido(self):
+        cur=MagicMock();cur.fetchone.side_effect=[(0,0,0),(7,'Fixture','3456',0,1)]
         conn=MagicMock();conn.cursor.return_value.__enter__.return_value=cur
-        with patch.object(identidad,'obtener_conexion') as conexion,patch.object(identidad,'_clave',return_value=b't'*32):
+        with patch.object(identidad,'obtener_conexion') as conexion:
             conexion.return_value.__enter__.return_value=conn
-            self.assertEqual(identidad.autenticar_prueba_academica('7',self.clave,por_id=True)['estudiante_id'],7)
-        for valor in ('0','-1','7 OR 1=1','７','99999999999999999999999'):
+            perfil=identidad.autenticar_prueba_academica('CC','00.123-456',self.clave)
+            self.assertEqual((perfil['estudiante_id'],perfil['documento_final']),(7,'3456'))
+            self.assertNotIn('codigo_institucional',perfil)
+        for tipo,valor in [('CC','0'),('CC','123 OR 1=1'),('CC','１２３４５'),('OTRO','123456')]:
             with patch.object(identidad,'registrar_fallo_biometrico'),patch.object(identidad,'obtener_conexion') as conectar:
-                self.assertIsNone(identidad.autenticar_prueba_academica(valor,self.clave,por_id=True))
+                self.assertIsNone(identidad.autenticar_prueba_academica(tipo,valor,self.clave))
                 conectar.assert_not_called()
 
     def test_prueba_emitida_no_se_abre_si_cambia_configuracion(self):

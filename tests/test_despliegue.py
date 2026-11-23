@@ -156,7 +156,7 @@ class DespliegueTest(unittest.TestCase):
     def test_preflight_base_es_de_solo_lectura_y_revisa_permisos(self):
         propietario = MagicMock()
         consulta = propietario.__enter__.return_value.cursor.return_value.__enter__.return_value
-        consulta.__iter__.return_value = iter([(f'{n:03d}',) for n in range(1, 11)])
+        consulta.__iter__.return_value = iter([(f'{n:03d}',) for n in range(1, 12)])
         consulta.fetchone.side_effect = [('UPC_AULA_APP', 'UPC_ASISTENCIA'), (0,), (0,)]
         from src.base_datos.permisos_ejecucion import contrato_permisos
         contrato = contrato_permisos()

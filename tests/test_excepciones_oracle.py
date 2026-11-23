@@ -36,7 +36,7 @@ class ExcepcionesOracleTest(unittest.TestCase):
                 return int(out.getvalue()[0])
             self.admin = insertar("INSERT INTO administradores(usuario,nombre,contrasena) VALUES(:u,'Fixture excepciones','FIXTURE')",
                                   columna='administrador_id', u=self.codigo)
-            self.estudiante = insertar("INSERT INTO estudiantes(nombre,codigo_institucional) VALUES('Fixture excepciones',:u)",
+            self.estudiante = insertar("INSERT INTO estudiantes(nombre,codigo_institucional) VALUES(:u,:u)",
                                        columna='estudiante_id', u=self.codigo)
             self.estudiantes.append(self.estudiante)
             self.token_admin = secrets.token_urlsafe(32)

@@ -69,7 +69,8 @@ def construir_perfil(filas):
     presentes = sum(r['presente'] for r in registros.values())
     return {
         'estudiante_id': estudiante_id, 'nombre': filas[0]['nombre_estudiante'],
-        'codigo': filas[0].get('codigo_institucional'),
+        'tipo_documento': filas[0].get('tipo_documento'),
+        'documento_final': filas[0].get('documento_final'),
         'estado_verificacion': filas[0].get('estado_verificacion','PENDIENTE'),
         'total_materias': sum(m['matriculada'] for m in materias.values()),
         'materias': sorted(materias.values(), key=lambda m: (not m['matriculada'], m['nombre'].casefold())),

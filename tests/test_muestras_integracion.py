@@ -22,7 +22,7 @@ class MuestrasOracleTest(unittest.TestCase):
             def commit(self): pass
 
         with patch.object(bd, 'ejecutar_con_reintentos', side_effect=lambda op, **kw: op(SinCommit())):
-            respuesta = bd.crear_estudiante('Fixture de biometría', [0.1] * 128, [2.] * 256, codigo_institucional='TEST-BIOMETRIA')
+            respuesta = bd.crear_estudiante('Fixture de biometría', [0.1] * 128, [2.] * 256, tipo_documento='CC', documento='987654321001')
         with self.conn.cursor() as cur:
             cur.execute('SELECT embedding_facial,embedding_voz FROM estudiantes WHERE estudiante_id=:e', e=respuesta[0]['estudiante_id'])
             facial, voz = (bd._deserializar_embedding(v) for v in cur.fetchone())

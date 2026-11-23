@@ -35,7 +35,7 @@ class RegistroInterfazTest(unittest.TestCase):
         self.at.camera_input[0].upload('rostro.jpg', archivo.getvalue()).run()
         self.assertEqual([e.message for e in self.at.exception], [])
         next(i for i in self.at.text_input if i.label == 'Ingresa tu nombre').input('Alumno').run()
-        next(i for i in self.at.text_input if i.label == 'Código institucional').input('TEST-001').run()
+        next(i for i in self.at.text_input if i.label == 'Número de documento').input('123456789').run()
 
     def crear(self):
         next(b for b in self.at.button if b.label == 'Crear Cuenta').click().run()

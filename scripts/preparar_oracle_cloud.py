@@ -23,6 +23,7 @@ MIGRACIONES = (
     ('008', '008_excepciones.sql'),
     ('009', '009_excepciones_docentes.sql'),
     ('010', '010_prueba_academica.sql'),
+    ('011', '011_documento_estudiantil.sql'),
 )
 
 
@@ -94,7 +95,7 @@ def verificar(parametros, config):
     with oracledb.connect(user=config['ORACLE_ADMIN_USUARIO'], password=config['ORACLE_ADMIN_CONTRASENA'], params=parametros) as conn:
         ejecutar_script(conn, leer_script(RAIZ / 'sql/cloud/05_verificar_acceso_admin.sql', RAIZ))
     estado('completada', inventario=inventario)
-    print('Esquema 001–010 verificado y acceso administrativo limitado correcto.')
+    print('Esquema 001–011 verificado y acceso administrativo limitado correcto.')
     print('Inventario:', json.dumps(inventario, ensure_ascii=False))
 
 

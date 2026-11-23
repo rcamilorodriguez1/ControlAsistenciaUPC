@@ -30,6 +30,9 @@ def audio_wav(segundos=3, frecuencia=16000, amplitud=0.1, canales=1):
 
 
 class VectoresTest(unittest.TestCase):
+    def setUp(self):
+        p=patch('src.servicios.verificacion_identidad._clave',return_value=b'v'*32)
+        p.start();self.addCleanup(p.stop)
     def test_rechaza_dimensiones_tipos_valores_no_finitos_y_vector_nulo(self):
         for n, validar in [(128, validar_vector_facial), (256, normalizar_vector_voz)]:
             for vector in [None, [], [1.] * (n - 1), [[1.] * n], [0.] * n,
@@ -56,7 +59,7 @@ class VectoresTest(unittest.TestCase):
 
     def test_guardado_prepara_voz_normalizada_sin_reintentar_alta(self):
         with patch.object(bd, 'ejecutar_con_reintentos', return_value=42) as ejecutar:
-            datos = bd.crear_estudiante('Alumno', [0.1] * 128, [2.] * 256, codigo_institucional='TEST-001')[0]
+            datos = bd.crear_estudiante('Alumno', [0.1] * 128, [2.] * 256, tipo_documento='CC', documento='123456789')[0]
         self.assertEqual(ejecutar.call_args.kwargs, {'reintentos': 1})
         self.assertAlmostEqual(np.linalg.norm(datos['embedding_voz']), 1.)
         np.testing.assert_array_equal(datos['embedding_facial'], [0.1] * 128)
@@ -145,21 +148,21 @@ class RegistroValidadoTest(unittest.TestCase):
     def test_exactamente_un_rostro_revalidado_antes_de_crear(self):
         for rostros in [[], [np.ones(128), np.ones(128)]]:
             self.mock[0].return_value = rostros
-            with self.assertRaises(MuestraInvalida): registro.registrar_estudiante('Alumno', foto_registro(), codigo_institucional='TEST-001')
+            with self.assertRaises(MuestraInvalida): registro.registrar_estudiante('Alumno', foto_registro(), tipo_documento='CC', documento='123456789')
             self.mock[2].assert_not_called()
         self.assertTrue(self.mock[0].call_args.kwargs['rostro_unico'])
 
     def test_voz_enviada_fallida_no_se_omite_ni_crea_perfil(self):
         self.mock[1].side_effect = MuestraInvalida('Voz insuficiente')
-        with self.assertRaises(MuestraInvalida): registro.registrar_estudiante('Alumno', foto_registro(), b'voz', codigo_institucional='TEST-001')
+        with self.assertRaises(MuestraInvalida): registro.registrar_estudiante('Alumno', foto_registro(), b'voz', tipo_documento='CC', documento='123456789')
         self.mock[2].assert_not_called()
         self.mock[3].assert_not_called()
 
     def test_sin_voz_es_opcional_y_con_voz_se_normaliza(self):
-        registro.registrar_estudiante(' Alumno ', foto_registro(), codigo_institucional='TEST-001')
+        registro.registrar_estudiante(' Alumno ', foto_registro(), tipo_documento='CC', documento='123456789')
         self.mock[1].assert_not_called()
         self.assertIsNone(self.mock[2].call_args.kwargs['embedding_voz'])
-        registro.registrar_estudiante(' Alumno ', foto_registro(), b'voz', codigo_institucional='TEST-001')
+        registro.registrar_estudiante(' Alumno ', foto_registro(), b'voz', tipo_documento='CC', documento='123456789')
         self.assertAlmostEqual(np.linalg.norm(self.mock[2].call_args.kwargs['embedding_voz']), 1.)
         self.assertEqual(self.mock[2].call_args.args, ('Alumno',))
         self.assertEqual(self.mock[3].call_count, 2)

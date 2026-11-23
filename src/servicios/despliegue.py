@@ -74,8 +74,8 @@ def comprobar_base():
         comprobar_permisos(cur, esquema)
         cur.execute(cargar_sql('servicios/despliegue/comprobar_base_01'))
         versiones = {r[0] for r in cur}
-        if not {f'{n:03d}' for n in range(1, 11)} <= versiones:
-            raise ValueError('Instala y verifica el esquema 001–010 antes de iniciar.')
+        if not {f'{n:03d}' for n in range(1, 12)} <= versiones:
+            raise ValueError('Instala y verifica el esquema 001–011 antes de iniciar.')
         cur.execute(cargar_sql('servicios/despliegue/comprobar_base_02'), esquema=esquema)
         if cur.fetchone()[0]:
             raise ValueError('El esquema contiene objetos inválidos.')

@@ -25,7 +25,6 @@ from src.base_datos.consultas import cargar_sql
 from src.base_datos.esquema import esquema_propietario
 from src.utilidades.claves_identidad import leer_clave
 from src.servicios.clave_maestra_pruebas import configuracion_pruebas
-from src.servicios.validaciones import codigo as validar_codigo
 
 _logger = logging.getLogger(__name__)
 TIPOS_DOCUMENTO = ('CC', 'TI', 'CE', 'PA')
@@ -158,7 +157,7 @@ def autenticar_excepcion(tipo, numero, contrasena):
     except ValueError:
         registrar_fallo_biometrico('DOCUMENTO_INVALIDO', metodo='EXCEPCION')
         return None
-    huella, _ = huella_documento(tipo, numero)
+    huella, final = huella_documento(tipo, numero)
     limite = sha256(('excepcion:' + huella).encode()).hexdigest()
     with obtener_conexion() as conn, conn.cursor() as cur:
         cur.execute(cargar_sql('compartidas/limpiar_limites_expirados'))
@@ -189,26 +188,22 @@ def autenticar_excepcion(tipo, numero, contrasena):
         conn.commit()
     if not correcto:
         return None
-    return {'estudiante_id': fila[0], 'nombre': fila[1], 'codigo_institucional': fila[2], '_prueba_identidad': prueba}
+    return {'estudiante_id': fila[0], 'nombre': fila[1], 'tipo_documento': tipo,
+            'documento_final': final, '_prueba_identidad': prueba}
 
 
-def autenticar_prueba_academica(codigo, contrasena, *, por_id=False):
+def autenticar_prueba_academica(tipo, numero, contrasena):
     """Acceso temporal a cualquier alumno activo, sin conceder una excepción normal."""
     exigir_acceso_disponible()
     config = configuracion_pruebas()
     if config is None:
         return None
     try:
-        if por_id:
-            if not isinstance(codigo, str) or not re.fullmatch(r'[1-9][0-9]{0,17}', codigo.strip(), re.ASCII):
-                raise ValueError('ID de estudiante no válido.')
-            codigo = 'ID:' + str(int(codigo.strip()))
-        else:
-            codigo = validar_codigo(codigo, 'Código institucional')
+        huella, final = huella_documento(tipo, numero)
     except ValueError:
-        registrar_fallo_biometrico('MUESTRA_INVALIDA', metodo='PRUEBA_ACADEMICA')
+        registrar_fallo_biometrico('DOCUMENTO_INVALIDO', metodo='PRUEBA_ACADEMICA')
         return None
-    limite = sha256(('prueba_academica:' + codigo).encode()).hexdigest()
+    limite = sha256(('prueba_academica:' + huella).encode()).hexdigest()
     with obtener_conexion() as conn, conn.cursor() as cur:
         cur.execute(cargar_sql('compartidas/limpiar_limites_expirados'))
         try:
@@ -218,10 +213,7 @@ def autenticar_prueba_academica(codigo, contrasena, *, por_id=False):
                 raise
         cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_excepcion_02'), c=limite)
         intentos, bloqueado, expirada = cur.fetchone()
-        if por_id:
-            cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_prueba_academica_por_id_01'), i=int(codigo[3:]))
-        else:
-            cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_prueba_academica_01'), c=codigo)
+        cur.execute(cargar_sql('servicios/verificacion_identidad/autenticar_prueba_academica_01'), d=huella)
         fila = cur.fetchone()
         coincide = config.coincide(contrasena)
         correcto = bool(coincide and fila and fila[4] == 1 and not bloqueado)
@@ -238,7 +230,8 @@ def autenticar_prueba_academica(codigo, contrasena, *, por_id=False):
         conn.commit()
     if not correcto:
         return None
-    return {'estudiante_id': fila[0], 'nombre': fila[1], 'codigo_institucional': fila[2], '_prueba_identidad': prueba}
+    return {'estudiante_id': fila[0], 'nombre': fila[1], 'tipo_documento': tipo,
+            'documento_final': final, '_prueba_identidad': prueba}
 
 
 def confirmar_en_conexion(conn, estudiante_id, prueba):

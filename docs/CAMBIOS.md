@@ -1,5 +1,25 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Documento estudiantil en lugar de código institucional
+
+- Registro, perfil, administración, excepciones docentes y acceso académico de prueba
+  utilizan documento. Se retiran los campos de código institucional e ID del acceso.
+- Las altas guardan cuenta y HMAC del documento en una única transacción; un duplicado
+  revierte el alta completa. Se muestran tipo y últimos cuatro caracteres, sin almacenar
+  el número completo ni convertir códigos antiguos en documentos.
+- Perfil propio y Gestión académica permiten completar/corregir documento, con identidad,
+  versión, unicidad, cierre de sesiones y revocación de la credencial excepcional anterior.
+  Autorizar una excepción exige coincidir con el documento registrado.
+- Migración 011 actualiza cuatro paquetes existentes: 14 tablas, 140 columnas, 11 FK y
+  los mismos 53 permisos del runtime. Ambas bases se migran tras respaldo cifrado.
+  Se conservan cuentas, códigos históricos, matrículas y resultados existentes.
+- Oracle local y Autonomous son bases independientes; no se realiza una limpieza de
+  datos del usuario. Las pruebas usan y limpian únicamente sus cuentas sintéticas.
+  Las pruebas de página/cámara permanecen a cargo del usuario.
+- Comprobación aprobada: 95 pruebas aisladas, 45 en Oracle local y 15 con runtime y
+  conexión administrativa limitada de Autonomous. Sin fallos ni omisiones; ambos
+  esquemas 011 y sus respaldos cifrados verificados. Evidencia en .local/oracle_cloud/.
+
 ## 22/11/2026 — Clave maestra temporal para demostración estudiantil
 
 - Petición explícita: acceso a cualquier estudiante activo, incluso sin una excepción

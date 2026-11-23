@@ -104,7 +104,7 @@ def _auditoria():
 def _cuentas():
     st.subheader('Editar cuentas')
     tipo = st.selectbox('Tipo de cuenta', ['PROFESOR', 'ESTUDIANTE'], format_func=lambda t: 'Profesor' if t == 'PROFESOR' else 'Estudiante')
-    busqueda = st.text_input('Buscar por nombre, usuario o código', max_chars=100, key='admin_buscar_cuenta')
+    busqueda = st.text_input('Buscar por nombre, usuario o últimos cuatro caracteres del documento', max_chars=100, key='admin_buscar_cuenta')
     filas = datos.cuentas(tipo, busqueda)
     st.caption('Hasta 500 coincidencias. Usa la búsqueda para localizar una cuenta concreta.')
     if not filas:
@@ -118,9 +118,8 @@ def _cuentas():
     version = fila['version']
     prefijo = f'admin_editar_{tipo}_{identidad}_{version}'
     nombre = st.text_input('Nombre completo', value=fila['nombre'], max_chars=200, key=prefijo+'_nombre')
-    campo = 'usuario' if tipo == 'PROFESOR' else 'codigo_institucional'
-    identificador = st.text_input('Usuario' if tipo == 'PROFESOR' else 'Código institucional', value=fila.get(campo) or '',
-                                  max_chars=100 if tipo == 'PROFESOR' else 50, key=prefijo+'_identificador')
+    identificador = st.text_input('Usuario', value=fila.get('usuario') or '',max_chars=100,
+                                  key=prefijo+'_identificador') if tipo=='PROFESOR' else fila.get('codigo_institucional') or ''
     activo = st.checkbox('Cuenta activa', value=bool(fila['activo']), key=prefijo+'_activo')
     nueva_clave = ''
     cambiar_clave = False
@@ -139,6 +138,21 @@ def _cuentas():
         else: datos.editar_estudiante(identidad, identificador, nombre, activo, motivo, version=version)
         st.session_state.pop(base, None)
         st.toast('Cambios guardados y registrados en auditoría.'); st.rerun()
+    if tipo == 'ESTUDIANTE':
+        from src.servicios import documentos_estudiantes as documentos
+        from src.servicios.verificacion_identidad import TIPOS_DOCUMENTO
+        st.caption(documentos.etiqueta_documento(fila.get('tipo_documento'),fila.get('documento_final')))
+        with st.form(f'admin_documento_{identidad}_{fila.get("version_documento",0)}',clear_on_submit=True):
+            tipo_doc=st.selectbox('Tipo de documento del estudiante',TIPOS_DOCUMENTO)
+            numero_doc=st.text_input('Número del documento del estudiante',max_chars=40)
+            comprobado=st.checkbox('Comprobé que el documento corresponde a este estudiante.')
+            st.caption('Actualizar el documento cierra las sesiones y revoca la contraseña excepcional anterior.')
+            guardar_doc=st.form_submit_button('Guardar documento del estudiante',disabled=not bool(fila['activo']))
+        if guardar_doc:
+            documentos.guardar_administrativo(identidad,tipo_doc,numero_doc,
+                version=int(fila.get('version_documento',0)),comprobado=comprobado)
+            st.session_state.pop(base,None)
+            st.toast('Documento guardado; el estudiante debe iniciar sesión nuevamente.');st.rerun()
 
 
 def _materias():

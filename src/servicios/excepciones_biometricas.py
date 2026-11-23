@@ -3,7 +3,7 @@ import oracledb
 
 from src.base_datos import administracion as datos
 from src.base_datos.bd import cifrar_contrasena, _filas_a_diccionarios
-from src.servicios.validaciones import texto, codigo
+from src.servicios.validaciones import texto
 from src.servicios.verificacion_identidad import huella_documento, CATEGORIAS
 
 
@@ -41,8 +41,7 @@ def autorizar(estudiante_id, tipo, documento, contrasena, categoria, referencia,
         raise ValueError('Cuenta o versión no válida.')
     huella, final = huella_documento(tipo, documento)
     nombre = texto(nombre, 'Nombre', 200) if estudiante_id is None else None
-    codigo_institucional = codigo(codigo_institucional, 'Código institucional') if estudiante_id is None else None
-    return _ejecutar('autorizar', [estudiante_id, nombre, codigo_institucional, huella, tipo, final,
+    return _ejecutar('autorizar', [estudiante_id, nombre, None, huella, tipo, final,
         cifrar_contrasena(contrasena), categoria, texto(referencia, 'Referencia del expediente', 100), dias, version], identificador=True)
 
 

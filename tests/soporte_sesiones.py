@@ -4,6 +4,8 @@ from unittest.mock import patch
 
 
 def simular_sesiones(caso):
+    p=patch('src.servicios.documentos_estudiantes.consultar_propio',return_value={'tipo':None,'final':None,'version':0})
+    p.start();caso.addCleanup(p.stop)
     p=patch('src.pantallas.pantalla_estudiante.acreditar_biometria',side_effect=lambda p:p)
     p.start();caso.addCleanup(p.stop)
     p=patch('src.pantallas.pantalla_estudiante.registrar_fallo_biometrico')

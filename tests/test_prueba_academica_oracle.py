@@ -2,6 +2,7 @@
 from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 import os
+import secrets
 import unittest
 from unittest.mock import patch
 from uuid import uuid4
@@ -14,7 +15,7 @@ class PruebaAcademicaOracleTest(unittest.TestCase):
         from src.base_datos.configuracion import obtener_conexion
         from src.servicios import clave_maestra_pruebas as claves, verificacion_identidad as identidad, sesiones_servidor as sesiones
         self.claves,self.identidad,self.sesiones=claves,identidad,sesiones
-        self.conn=obtener_conexion();self.alumnos=[];self.addCleanup(self.limpiar)
+        self.conn=obtener_conexion();self.alumnos=[];self.documentos={};self.addCleanup(self.limpiar)
         self.maestra='ClaveSinteticaAcademicaOracle!2026'
         self.cfg={'ESTUDIANTE_CLAVE_MAESTRA':self.maestra,
             'ESTUDIANTE_CLAVE_MAESTRA_HASTA':(datetime.now(timezone.utc)+timedelta(hours=2)).isoformat()}
@@ -25,7 +26,11 @@ class PruebaAcademicaOracleTest(unittest.TestCase):
                 codigo=('DEMO_'+uuid4().hex[:18]).upper();salida=cur.var(oracledb.NUMBER)
                 cur.execute("INSERT INTO estudiantes(nombre,codigo_institucional,activo) VALUES('Fixture academico',:c,:a) RETURNING estudiante_id INTO :i",
                             c=codigo,a=activo,i=salida)
-                self.alumnos.append((int(salida.getvalue()[0]),codigo))
+                identificador=int(salida.getvalue()[0]);self.alumnos.append((identificador,codigo))
+                documento=str(secrets.randbelow(900000000000)+100000000000)
+                huella,final=self.identidad.huella_documento('CC',documento)
+                self.documentos[identificador]=documento
+                cur.execute("INSERT INTO verificacion_estudiantes(estudiante_id,documento_huella,tipo_documento,documento_final) VALUES(:i,:h,'CC',:f)",i=identificador,h=huella,f=final)
         self.conn.commit()
 
     def limpiar(self):
@@ -35,11 +40,13 @@ class PruebaAcademicaOracleTest(unittest.TestCase):
                 cur.execute("DELETE FROM eventos_gestion WHERE entidad='VERIFICACION' AND entidad_id=:i",i=i)
                 cur.execute("DELETE FROM sesiones_usuario WHERE rol='ESTUDIANTE' AND actor_id=:i",i=i)
                 cur.execute('DELETE FROM estudiantes WHERE estudiante_id=:i',i=i)
-                cur.execute('DELETE FROM limites_acceso WHERE clave=:c',c=sha256(('prueba_academica:'+codigo).encode()).hexdigest())
+                if i in self.documentos:
+                    huella=self.identidad.huella_documento('CC',self.documentos[i])[0]
+                    cur.execute('DELETE FROM limites_acceso WHERE clave=:c',c=sha256(('prueba_academica:'+huella).encode()).hexdigest())
         self.conn.commit();self.conn.close()
 
     def autenticar(self,n=0,clave=None):
-        return self.identidad.autenticar_prueba_academica(self.alumnos[n][1],self.maestra if clave is None else clave)
+        return self.identidad.autenticar_prueba_academica('CC',self.documentos[self.alumnos[n][0]],self.maestra if clave is None else clave)
 
     def abrir(self,perfil):
         return self.sesiones.abrir('estudiante',perfil['estudiante_id'],prueba_identidad=perfil['_prueba_identidad'])
@@ -60,16 +67,9 @@ class PruebaAcademicaOracleTest(unittest.TestCase):
         with self.conn.cursor() as cur:
             cur.execute('SELECT activo FROM estudiantes WHERE estudiante_id=:i',i=self.alumnos[2][0]);self.assertEqual(cur.fetchone()[0],0)
 
-    def test_cuenta_activa_sin_codigo_institucional_accede_por_id(self):
-        import oracledb
-        with self.conn.cursor() as cur:
-            salida=cur.var(oracledb.NUMBER)
-            cur.execute("INSERT INTO estudiantes(nombre) VALUES('Fixture sin codigo') RETURNING estudiante_id INTO :i",i=salida)
-            i=int(salida.getvalue()[0]);self.alumnos.append((i,'ID:'+str(i)))
-        self.conn.commit()
-        perfil=self.identidad.autenticar_prueba_academica(str(i),self.maestra,por_id=True)
-        token=self.abrir(perfil)
-        self.sesiones.validar('estudiante',i,token)
+    def test_cuenta_sin_documento_no_se_identifica_por_codigo_o_id(self):
+        self.assertIsNone(self.identidad.autenticar_prueba_academica('CC','99999999999999',self.maestra))
+        self.assertIsNone(self.identidad.autenticar_prueba_academica('CC',self.alumnos[0][1],self.maestra))
 
     def test_fallos_bloquean_tambien_la_clave_correcta(self):
         for _ in range(5):self.assertIsNone(self.autenticar(clave='incorrecta'))

@@ -24,6 +24,7 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 | Consultar el perfil y la configuración del docente | [Perfil docente](PERFIL_DOCENTE.md) |
 | Utilizar la última entrega de excepciones biométricas | [Excepciones biométricas](EXCEPCIONES_BIOMETRICAS.md) |
 | Entrar con clave común durante la presentación académica | [Modo temporal de prueba estudiantil, esquema 010](PRUEBA_ACADEMICA.md) |
+| Sustituir el código institucional por documento | [Documento estudiantil: registro, perfil y acceso, esquema 011](DOCUMENTO_ESTUDIANTIL.md) |
 
 ## Contexto del proyecto y orden de publicación
 
@@ -66,14 +67,14 @@ Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
   explícita de commit o push puede adelantar el paso. Si una comprobación falla, corregirla
   antes de publicar y registrar el bloqueo; no marcar un punto como completo sin su evidencia.
 
-Último lote preparado, contado desde `52bb08d`:
+Último lote preparado, contado desde `1391969`:
 
 | Referencia | Estado |
 | --- | --- |
-| Base del lote | `52bb08d`, rama `main` |
-| Cambios del lote | Clave maestra temporal estudiantil, estado académico diferenciado, migración 010, generador y documentación privada de activación |
-| Verificación | 95 pruebas técnicas aprobadas; Oracle local y Autonomous 010 con respaldo; runtime limitado y preflight correctos |
-| Commit/push | Cierre de FB6.2; el hash final queda en Git y el seguimiento privado. Falta importar dos variables en Render para activar el modo |
+| Base del lote | `1391969`, rama `main` |
+| Cambios del lote | Documento en registro, perfil, administración y acceso de prueba; migración 011 y conservación de datos anteriores |
+| Verificación | 155 pruebas técnicas aprobadas: 95 aisladas, 45 locales y 15 con conexiones limitadas de Autonomous; respaldos y esquema 011 correctos |
+| Commit/push | Cierre de FB6.3; el hash final queda en Git y el seguimiento privado. La clave común sigue activándose con las dos variables privadas de Render |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el

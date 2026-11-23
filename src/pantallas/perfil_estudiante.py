@@ -36,7 +36,8 @@ def _identidad(perfil):
     porcentaje = perfil['porcentaje']
     valor = 0 if porcentaje is None else min(100, max(0, porcentaje))
     estado = perfil['estado']
-    codigo = f'Código institucional · {_e(perfil["codigo"])}' if perfil['codigo'] else 'Universidad Popular del Cesar'
+    from src.servicios.documentos_estudiantes import etiqueta_documento
+    codigo = _e(etiqueta_documento(perfil.get('tipo_documento'),perfil.get('documento_final')))
     base = (f'{perfil["asistidas"]} de {perfil["total"]} clases con registro confirmado'
             if perfil['total'] else 'Aún no hay clases con registro confirmado')
     texto = _porcentaje(porcentaje)
@@ -193,6 +194,8 @@ def pantalla_perfil_estudiante():
         _identidad(perfil)
         from src.componentes.estado_verificacion import mostrar_estado_verificacion
         mostrar_estado_verificacion(perfil.get('estado_verificacion'))
+        from src.componentes.documento_estudiante import configurar_documento
+        configurar_documento()
         with st.container(key='perfil_detalle'):
             calendario, materias = st.columns([1.2, 1], gap='large')
             with calendario:

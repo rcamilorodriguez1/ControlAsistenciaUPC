@@ -4,7 +4,7 @@ from src.base_datos import bd
 
 
 def ejecutar(nombre, parametros, *, salida=False):
-    if nombre not in {'crear_materia','matricular','retirar','archivar_materia','retirar_biometria','archivar_estudiante','archivar_profesor'}:
+    if nombre not in {'crear_materia','matricular','retirar','archivar_materia','retirar_biometria','archivar_estudiante','archivar_profesor','actualizar_documento'}:
         raise ValueError('Operación no permitida.')
     def op(conn):
         try:
@@ -26,9 +26,11 @@ def ejecutar(nombre, parametros, *, salida=False):
         codigo = getattr(exc.args[0], 'code', None)
         if codigo == 20085:
             raise PermissionError('La cuenta o el rol actual no permite esta operación.') from exc
+        if codigo == 1 and nombre == 'actualizar_documento':
+            raise ValueError('El documento ya está asociado a otra cuenta.') from exc
         if codigo in (1,20010,20088):
             raise ValueError('El código o la matrícula ya existe.') from exc
-        if codigo in (20034,20035,20084,20086,20087):
+        if codigo in (20034,20035,20084,20086,20087,20303,20313):
             raise ValueError(str(exc.args[0]).splitlines()[0].split(': ',1)[-1]) from exc
         raise
 
