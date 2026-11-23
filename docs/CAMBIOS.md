@@ -1,5 +1,23 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Reinicio de datos en ambas bases y estudio gradual
+
+- Instrucción expresa: vaciar Oracle local y Autonomous y cargar datos poco a poco.
+  Se conserva el esquema 001–011, usuarios técnicos, permisos y claves privadas.
+- Script de limpieza con modo de conteo predeterminado y aplicación explícita:
+  valida los destinos y sus 14 tablas, bloquea escrituras y verifica respaldos
+  cifrados de ambos antes de cualquier DELETE. Los historiales se vacían al final.
+- Se vacían las 13 tablas de datos, incluidas cuentas web, auditoría y sesiones;
+  VERSIONES_ESQUEMA conserva 11 filas. No se reinstala Oracle ni se reinician IDs.
+- Cuatro pruebas comprueban protección de versiones, respaldos previos, orden de
+  verificación/COMMIT y rollback ante errores. Informe privado en .local/reinicios/.
+- Ejecución confirmada en ambos destinos: 13 tablas vacías en cada uno, 11 versiones
+  conservadas y preflight cloud aprobado con las bases vacías. Respaldos cifrados y
+  resultado en .local/reinicios/academico_20261123T044635Z_8b4791/.
+- Nueva rama y guía para estudiar scripts paso a paso, empezando por estructura,
+  datos, transacciones, cuentas técnicas/web y carga de un conjunto pequeño acordado.
+  No se crean datos de demostración ni nuevas cuentas automáticamente.
+
 ## 22/11/2026 — Documento estudiantil en lugar de código institucional
 
 - Registro, perfil, administración, excepciones docentes y acceso académico de prueba

@@ -6,6 +6,7 @@ registro histórico, incluidos los pendientes de despliegue que siguen abiertos.
 
 | Rama | Alcance | Estado |
 | --- | --- | --- |
+| [Aprendizaje de base de datos](ROADMAP_APRENDIZAJE_BASE_DATOS.md) | Reinicio autorizado de ambos destinos, carga gradual y explicación de cada script | Reinicio terminado y guía inicial disponible; sin datos nuevos automáticos |
 | [Frontend y backend](ROADMAP_FRONT_BACK.md) | Selector de clases, créditos, perfiles, configuración y excepciones docentes | Implementado y probado; aceptación en Render pendiente |
 | [Base de datos y aporte académico](ROADMAP_BASE_DATOS.md) | Visualización, diccionario, conexión y goodwill | Entregables terminados; revisión académica del equipo pendiente |
 | [Memoria y presentación](ROADMAP_DOCUMENTACION_PRESENTACION.md) | PDF 1.2 y presentación comercial con identidad UPC | Terminados y revisados: 87 páginas y 20 diapositivas |

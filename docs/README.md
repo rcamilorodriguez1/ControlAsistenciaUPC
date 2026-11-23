@@ -7,6 +7,7 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 
 | Necesidad | Documento |
 | --- | --- |
+| Empezar con datos vacíos y aprender cada script | [Guía de estudio](APRENDER_BASE_DATOS.md) · [roadmap de aprendizaje](ROADMAP_APRENDIZAJE_BASE_DATOS.md) |
 | Leer la memoria académica y técnica completa | [Documentación integral 1.2 en PDF](UPC_Aula_Documentacion_Integral.pdf) |
 | Presentar el producto a aliados o posibles inversionistas | [Presentación comercial y guion](PRESENTACION_COMERCIAL.md) |
 | Llevar todo a la exposición de Base de Datos | [Paquete del Escritorio y orden de exposición](PAQUETE_PRESENTACION_BASE_DATOS.md) |
@@ -72,9 +73,9 @@ Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
 | Referencia | Estado |
 | --- | --- |
 | Base del lote | `1391969`, rama `main` |
-| Cambios del lote | Documento en registro, perfil, administración y acceso de prueba; migración 011 y conservación de datos anteriores |
-| Verificación | 155 pruebas técnicas aprobadas: 95 aisladas, 45 locales y 15 con conexiones limitadas de Autonomous; respaldos y esquema 011 correctos |
-| Commit/push | Cierre de FB6.3; el hash final queda en Git y el seguimiento privado. La clave común sigue activándose con las dos variables privadas de Render |
+| Cambios del lote | Documento estudiantil 011; después, reinicio expresamente autorizado de datos en las dos bases y guía de estudio gradual |
+| Verificación | 155 pruebas del documento y cuatro del reinicio; 13 tablas vacías por base, 11 versiones conservadas, respaldos y preflight correctos |
+| Commit/push | Cierre de FB6.3 y AB1; el hash final queda en Git y el seguimiento privado. Las cuentas web deberán crearse de nuevo paso a paso |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el
