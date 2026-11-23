@@ -1,5 +1,21 @@
 # Registro de cambios de UPC | Aula
 
+## 23/11/2026 — Guía ilustrada para aprender toda la base desde cero
+
+- PDF de 84 páginas y 27 capítulos con párrafos cortos, gráficos vectoriales,
+  ejemplos ficticios, índice navegable, glosario y preguntas con respuestas.
+- Catálogo 011 capturado en solo lectura: 14 tablas, diccionario de 140 campos,
+  11 FK, 11 vistas, ocho paquetes con 41 rutinas públicas, diez triggers,
+  37 índices —incluidos internos— y nueve identidades. Se explica cada objeto,
+  la conexión, las once migraciones, transacciones y el reinicio de ambas bases.
+- Exportador de metadatos y generador reproducible; mapa de todos los SQL y
+  explicación de los scripts Python de operación. Los originales 009 se conservan.
+- Revisión de cobertura, marcadores/enlaces y límites de página aprobada; revisión
+  visual del documento y contraste con 12 valores privados sin coincidencias.
+  Copia idéntica del PDF en el Escritorio, comprobada por SHA-256.
+- Se cierra AB2.1 (material de estudio). El estudio y la primera carga gradual
+  siguen pendientes; no se crean datos ni se prueban la página o la cámara.
+
 ## 22/11/2026 — Reinicio de datos en ambas bases y estudio gradual
 
 - Instrucción expresa: vaciar Oracle local y Autonomous y cargar datos poco a poco.

@@ -1,0 +1,5154 @@
+{
+  "generado_utc": "2026-11-23T10:38:48.215064+00:00",
+  "versiones": [
+    "001",
+    "002",
+    "003",
+    "004",
+    "005",
+    "006",
+    "007",
+    "008",
+    "009",
+    "010",
+    "011"
+  ],
+  "alcance": "Metadatos del esquema propietario; sin filas, usuarios Oracle, DSN ni credenciales.",
+  "tablas": [
+    {
+      "nombre": "ADMINISTRADORES",
+      "comentario": "Administradores de aplicacion; alta privada, clave bcrypt y sin registro publico.",
+      "columnas": [
+        {
+          "nombre": "ADMINISTRADOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada de la cuenta administrativa de la aplicación.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "USUARIO",
+          "tipo": "VARCHAR2(100 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Identificador de acceso; la aplicación lo normaliza.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "NOMBRE",
+          "tipo": "VARCHAR2(200 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Nombre legible de la persona o materia.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CONTRASENA",
+          "tipo": "VARCHAR2(255 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Hash bcrypt; no permite consultar la contraseña en texto.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTIVO",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "1: cuenta/materia activa; 0: archivada o deshabilitada.",
+          "predeterminado": "1"
+        },
+        {
+          "nombre": "CREADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación de la fila.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "ACTUALIZADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante actualizado automáticamente por su trigger al hacer UPDATE.",
+          "predeterminado": "SYSTIMESTAMP"
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_ADMINISTRADORES_ACTIVO",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "activo IN (0,1)"
+        },
+        {
+          "nombre": "PK_ADMINISTRADORES",
+          "tipo": "P",
+          "columnas": [
+            "ADMINISTRADOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037155",
+          "tipo": "C",
+          "columnas": [
+            "ADMINISTRADOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ADMINISTRADOR_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037156",
+          "tipo": "C",
+          "columnas": [
+            "USUARIO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"USUARIO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037157",
+          "tipo": "C",
+          "columnas": [
+            "NOMBRE"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"NOMBRE\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037158",
+          "tipo": "C",
+          "columnas": [
+            "CONTRASENA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CONTRASENA\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037159",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTIVO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037160",
+          "tipo": "C",
+          "columnas": [
+            "CREADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CREADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037161",
+          "tipo": "C",
+          "columnas": [
+            "ACTUALIZADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTUALIZADO_EN\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "AUDITORIA_ASISTENCIA",
+      "comentario": "Instantaneas de correcciones y bajas; misma transaccion que la asistencia. Sin FK para conservar bajas en cascada.",
+      "columnas": [
+        {
+          "nombre": "AUDITORIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada del evento de auditoría.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "OPERACION",
+          "tipo": "VARCHAR2(10 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "UPDATE relevante o DELETE; no registra el INSERT inicial.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ASISTENCIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "ID histórico del registro afectado; se conserva sin FK.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MATERIA_ANTERIOR",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Materia antes de la operación.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTUDIANTE_ANTERIOR",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Estudiante antes de la operación.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "FECHA_ANTERIOR",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Fecha de análisis anterior.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "PRESENTE_ANTERIOR",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Decisión de asistencia anterior.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MATERIA_NUEVA",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Materia después de la operación; nula en una baja.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTUDIANTE_NUEVO",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Estudiante después de la operación; nulo en una baja.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "FECHA_NUEVA",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Fecha de análisis posterior; nula en una baja.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "PRESENTE_NUEVO",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Decisión posterior; nula en una baja.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "OCURRIDO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación del evento histórico.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "USUARIO_BD",
+          "tipo": "VARCHAR2(128 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Usuario técnico Oracle que ejecutó la operación, distinto del actor de la aplicación.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTOR_ROL",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Rol declarado para la acción; puede incluir SISTEMA o NO_IDENTIFICADO en los historiales.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Identidad declarada por la aplicacion o SQLPlus; no sustituye autenticacion.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MOTIVO",
+          "tipo": "VARCHAR2(500 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Justificación de la acción; debe excluir contraseñas y detalles médicos.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MODULO",
+          "tipo": "VARCHAR2(64 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Módulo técnico informado por la sesión Oracle.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "IDENTIFICADOR_CLIENTE",
+          "tipo": "VARCHAR2(64 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Identificador técnico de cliente de la sesión Oracle.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CLASE_ANTERIOR",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Clase anterior, conservada como dato histórico.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CLASE_NUEVA",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Clase después de la operación; nula en una baja.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "DETECTADO_ANTERIOR",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Detección inicial conservada al producirse el cambio/baja.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CORRECCION_INICIAL",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Bandera de revisión inicial del registro afectado.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MOTIVO_INICIAL",
+          "tipo": "VARCHAR2(500 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Motivo de la revisión inicial, distinto del motivo del cambio posterior.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "REVISOR_INICIAL",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Docente que realizó la revisión inicial.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTADO_ANTERIOR",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Estado de detección original del registro afectado.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_AUDASIST_ANT",
+          "tipo": "C",
+          "columnas": [
+            "PRESENTE_ANTERIOR"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "presente_anterior IN (0, 1)"
+        },
+        {
+          "nombre": "CK_AUDASIST_NUEVO",
+          "tipo": "C",
+          "columnas": [
+            "PRESENTE_NUEVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "presente_nuevo IN (0, 1)"
+        },
+        {
+          "nombre": "CK_AUDASIST_OPERACION",
+          "tipo": "C",
+          "columnas": [
+            "OPERACION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "operacion IN ('UPDATE', 'DELETE')"
+        },
+        {
+          "nombre": "CK_AUDASIST_ROL",
+          "tipo": "C",
+          "columnas": [
+            "ACTOR_ROL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "actor_rol IN ('PROFESOR','ESTUDIANTE','ADMINISTRADOR','SISTEMA','NO_IDENTIFICADO')"
+        },
+        {
+          "nombre": "PK_AUDITORIA_ASISTENCIA",
+          "tipo": "P",
+          "columnas": [
+            "AUDITORIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037076",
+          "tipo": "C",
+          "columnas": [
+            "AUDITORIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"AUDITORIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037077",
+          "tipo": "C",
+          "columnas": [
+            "OPERACION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"OPERACION\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037078",
+          "tipo": "C",
+          "columnas": [
+            "ASISTENCIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ASISTENCIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037079",
+          "tipo": "C",
+          "columnas": [
+            "MATERIA_ANTERIOR"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATERIA_ANTERIOR\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037080",
+          "tipo": "C",
+          "columnas": [
+            "ESTUDIANTE_ANTERIOR"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTUDIANTE_ANTERIOR\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037081",
+          "tipo": "C",
+          "columnas": [
+            "FECHA_ANTERIOR"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"FECHA_ANTERIOR\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037082",
+          "tipo": "C",
+          "columnas": [
+            "PRESENTE_ANTERIOR"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"PRESENTE_ANTERIOR\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037083",
+          "tipo": "C",
+          "columnas": [
+            "OCURRIDO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"OCURRIDO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037084",
+          "tipo": "C",
+          "columnas": [
+            "USUARIO_BD"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"USUARIO_BD\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037085",
+          "tipo": "C",
+          "columnas": [
+            "ACTOR_ROL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTOR_ROL\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "CLASES",
+      "comentario": "Clase identificada por materia e instante UTC; una confirmacion durable compartida por pestañas.",
+      "columnas": [
+        {
+          "nombre": "CLASE_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada para una sesión académica.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "MATERIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "FK a materias; interviene en la unicidad del horario.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "PROFESOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Responsable al crear la clase, conservado como instantanea.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "FECHA_HORA",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Inicio de la clase con zona horaria; fecha que utiliza el calendario.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "INSTANTE_UTC",
+          "tipo": "TIMESTAMP(6)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Columna virtual SYS_EXTRACT_UTC(fecha_hora), usada en la unicidad.",
+          "predeterminado": "SYS_EXTRACT_UTC(\"FECHA_HORA\")"
+        },
+        {
+          "nombre": "LOTE_LEGADO",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "0 para clases nuevas; ocurrencias historicas duplicadas se conservan en lotes 1,2,...",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "ESTADO",
+          "tipo": "VARCHAR2(12 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "BORRADOR o CONFIRMADA.",
+          "predeterminado": "'BORRADOR'"
+        },
+        {
+          "nombre": "ORIGEN",
+          "tipo": "VARCHAR2(12 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "PENDIENTE, FACIAL, VOZ o LEGADO.",
+          "predeterminado": "'PENDIENTE'"
+        },
+        {
+          "nombre": "CLAVE_CONFIRMACION",
+          "tipo": "VARCHAR2(32 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Clave hexadecimal de propuesta (32 caracteres) para reconocer reintentos.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "PROPUESTA_CONFIRMADA",
+          "tipo": "CLOB",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Carga canonica de la confirmacion para reconocer reintentos; sin biometria.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "REGISTROS_CONFIRMADOS",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Cantidad al confirmar; inmutable para clases normales ya confirmadas.",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "CREADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación de la fila.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "CONFIRMADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Instante en que quedó confirmada; nulo en borrador.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_CLASES_CANTIDAD",
+          "tipo": "C",
+          "columnas": [
+            "REGISTROS_CONFIRMADOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "registros_confirmados>=0 AND registros_confirmados=TRUNC(registros_confirmados)"
+        },
+        {
+          "nombre": "CK_CLASES_CONFIRMADA",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO",
+            "ORIGEN",
+            "CLAVE_CONFIRMACION",
+            "PROPUESTA_CONFIRMADA",
+            "CONFIRMADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\n                (estado='BORRADOR' AND origen='PENDIENTE' AND clave_confirmacion IS NULL AND propuesta_confirmada IS NULL AND confirmado_en IS NULL)\n                OR (estado='CONFIRMADA' AND origen='LEGADO' AND clave_confirmacion IS NULL AND confirmado_en IS NOT NULL)\n                OR (estado='CONFIRMADA' AND origen IN ('FACIAL','VOZ') AND LENGTH(clave_confirmacion)=32 AND clave_confirmacion IS NOT NULL AND propuesta_confirmada IS NOT NULL AND confirmado_en IS NOT NULL)"
+        },
+        {
+          "nombre": "CK_CLASES_ESTADO",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "estado IN ('BORRADOR','CONFIRMADA')"
+        },
+        {
+          "nombre": "CK_CLASES_JSON",
+          "tipo": "C",
+          "columnas": [
+            "PROPUESTA_CONFIRMADA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "propuesta_confirmada IS JSON"
+        },
+        {
+          "nombre": "CK_CLASES_LOTE",
+          "tipo": "C",
+          "columnas": [
+            "LOTE_LEGADO",
+            "ORIGEN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "lote_legado>=0 AND lote_legado=TRUNC(lote_legado) AND (lote_legado=0 OR origen='LEGADO')"
+        },
+        {
+          "nombre": "CK_CLASES_ORIGEN",
+          "tipo": "C",
+          "columnas": [
+            "ORIGEN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "origen IN ('PENDIENTE','FACIAL','VOZ','LEGADO')"
+        },
+        {
+          "nombre": "FK_CLASES_MATERIA",
+          "tipo": "R",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": "MATERIAS",
+          "columnas_referencia": [
+            "MATERIA_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "PK_CLASES",
+          "tipo": "P",
+          "columnas": [
+            "CLASE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037105",
+          "tipo": "C",
+          "columnas": [
+            "CLASE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CLASE_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037106",
+          "tipo": "C",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATERIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037107",
+          "tipo": "C",
+          "columnas": [
+            "PROFESOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"PROFESOR_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037108",
+          "tipo": "C",
+          "columnas": [
+            "FECHA_HORA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"FECHA_HORA\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037109",
+          "tipo": "C",
+          "columnas": [
+            "LOTE_LEGADO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"LOTE_LEGADO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037110",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTADO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037111",
+          "tipo": "C",
+          "columnas": [
+            "ORIGEN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ORIGEN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037112",
+          "tipo": "C",
+          "columnas": [
+            "REGISTROS_CONFIRMADOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"REGISTROS_CONFIRMADOS\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037113",
+          "tipo": "C",
+          "columnas": [
+            "CREADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CREADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "UQ_CLASES_CONFIRMACION",
+          "tipo": "U",
+          "columnas": [
+            "CLAVE_CONFIRMACION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "UQ_CLASES_INSTANTE",
+          "tipo": "U",
+          "columnas": [
+            "MATERIA_ID",
+            "INSTANTE_UTC",
+            "LOTE_LEGADO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "UQ_CLASES_MATERIA",
+          "tipo": "U",
+          "columnas": [
+            "CLASE_ID",
+            "MATERIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        }
+      ]
+    },
+    {
+      "nombre": "ESTUDIANTES",
+      "comentario": "Perfiles estudiantiles y vectores biometricos JSON; no guarda fotos ni audio.",
+      "columnas": [
+        {
+          "nombre": "ESTUDIANTE_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada por Oracle para la cuenta estudiantil.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "NOMBRE",
+          "tipo": "VARCHAR2(200 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Nombre legible de la persona o materia.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "EMBEDDING_FACIAL",
+          "tipo": "CLOB",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Vector facial de 128 dimensiones serializado como JSON.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "EMBEDDING_VOZ",
+          "tipo": "CLOB",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Vector de hablante de 256 dimensiones serializado como JSON, opcional.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CREADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación de la fila.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "ACTUALIZADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Ultima sentencia UPDATE; las filas anteriores parten de la fecha de migracion.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "ACTIVO",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "1: cuenta/materia activa; 0: archivada o deshabilitada.",
+          "predeterminado": "1"
+        },
+        {
+          "nombre": "CODIGO_INSTITUCIONAL",
+          "tipo": "VARCHAR2(50 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Identificador unico. NULL solo para perfiles heredados/administrativos pendientes de completar.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "VERSION_EDICION",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Contador de edición que incrementa el trigger; detecta formularios obsoletos.",
+          "predeterminado": "0"
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_ESTUDIANTES_ACTIVO",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "activo IN (0,1)"
+        },
+        {
+          "nombre": "CK_ESTUDIANTES_CODIGO",
+          "tipo": "C",
+          "columnas": [
+            "CODIGO_INSTITUCIONAL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "codigo_institucional IS NULL OR REGEXP_LIKE(codigo_institucional,'^[A-Z0-9][A-Z0-9_.-]{0,49}$')"
+        },
+        {
+          "nombre": "CK_ESTUDIANTES_FACIAL_JSON",
+          "tipo": "C",
+          "columnas": [
+            "EMBEDDING_FACIAL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "embedding_facial IS JSON"
+        },
+        {
+          "nombre": "CK_ESTUDIANTES_VOZ_JSON",
+          "tipo": "C",
+          "columnas": [
+            "EMBEDDING_VOZ"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "embedding_voz IS JSON"
+        },
+        {
+          "nombre": "PK_ESTUDIANTES",
+          "tipo": "P",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037047",
+          "tipo": "C",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTUDIANTE_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037048",
+          "tipo": "C",
+          "columnas": [
+            "NOMBRE"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"NOMBRE\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037049",
+          "tipo": "C",
+          "columnas": [
+            "CREADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CREADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037103",
+          "tipo": "C",
+          "columnas": [
+            "ACTUALIZADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTUALIZADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037137",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTIVO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037165",
+          "tipo": "C",
+          "columnas": [
+            "VERSION_EDICION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"VERSION_EDICION\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "EVENTOS_GESTION",
+      "comentario": "Trazabilidad de gestión de cuentas, materias y verificaciones de identidad.",
+      "columnas": [
+        {
+          "nombre": "EVENTO_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada de la bitácora general.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "ENTIDAD",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Tipo de objeto afectado: cuenta, materia, auditoría o verificación.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ENTIDAD_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "ID interpretado según entidad; 0 puede representar identidad todavía desconocida.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACCION",
+          "tipo": "VARCHAR2(30 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Nombre de la operación registrada por el paquete/servicio.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MOTIVO",
+          "tipo": "VARCHAR2(500 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Justificación de la acción; debe excluir contraseñas y detalles médicos.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTOR_ROL",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Rol declarado para la acción; puede incluir SISTEMA o NO_IDENTIFICADO en los historiales.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Identificador del actor, interpretado según el rol; no es una FK polimórfica.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "OCURRIDO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación del evento histórico.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "VALORES_ANTERIORES",
+          "tipo": "CLOB",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Instantanea JSON administrativa sin hashes ni biometria.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "VALORES_NUEVOS",
+          "tipo": "CLOB",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "JSON opcional con campos seleccionados después de editar.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_EVENTOS_ANTES_JSON",
+          "tipo": "C",
+          "columnas": [
+            "VALORES_ANTERIORES"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "valores_anteriores IS JSON"
+        },
+        {
+          "nombre": "CK_EVENTOS_DESPUES_JSON",
+          "tipo": "C",
+          "columnas": [
+            "VALORES_NUEVOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "valores_nuevos IS JSON"
+        },
+        {
+          "nombre": "PK_EVENTOS_GESTION",
+          "tipo": "P",
+          "columnas": [
+            "EVENTO_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037143",
+          "tipo": "C",
+          "columnas": [
+            "EVENTO_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"EVENTO_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037144",
+          "tipo": "C",
+          "columnas": [
+            "ENTIDAD"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ENTIDAD\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037145",
+          "tipo": "C",
+          "columnas": [
+            "ENTIDAD_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ENTIDAD_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037146",
+          "tipo": "C",
+          "columnas": [
+            "ACCION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACCION\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037147",
+          "tipo": "C",
+          "columnas": [
+            "MOTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MOTIVO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037148",
+          "tipo": "C",
+          "columnas": [
+            "ACTOR_ROL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTOR_ROL\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037149",
+          "tipo": "C",
+          "columnas": [
+            "OCURRIDO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"OCURRIDO_EN\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "HISTORIAL_MATRICULAS",
+      "comentario": "Eventos de alta y retiro posteriores a la migracion; no elimina historia al borrar entidades.",
+      "columnas": [
+        {
+          "nombre": "HISTORIAL_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada del evento de matrícula.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "ACCION",
+          "tipo": "VARCHAR2(10 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "ALTA o RETIRO.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MATERIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Materia de la matrícula histórica; sin FK.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTUDIANTE_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Estudiante de la matrícula histórica; sin FK.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MATRICULADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Fecha de alta de esa relación de matrícula.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "OCURRIDO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación del evento histórico.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "USUARIO_BD",
+          "tipo": "VARCHAR2(128 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Usuario técnico Oracle que ejecutó la operación, distinto del actor de la aplicación.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTOR_ROL",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Rol declarado para la acción; puede incluir SISTEMA o NO_IDENTIFICADO en los historiales.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Identidad declarada por la aplicacion o SQLPlus; no sustituye autenticacion.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MOTIVO",
+          "tipo": "VARCHAR2(500 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Justificación de la acción; debe excluir contraseñas y detalles médicos.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MODULO",
+          "tipo": "VARCHAR2(64 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Módulo técnico informado por la sesión Oracle.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "IDENTIFICADOR_CLIENTE",
+          "tipo": "VARCHAR2(64 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Identificador técnico de cliente de la sesión Oracle.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_HISTMAT_ACCION",
+          "tipo": "C",
+          "columnas": [
+            "ACCION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "accion IN ('ALTA', 'RETIRO')"
+        },
+        {
+          "nombre": "CK_HISTMAT_ROL",
+          "tipo": "C",
+          "columnas": [
+            "ACTOR_ROL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "actor_rol IN ('PROFESOR','ESTUDIANTE','ADMINISTRADOR','SISTEMA','NO_IDENTIFICADO')"
+        },
+        {
+          "nombre": "PK_HISTORIAL_MATRICULAS",
+          "tipo": "P",
+          "columnas": [
+            "HISTORIAL_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037091",
+          "tipo": "C",
+          "columnas": [
+            "HISTORIAL_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"HISTORIAL_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037092",
+          "tipo": "C",
+          "columnas": [
+            "ACCION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACCION\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037093",
+          "tipo": "C",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATERIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037094",
+          "tipo": "C",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTUDIANTE_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037095",
+          "tipo": "C",
+          "columnas": [
+            "MATRICULADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATRICULADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037096",
+          "tipo": "C",
+          "columnas": [
+            "OCURRIDO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"OCURRIDO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037097",
+          "tipo": "C",
+          "columnas": [
+            "USUARIO_BD"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"USUARIO_BD\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037098",
+          "tipo": "C",
+          "columnas": [
+            "ACTOR_ROL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTOR_ROL\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "LIMITES_ACCESO",
+      "comentario": "Ventana de intentos por SHA256 de usuario; no almacena claves ni nombres de acceso.",
+      "columnas": [
+        {
+          "nombre": "CLAVE",
+          "tipo": "VARCHAR2(64 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "PK: huella del identificador/ámbito de acceso, no la contraseña.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "INTENTOS",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Número de fallos en la ventana vigente.",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "VENTANA_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Inicio de la ventana de recuento.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "BLOQUEADO_HASTA",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Fin del bloqueo; nulo si no se impuso.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_LIMITES_INTENTOS",
+          "tipo": "C",
+          "columnas": [
+            "INTENTOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "intentos>=0 AND intentos=TRUNC(intentos)"
+        },
+        {
+          "nombre": "PK_LIMITES_ACCESO",
+          "tipo": "P",
+          "columnas": [
+            "CLAVE"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037139",
+          "tipo": "C",
+          "columnas": [
+            "INTENTOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"INTENTOS\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037140",
+          "tipo": "C",
+          "columnas": [
+            "VENTANA_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"VENTANA_EN\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "MATERIAS",
+      "comentario": "Materias y secciones administradas por un profesor.",
+      "columnas": [
+        {
+          "nombre": "MATERIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada por Oracle para la materia/sección.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "CODIGO_MATERIA",
+          "tipo": "VARCHAR2(50 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Código único de la materia/sección, normalizado por la aplicación.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "NOMBRE",
+          "tipo": "VARCHAR2(200 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Nombre legible de la persona o materia.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "SECCION",
+          "tipo": "VARCHAR2(100 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Nombre o código descriptivo del grupo; no referencia otra tabla de grupos.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "PROFESOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "FK al profesor responsable de la materia.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CREADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación de la fila.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "ACTUALIZADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Ultima sentencia UPDATE; las filas anteriores parten de la fecha de migracion.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "ACTIVO",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "1: cuenta/materia activa; 0: archivada o deshabilitada.",
+          "predeterminado": "1"
+        },
+        {
+          "nombre": "VERSION_EDICION",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Contador de edición que incrementa el trigger; detecta formularios obsoletos.",
+          "predeterminado": "0"
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_MATERIAS_ACTIVO",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "activo IN (0,1)"
+        },
+        {
+          "nombre": "FK_MATERIAS_PROFESOR",
+          "tipo": "R",
+          "columnas": [
+            "PROFESOR_ID"
+          ],
+          "referencia": "PROFESORES",
+          "columnas_referencia": [
+            "PROFESOR_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "PK_MATERIAS",
+          "tipo": "P",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037053",
+          "tipo": "C",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATERIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037054",
+          "tipo": "C",
+          "columnas": [
+            "CODIGO_MATERIA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CODIGO_MATERIA\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037055",
+          "tipo": "C",
+          "columnas": [
+            "NOMBRE"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"NOMBRE\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037056",
+          "tipo": "C",
+          "columnas": [
+            "PROFESOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"PROFESOR_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037057",
+          "tipo": "C",
+          "columnas": [
+            "CREADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CREADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037104",
+          "tipo": "C",
+          "columnas": [
+            "ACTUALIZADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTUALIZADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037138",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTIVO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037166",
+          "tipo": "C",
+          "columnas": [
+            "VERSION_EDICION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"VERSION_EDICION\" IS NOT NULL"
+        },
+        {
+          "nombre": "UQ_MATERIAS_CODIGO",
+          "tipo": "U",
+          "columnas": [
+            "CODIGO_MATERIA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        }
+      ]
+    },
+    {
+      "nombre": "MATERIA_ESTUDIANTES",
+      "comentario": "Relacion muchos a muchos entre estudiantes y materias.",
+      "columnas": [
+        {
+          "nombre": "MATERIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Parte de la PK compuesta y FK a materias.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTUDIANTE_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Parte de la PK compuesta y FK a estudiantes.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MATRICULADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Fecha de alta de esa relación de matrícula.",
+          "predeterminado": "SYSTIMESTAMP"
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "FK_ME_ESTUDIANTE",
+          "tipo": "R",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": "ESTUDIANTES",
+          "columnas_referencia": [
+            "ESTUDIANTE_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "FK_ME_MATERIA",
+          "tipo": "R",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": "MATERIAS",
+          "columnas_referencia": [
+            "MATERIA_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "PK_MATERIA_ESTUDIANTES",
+          "tipo": "P",
+          "columnas": [
+            "MATERIA_ID",
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037061",
+          "tipo": "C",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATERIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037062",
+          "tipo": "C",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTUDIANTE_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037063",
+          "tipo": "C",
+          "columnas": [
+            "MATRICULADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATRICULADO_EN\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "PROFESORES",
+      "comentario": "Cuentas docentes; la contrasena contiene un hash bcrypt.",
+      "columnas": [
+        {
+          "nombre": "PROFESOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada por Oracle para la cuenta docente.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "USUARIO",
+          "tipo": "VARCHAR2(100 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Identificador de acceso; la aplicación lo normaliza.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CONTRASENA",
+          "tipo": "VARCHAR2(255 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Hash bcrypt; no permite consultar la contraseña en texto.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "NOMBRE",
+          "tipo": "VARCHAR2(200 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Nombre legible de la persona o materia.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CREADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de creación de la fila.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "ACTUALIZADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Ultima sentencia UPDATE; las filas anteriores parten de la fecha de migracion.",
+          "predeterminado": "SYSTIMESTAMP"
+        },
+        {
+          "nombre": "ACTIVO",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "1: cuenta/materia activa; 0: archivada o deshabilitada.",
+          "predeterminado": "1"
+        },
+        {
+          "nombre": "VERSION_EDICION",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Contador de edición que incrementa el trigger; detecta formularios obsoletos.",
+          "predeterminado": "0"
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_PROFESORES_ACTIVO",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "activo IN (0,1)"
+        },
+        {
+          "nombre": "PK_PROFESORES",
+          "tipo": "P",
+          "columnas": [
+            "PROFESOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037040",
+          "tipo": "C",
+          "columnas": [
+            "PROFESOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"PROFESOR_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037041",
+          "tipo": "C",
+          "columnas": [
+            "USUARIO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"USUARIO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037042",
+          "tipo": "C",
+          "columnas": [
+            "CONTRASENA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CONTRASENA\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037043",
+          "tipo": "C",
+          "columnas": [
+            "NOMBRE"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"NOMBRE\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037044",
+          "tipo": "C",
+          "columnas": [
+            "CREADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CREADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037102",
+          "tipo": "C",
+          "columnas": [
+            "ACTUALIZADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTUALIZADO_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037136",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTIVO\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037164",
+          "tipo": "C",
+          "columnas": [
+            "VERSION_EDICION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"VERSION_EDICION\" IS NOT NULL"
+        },
+        {
+          "nombre": "UQ_PROFESORES_USUARIO",
+          "tipo": "U",
+          "columnas": [
+            "USUARIO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        }
+      ]
+    },
+    {
+      "nombre": "REGISTROS_ASISTENCIA",
+      "comentario": "Resultados individuales de las tomas de asistencia.",
+      "columnas": [
+        {
+          "nombre": "ASISTENCIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": true,
+          "comentario": "PK generada del resultado individual.",
+          "predeterminado": "Identidad Oracle"
+        },
+        {
+          "nombre": "MATERIA_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Identificador de la materia/sección.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTUDIANTE_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Identificador del estudiante.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "FECHA_HORA",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante del analisis; el horario de clase esta en CLASES.FECHA_HORA.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "PRESENTE",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Decisión final: 1 asistió, 0 no asistió.",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "CLASE_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Clase del resultado; participa en la FK compuesta clase/materia y en la unicidad por estudiante.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "PRESENTE_DETECTADO",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "NULL cuando no hay muestra; nunca usar NVL para convertirlo en ausencia.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CORREGIDO_MANUAL",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Correccion previa a la primera confirmacion; las ediciones posteriores se auditan con el disparador.",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "MOTIVO_CORRECCION",
+          "tipo": "VARCHAR2(500 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Motivo de la revisión manual antes de confirmar.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "REVISADO_POR",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Docente de esa revisión inicial; referencia lógica sin FK.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "REVISADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Instante de la revisión manual inicial.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTADO_DETECCION",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Resultado original: PRESENTE/AUSENTE o SIN_MUESTRA. Un fallo global no se confirma.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_ASISTENCIA_PRESENTE",
+          "tipo": "C",
+          "columnas": [
+            "PRESENTE"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "presente IN (0, 1)"
+        },
+        {
+          "nombre": "CK_RA_CORREGIDO",
+          "tipo": "C",
+          "columnas": [
+            "CORREGIDO_MANUAL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "corregido_manual IN (0,1)"
+        },
+        {
+          "nombre": "CK_RA_DETECCION_COHERENTE",
+          "tipo": "C",
+          "columnas": [
+            "PRESENTE_DETECTADO",
+            "ESTADO_DETECCION",
+            "CORREGIDO_MANUAL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\n        (estado_deteccion='SIN_MUESTRA' AND presente_detectado IS NULL AND corregido_manual=1)\n        OR (estado_deteccion='PRESENTE' AND presente_detectado IS NOT NULL AND presente_detectado=1)\n        OR (estado_deteccion='AUSENTE' AND presente_detectado IS NOT NULL AND presente_detectado=0)"
+        },
+        {
+          "nombre": "CK_RA_DETECTADO",
+          "tipo": "C",
+          "columnas": [
+            "PRESENTE_DETECTADO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "presente_detectado IN (0,1)"
+        },
+        {
+          "nombre": "CK_RA_ESTADO_DETECCION",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO_DETECCION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "estado_deteccion IN ('PRESENTE','AUSENTE','SIN_MUESTRA')"
+        },
+        {
+          "nombre": "CK_RA_REVISION",
+          "tipo": "C",
+          "columnas": [
+            "CORREGIDO_MANUAL",
+            "MOTIVO_CORRECCION",
+            "REVISADO_POR",
+            "REVISADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\n        (corregido_manual=0 AND motivo_correccion IS NULL AND revisado_por IS NULL AND revisado_en IS NULL)\n        OR (corregido_manual=1 AND TRIM(motivo_correccion) IS NOT NULL AND revisado_por IS NOT NULL AND revisado_en IS NOT NULL)"
+        },
+        {
+          "nombre": "FK_RA_CLASE_MATERIA",
+          "tipo": "R",
+          "columnas": [
+            "CLASE_ID",
+            "MATERIA_ID"
+          ],
+          "referencia": "CLASES",
+          "columnas_referencia": [
+            "CLASE_ID",
+            "MATERIA_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "FK_RA_ESTUDIANTE",
+          "tipo": "R",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": "ESTUDIANTES",
+          "columnas_referencia": [
+            "ESTUDIANTE_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "FK_RA_MATERIA",
+          "tipo": "R",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": "MATERIAS",
+          "columnas_referencia": [
+            "MATERIA_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "PK_REGISTROS_ASISTENCIA",
+          "tipo": "P",
+          "columnas": [
+            "ASISTENCIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037067",
+          "tipo": "C",
+          "columnas": [
+            "ASISTENCIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ASISTENCIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037068",
+          "tipo": "C",
+          "columnas": [
+            "MATERIA_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"MATERIA_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037069",
+          "tipo": "C",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTUDIANTE_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037070",
+          "tipo": "C",
+          "columnas": [
+            "FECHA_HORA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"FECHA_HORA\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037071",
+          "tipo": "C",
+          "columnas": [
+            "PRESENTE"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"PRESENTE\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037125",
+          "tipo": "C",
+          "columnas": [
+            "CORREGIDO_MANUAL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CORREGIDO_MANUAL\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037126",
+          "tipo": "C",
+          "columnas": [
+            "CLASE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CLASE_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037133",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO_DETECCION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTADO_DETECCION\" IS NOT NULL"
+        },
+        {
+          "nombre": "UQ_RA_CLASE_ESTUDIANTE",
+          "tipo": "U",
+          "columnas": [
+            "CLASE_ID",
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        }
+      ]
+    },
+    {
+      "nombre": "SESIONES_USUARIO",
+      "comentario": "Una sesion vigente por rol/cuenta. Solo SHA-256 del token, nunca el token original ni contrasenas.",
+      "columnas": [
+        {
+          "nombre": "ROL",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Parte de PK: PROFESOR, ESTUDIANTE o ADMINISTRADOR.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTOR_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Parte de PK: ID de la cuenta dentro de su rol; referencia lógica.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "TOKEN_HASH",
+          "tipo": "VARCHAR2(64 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "SHA-256 hexadecimal del token de sesión, nunca su valor original.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CREADA_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Inicio de la sesión que ocupa actualmente la fila.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ACTIVIDAD_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Última actividad validada para calcular inactividad.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "EXPIRA_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Vencimiento absoluto de la sesión (ocho horas en la política actual).",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "REVOCADA_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Instante de revocación; nulo mientras no se haya revocado explícitamente.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_SESIONES_ACTOR",
+          "tipo": "C",
+          "columnas": [
+            "ACTOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "actor_id>0 AND actor_id=TRUNC(actor_id)"
+        },
+        {
+          "nombre": "CK_SESIONES_FECHAS",
+          "tipo": "C",
+          "columnas": [
+            "EXPIRA_EN",
+            "ACTIVIDAD_EN",
+            "CREADA_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "expira_en>creada_en AND actividad_en>=creada_en"
+        },
+        {
+          "nombre": "CK_SESIONES_HASH",
+          "tipo": "C",
+          "columnas": [
+            "TOKEN_HASH"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "REGEXP_LIKE(token_hash,'^[a-f0-9]{64}$','c')"
+        },
+        {
+          "nombre": "CK_SESIONES_ROL",
+          "tipo": "C",
+          "columnas": [
+            "ROL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "rol IN ('PROFESOR','ESTUDIANTE','ADMINISTRADOR')"
+        },
+        {
+          "nombre": "PK_SESIONES_USUARIO",
+          "tipo": "P",
+          "columnas": [
+            "ROL",
+            "ACTOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037171",
+          "tipo": "C",
+          "columnas": [
+            "ROL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ROL\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037172",
+          "tipo": "C",
+          "columnas": [
+            "ACTOR_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTOR_ID\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037173",
+          "tipo": "C",
+          "columnas": [
+            "TOKEN_HASH"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"TOKEN_HASH\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037174",
+          "tipo": "C",
+          "columnas": [
+            "CREADA_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"CREADA_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037175",
+          "tipo": "C",
+          "columnas": [
+            "ACTIVIDAD_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ACTIVIDAD_EN\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037176",
+          "tipo": "C",
+          "columnas": [
+            "EXPIRA_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"EXPIRA_EN\" IS NOT NULL"
+        }
+      ]
+    },
+    {
+      "nombre": "VERIFICACION_ESTUDIANTES",
+      "comentario": "Autorizacion excepcional separada del ultimo metodo de verificacion. Documento HMAC y contraseña bcrypt; nunca documento completo.",
+      "columnas": [
+        {
+          "nombre": "ESTUDIANTE_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "PK compartida y FK a estudiantes: como máximo una fila por estudiante.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "DOCUMENTO_HUELLA",
+          "tipo": "VARCHAR2(64 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "HMAC-SHA-256 de tipo/número normalizado; único cuando existe.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "TIPO_DOCUMENTO",
+          "tipo": "VARCHAR2(2 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "CC, TI, CE o PA.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "DOCUMENTO_FINAL",
+          "tipo": "VARCHAR2(4 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Últimos cuatro caracteres para mostrar el documento enmascarado.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "CLAVE_HASH",
+          "tipo": "VARCHAR2(255 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Bcrypt de la contraseña alternativa; se retira al revocar.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "EXCEPCION_ACTIVA",
+          "tipo": "NUMBER(1,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "1 habilita el permiso sujeto a vigencia/cuenta; 0 lo deshabilita.",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "CATEGORIA",
+          "tipo": "VARCHAR2(20 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "FISICA, MEDICA, TECNICA o ADMINISTRATIVA; no es un diagnóstico.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "REFERENCIA",
+          "tipo": "VARCHAR2(100 CHAR)",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Referencia administrativa del expediente de autorización.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "AUTORIZADO_POR",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "FK al administrador que aprobó o renovó.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "AUTORIZADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Fecha de aprobación/renovación.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "EXPIRA_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Fin de la autorización; la interfaz exige vigencia de 1 a 365 días.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "ESTADO_VERIFICACION",
+          "tipo": "VARCHAR2(25 CHAR)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Resultado del último acceso confirmado: PENDIENTE, BIOMETRICA_COMPLETA o EXCEPCIONAL.",
+          "predeterminado": "'PENDIENTE'"
+        },
+        {
+          "nombre": "VERIFICADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Instante de esa verificación; nulo si está PENDIENTE.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "FACTORES_VERIFICADOS",
+          "tipo": "NUMBER(2,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Cantidad de factores biométricos comprobados en ese acceso.",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "FACTORES_REQUERIDOS",
+          "tipo": "NUMBER(2,0)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Cantidad mínima de factores de la política registrada para ese acceso.",
+          "predeterminado": "1"
+        },
+        {
+          "nombre": "VERSION_CREDENCIAL",
+          "tipo": "NUMBER",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Contador para concurrencia e invalidación de pruebas/credenciales anteriores.",
+          "predeterminado": "0"
+        },
+        {
+          "nombre": "AUTORIZADO_DOCENTE_POR",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Docente que autoriza el acceso alternativo; no es una confirmacion de asistencia.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "MATERIA_AUTORIZACION_ID",
+          "tipo": "NUMBER",
+          "admite_nulo": true,
+          "identidad": false,
+          "comentario": "Materia propia con matricula vigente al emitir o renovar la credencial de acceso.",
+          "predeterminado": ""
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "CK_VERIFICACION_ACTIVA",
+          "tipo": "C",
+          "columnas": [
+            "EXCEPCION_ACTIVA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "excepcion_activa IN (0,1)"
+        },
+        {
+          "nombre": "CK_VERIFICACION_APROBADA",
+          "tipo": "C",
+          "columnas": [
+            "AUTORIZADO_DOCENTE_POR",
+            "AUTORIZADO_EN",
+            "DOCUMENTO_HUELLA",
+            "AUTORIZADO_POR",
+            "DOCUMENTO_FINAL",
+            "CLAVE_HASH",
+            "EXCEPCION_ACTIVA",
+            "CATEGORIA",
+            "REFERENCIA",
+            "MATERIA_AUTORIZACION_ID",
+            "TIPO_DOCUMENTO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "excepcion_activa=0 OR (documento_huella IS NOT NULL AND tipo_documento IS NOT NULL AND\n         documento_final IS NOT NULL AND clave_hash IS NOT NULL AND categoria IS NOT NULL AND\n         referencia IS NOT NULL AND autorizado_en IS NOT NULL AND\n         ((autorizado_por IS NOT NULL AND autorizado_docente_por IS NULL AND materia_autorizacion_id IS NULL) OR\n          (autorizado_por IS NULL AND autorizado_docente_por IS NOT NULL AND materia_autorizacion_id IS NOT NULL)))"
+        },
+        {
+          "nombre": "CK_VERIFICACION_CATEGORIA",
+          "tipo": "C",
+          "columnas": [
+            "CATEGORIA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "categoria IN ('FISICA','MEDICA','TECNICA','ADMINISTRATIVA')"
+        },
+        {
+          "nombre": "CK_VERIFICACION_ESTADO",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO_VERIFICACION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "estado_verificacion IN ('PENDIENTE','BIOMETRICA_COMPLETA','EXCEPCIONAL','PRUEBA_ACADEMICA')"
+        },
+        {
+          "nombre": "CK_VERIFICACION_FACTORES",
+          "tipo": "C",
+          "columnas": [
+            "FACTORES_VERIFICADOS",
+            "FACTORES_REQUERIDOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "factores_verificados BETWEEN 0 AND 3 AND factores_requeridos BETWEEN 1 AND 3"
+        },
+        {
+          "nombre": "CK_VERIFICACION_HUELLA",
+          "tipo": "C",
+          "columnas": [
+            "DOCUMENTO_HUELLA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "REGEXP_LIKE(documento_huella,'^[a-f0-9]{64}$','c')"
+        },
+        {
+          "nombre": "CK_VERIFICACION_RESULTADO",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO_VERIFICACION",
+            "VERIFICADO_EN",
+            "FACTORES_VERIFICADOS",
+            "FACTORES_REQUERIDOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "(estado_verificacion='PENDIENTE' AND verificado_en IS NULL AND factores_verificados=0) OR\n         (estado_verificacion IN ('EXCEPCIONAL','PRUEBA_ACADEMICA') AND verificado_en IS NOT NULL AND factores_verificados=0) OR\n         (estado_verificacion='BIOMETRICA_COMPLETA' AND verificado_en IS NOT NULL AND factores_verificados>=factores_requeridos)"
+        },
+        {
+          "nombre": "CK_VERIFICACION_TIPO",
+          "tipo": "C",
+          "columnas": [
+            "TIPO_DOCUMENTO"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "tipo_documento IN ('CC','TI','CE','PA')"
+        },
+        {
+          "nombre": "CK_VERIFICACION_VERSION",
+          "tipo": "C",
+          "columnas": [
+            "VERSION_CREDENCIAL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "version_credencial>=0 AND version_credencial=TRUNC(version_credencial)"
+        },
+        {
+          "nombre": "FK_VERIFICACION_ADMIN",
+          "tipo": "R",
+          "columnas": [
+            "AUTORIZADO_POR"
+          ],
+          "referencia": "ADMINISTRADORES",
+          "columnas_referencia": [
+            "ADMINISTRADOR_ID"
+          ],
+          "al_eliminar": "NO ACTION",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "FK_VERIFICACION_DOCENTE",
+          "tipo": "R",
+          "columnas": [
+            "AUTORIZADO_DOCENTE_POR"
+          ],
+          "referencia": "PROFESORES",
+          "columnas_referencia": [
+            "PROFESOR_ID"
+          ],
+          "al_eliminar": "NO ACTION",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "FK_VERIFICACION_EST",
+          "tipo": "R",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": "ESTUDIANTES",
+          "columnas_referencia": [
+            "ESTUDIANTE_ID"
+          ],
+          "al_eliminar": "CASCADE",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "FK_VERIFICACION_MATERIA",
+          "tipo": "R",
+          "columnas": [
+            "MATERIA_AUTORIZACION_ID"
+          ],
+          "referencia": "MATERIAS",
+          "columnas_referencia": [
+            "MATERIA_ID"
+          ],
+          "al_eliminar": "NO ACTION",
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "PK_VERIFICACION_EST",
+          "tipo": "P",
+          "columnas": [
+            "ESTUDIANTE_ID"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037182",
+          "tipo": "C",
+          "columnas": [
+            "EXCEPCION_ACTIVA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"EXCEPCION_ACTIVA\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037183",
+          "tipo": "C",
+          "columnas": [
+            "ESTADO_VERIFICACION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"ESTADO_VERIFICACION\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037184",
+          "tipo": "C",
+          "columnas": [
+            "FACTORES_VERIFICADOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"FACTORES_VERIFICADOS\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037185",
+          "tipo": "C",
+          "columnas": [
+            "FACTORES_REQUERIDOS"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"FACTORES_REQUERIDOS\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037186",
+          "tipo": "C",
+          "columnas": [
+            "VERSION_CREDENCIAL"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"VERSION_CREDENCIAL\" IS NOT NULL"
+        },
+        {
+          "nombre": "UQ_VERIFICACION_DOC",
+          "tipo": "U",
+          "columnas": [
+            "DOCUMENTO_HUELLA"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        }
+      ]
+    },
+    {
+      "nombre": "VERSIONES_ESQUEMA",
+      "comentario": "Versiones de instalacion y futuras migraciones aplicadas.",
+      "columnas": [
+        {
+          "nombre": "VERSION",
+          "tipo": "VARCHAR2(20 BYTE)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "PK textual de la migración, por ejemplo 008.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "DESCRIPCION",
+          "tipo": "VARCHAR2(200 BYTE)",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Resumen de la versión instalada.",
+          "predeterminado": ""
+        },
+        {
+          "nombre": "APLICADO_EN",
+          "tipo": "TIMESTAMP(6) WITH TIME ZONE",
+          "admite_nulo": false,
+          "identidad": false,
+          "comentario": "Instante de aplicación de la migración.",
+          "predeterminado": "SYSTIMESTAMP"
+        }
+      ],
+      "restricciones": [
+        {
+          "nombre": "PK_VERSIONES_ESQUEMA",
+          "tipo": "P",
+          "columnas": [
+            "VERSION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": ""
+        },
+        {
+          "nombre": "SYS_C0037037",
+          "tipo": "C",
+          "columnas": [
+            "DESCRIPCION"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"DESCRIPCION\" IS NOT NULL"
+        },
+        {
+          "nombre": "SYS_C0037038",
+          "tipo": "C",
+          "columnas": [
+            "APLICADO_EN"
+          ],
+          "referencia": null,
+          "columnas_referencia": [],
+          "al_eliminar": null,
+          "estado": "ENABLED",
+          "validacion": "VALIDATED",
+          "condicion": "\"APLICADO_EN\" IS NOT NULL"
+        }
+      ]
+    }
+  ],
+  "vistas": [
+    {
+      "nombre": "V_AUDITORIA_ASISTENCIA",
+      "sql": "SELECT auditoria_id,operacion,asistencia_id,materia_anterior,estudiante_anterior,fecha_anterior,presente_anterior,\n       materia_nueva,estudiante_nuevo,fecha_nueva,presente_nuevo,ocurrido_en,usuario_bd,actor_rol,actor_id,motivo,\n       modulo,identificador_cliente,clase_anterior,clase_nueva,detectado_anterior,correccion_inicial,motivo_inicial,revisor_inicial,estado_anterior\nFROM auditoria_asistencia"
+    },
+    {
+      "nombre": "V_CLASES",
+      "sql": "SELECT c.clase_id,c.materia_id,m.codigo_materia,m.nombre materia,c.profesor_id,\n       c.fecha_hora,c.lote_legado,c.estado,c.origen,c.registros_confirmados,c.creado_en,c.confirmado_en\nFROM clases c JOIN materias m ON m.materia_id=c.materia_id"
+    },
+    {
+      "nombre": "V_ESTUDIANTES",
+      "sql": "SELECT estudiante_id, nombre, creado_en,\n       CASE WHEN embedding_facial IS NOT NULL THEN 'SI' ELSE 'NO' END AS tiene_rostro,\n       CASE WHEN embedding_voz IS NOT NULL THEN 'SI' ELSE 'NO' END AS tiene_voz\nFROM estudiantes"
+    },
+    {
+      "nombre": "V_EVENTOS_GESTION",
+      "sql": "SELECT evento_id,entidad,entidad_id,accion,motivo,actor_rol,actor_id,ocurrido_en,\n       valores_anteriores,valores_nuevos FROM eventos_gestion"
+    },
+    {
+      "nombre": "V_HISTORIAL_MATRICULAS",
+      "sql": "SELECT historial_id, accion, materia_id, estudiante_id, matriculado_en,\n       ocurrido_en, usuario_bd, actor_rol, actor_id, motivo, modulo, identificador_cliente\nFROM historial_matriculas"
+    },
+    {
+      "nombre": "V_MATERIAS",
+      "sql": "SELECT m.materia_id, m.codigo_materia, m.nombre, m.seccion,\n       m.profesor_id, p.nombre AS profesor, m.creado_en\nFROM materias m JOIN profesores p ON p.profesor_id = m.profesor_id"
+    },
+    {
+      "nombre": "V_MATERIA_ESTUDIANTES",
+      "sql": "SELECT me.materia_id, m.codigo_materia, m.nombre AS materia,\n       me.estudiante_id, e.nombre AS estudiante, me.matriculado_en\nFROM materia_estudiantes me\nJOIN materias m ON m.materia_id = me.materia_id\nJOIN estudiantes e ON e.estudiante_id = me.estudiante_id"
+    },
+    {
+      "nombre": "V_PROFESORES",
+      "sql": "SELECT profesor_id, usuario, nombre, creado_en FROM profesores"
+    },
+    {
+      "nombre": "V_REGISTROS_ASISTENCIA",
+      "sql": "SELECT ra.asistencia_id,ra.clase_id,ra.materia_id,m.codigo_materia,m.nombre materia,\n       ra.estudiante_id,e.nombre estudiante,ra.fecha_hora,c.fecha_hora fecha_clase,\n       ra.presente,CASE ra.presente WHEN 1 THEN 'PRESENTE' ELSE 'AUSENTE' END estado,\n       ra.presente_detectado,ra.corregido_manual,ra.motivo_correccion,ra.revisado_por,ra.revisado_en,c.origen,ra.estado_deteccion\nFROM registros_asistencia ra JOIN clases c ON c.clase_id=ra.clase_id\nJOIN materias m ON m.materia_id=ra.materia_id JOIN estudiantes e ON e.estudiante_id=ra.estudiante_id"
+    },
+    {
+      "nombre": "V_RESUMEN_MATERIAS",
+      "sql": "SELECT m.materia_id,m.codigo_materia,m.nombre,COUNT(ra.asistencia_id) registros,\n       COUNT(DISTINCT c.clase_id) tomas_registradas,\n       NVL(ROUND(AVG(ra.presente)*100,2),0) porcentaje_asistencia\nFROM materias m LEFT JOIN clases c ON c.materia_id=m.materia_id AND c.estado='CONFIRMADA'\nLEFT JOIN registros_asistencia ra ON ra.clase_id=c.clase_id\nGROUP BY m.materia_id,m.codigo_materia,m.nombre"
+    },
+    {
+      "nombre": "V_VERSIONES_ESQUEMA",
+      "sql": "SELECT version, descripcion, aplicado_en FROM versiones_esquema"
+    }
+  ],
+  "paquetes": [
+    {
+      "nombre": "PKG_ADMINISTRACION",
+      "especificacion": "PACKAGE pkg_administracion AUTHID DEFINER AS\n    PROCEDURE cuentas(p_tipo VARCHAR2,p_busqueda VARCHAR2,p_resultado OUT SYS_REFCURSOR);\n    PROCEDURE listar_materias(p_busqueda VARCHAR2,p_resultado OUT SYS_REFCURSOR);\n    PROCEDURE auditoria(p_tipo VARCHAR2,p_desde TIMESTAMP WITH TIME ZONE,p_hasta TIMESTAMP WITH TIME ZONE,\n        p_limite NUMBER,p_resultado OUT SYS_REFCURSOR);\n    PROCEDURE editar_profesor(p_id NUMBER,p_usuario VARCHAR2,p_nombre VARCHAR2,p_activo NUMBER,p_hash VARCHAR2,p_motivo VARCHAR2,p_version VARCHAR2);\n    PROCEDURE editar_estudiante(p_id NUMBER,p_codigo VARCHAR2,p_nombre VARCHAR2,p_activo NUMBER,p_motivo VARCHAR2,p_version VARCHAR2);\n    PROCEDURE editar_materia(p_id NUMBER,p_codigo VARCHAR2,p_nombre VARCHAR2,p_seccion VARCHAR2,p_profesor NUMBER,p_activo NUMBER,p_motivo VARCHAR2,p_version VARCHAR2);\n    PROCEDURE registrar_exportacion(p_tipo VARCHAR2,p_cantidad NUMBER);\n    PROCEDURE actualizar_documento(p_id NUMBER,p_huella VARCHAR2,p_tipo VARCHAR2,p_final VARCHAR2,p_version NUMBER);\nEND pkg_administracion;",
+      "rutinas": [
+        {
+          "nombre": "CUENTAS",
+          "argumentos": [
+            {
+              "nombre": "P_TIPO",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_BUSQUEDA",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_RESULTADO",
+              "posicion": 3,
+              "tipo": "REF CURSOR",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "LISTAR_MATERIAS",
+          "argumentos": [
+            {
+              "nombre": "P_BUSQUEDA",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_RESULTADO",
+              "posicion": 2,
+              "tipo": "REF CURSOR",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "AUDITORIA",
+          "argumentos": [
+            {
+              "nombre": "P_TIPO",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_DESDE",
+              "posicion": 2,
+              "tipo": "TIMESTAMP WITH TIME ZONE",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HASTA",
+              "posicion": 3,
+              "tipo": "TIMESTAMP WITH TIME ZONE",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_LIMITE",
+              "posicion": 4,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_RESULTADO",
+              "posicion": 5,
+              "tipo": "REF CURSOR",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "EDITAR_PROFESOR",
+          "argumentos": [
+            {
+              "nombre": "P_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_USUARIO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_NOMBRE",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ACTIVO",
+              "posicion": 4,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HASH",
+              "posicion": 5,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 6,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 7,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "EDITAR_ESTUDIANTE",
+          "argumentos": [
+            {
+              "nombre": "P_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CODIGO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_NOMBRE",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ACTIVO",
+              "posicion": 4,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 5,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 6,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "EDITAR_MATERIA",
+          "argumentos": [
+            {
+              "nombre": "P_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CODIGO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_NOMBRE",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_SECCION",
+              "posicion": 4,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_PROFESOR",
+              "posicion": 5,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ACTIVO",
+              "posicion": 6,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 7,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 8,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "REGISTRAR_EXPORTACION",
+          "argumentos": [
+            {
+              "nombre": "P_TIPO",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CANTIDAD",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ACTUALIZAR_DOCUMENTO",
+          "argumentos": [
+            {
+              "nombre": "P_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HUELLA",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_TIPO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FINAL",
+              "posicion": 4,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 5,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "PKG_ASISTENCIA",
+      "especificacion": "PACKAGE pkg_asistencia AS\n    FUNCTION porcentaje_asistencia(p_estudiante_id NUMBER, p_materia_id NUMBER DEFAULT NULL) RETURN NUMBER;\n    PROCEDURE matricular_estudiante(p_estudiante_id NUMBER, p_materia_id NUMBER);\n    PROCEDURE registrar_asistencia(p_materia_id NUMBER, p_estudiante_id NUMBER,\n                                  p_fecha_hora TIMESTAMP WITH TIME ZONE, p_presente NUMBER);\n    PROCEDURE corregir_asistencia(p_asistencia_id NUMBER, p_presente NUMBER, p_motivo VARCHAR2);\n    PROCEDURE eliminar_asistencia(p_asistencia_id NUMBER, p_motivo VARCHAR2);\n    PROCEDURE retirar_estudiante(p_estudiante_id NUMBER, p_materia_id NUMBER, p_motivo VARCHAR2 DEFAULT NULL);\nEND pkg_asistencia;",
+      "rutinas": [
+        {
+          "nombre": "PORCENTAJE_ASISTENCIA",
+          "argumentos": [
+            {
+              "nombre": null,
+              "posicion": 0,
+              "tipo": "NUMBER",
+              "direccion": "OUT",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ESTUDIANTE_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MATERIA_ID",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": true
+            }
+          ]
+        },
+        {
+          "nombre": "MATRICULAR_ESTUDIANTE",
+          "argumentos": [
+            {
+              "nombre": "P_ESTUDIANTE_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MATERIA_ID",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "REGISTRAR_ASISTENCIA",
+          "argumentos": [
+            {
+              "nombre": "P_MATERIA_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ESTUDIANTE_ID",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FECHA_HORA",
+              "posicion": 3,
+              "tipo": "TIMESTAMP WITH TIME ZONE",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_PRESENTE",
+              "posicion": 4,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "CORREGIR_ASISTENCIA",
+          "argumentos": [
+            {
+              "nombre": "P_ASISTENCIA_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_PRESENTE",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ELIMINAR_ASISTENCIA",
+          "argumentos": [
+            {
+              "nombre": "P_ASISTENCIA_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "RETIRAR_ESTUDIANTE",
+          "argumentos": [
+            {
+              "nombre": "P_ESTUDIANTE_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MATERIA_ID",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "PKG_AUDITORIA",
+      "especificacion": "PACKAGE pkg_auditoria AS\n    PROCEDURE establecer_contexto(p_rol VARCHAR2, p_actor_id NUMBER DEFAULT NULL, p_motivo VARCHAR2 DEFAULT NULL);\n    PROCEDURE limpiar_contexto;\n    PROCEDURE fijar_motivo(p_motivo VARCHAR2);\n    FUNCTION rol_actual RETURN VARCHAR2;\n    FUNCTION actor_actual RETURN NUMBER;\n    FUNCTION motivo_actual RETURN VARCHAR2;\nEND pkg_auditoria;",
+      "rutinas": [
+        {
+          "nombre": "ESTABLECER_CONTEXTO",
+          "argumentos": [
+            {
+              "nombre": "P_ROL",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ACTOR_ID",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": true
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": true
+            }
+          ]
+        },
+        {
+          "nombre": "LIMPIAR_CONTEXTO",
+          "argumentos": []
+        },
+        {
+          "nombre": "FIJAR_MOTIVO",
+          "argumentos": [
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ROL_ACTUAL",
+          "argumentos": [
+            {
+              "nombre": null,
+              "posicion": 0,
+              "tipo": "VARCHAR2",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ACTOR_ACTUAL",
+          "argumentos": [
+            {
+              "nombre": null,
+              "posicion": 0,
+              "tipo": "NUMBER",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "MOTIVO_ACTUAL",
+          "argumentos": [
+            {
+              "nombre": null,
+              "posicion": 0,
+              "tipo": "VARCHAR2",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "PKG_CLASES",
+      "especificacion": "PACKAGE pkg_clases AS\n    PROCEDURE abrir_clase(p_materia_id NUMBER,p_fecha_hora TIMESTAMP WITH TIME ZONE,p_clase_id OUT NUMBER);\n    PROCEDURE confirmar_clase(p_clase_id NUMBER,p_clave VARCHAR2,p_origen VARCHAR2,p_registros CLOB,p_cantidad OUT NUMBER);\n    -- Compatibilidad de SQL 001/002: se llama desde el disparador al insertar sin CLASE_ID.\n    FUNCTION clase_legada(p_materia_id NUMBER,p_fecha_hora TIMESTAMP WITH TIME ZONE) RETURN NUMBER;\nEND pkg_clases;",
+      "rutinas": [
+        {
+          "nombre": "ABRIR_CLASE",
+          "argumentos": [
+            {
+              "nombre": "P_MATERIA_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FECHA_HORA",
+              "posicion": 2,
+              "tipo": "TIMESTAMP WITH TIME ZONE",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CLASE_ID",
+              "posicion": 3,
+              "tipo": "NUMBER",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "CONFIRMAR_CLASE",
+          "argumentos": [
+            {
+              "nombre": "P_CLASE_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CLAVE",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ORIGEN",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_REGISTROS",
+              "posicion": 4,
+              "tipo": "CLOB",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CANTIDAD",
+              "posicion": 5,
+              "tipo": "NUMBER",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "CLASE_LEGADA",
+          "argumentos": [
+            {
+              "nombre": null,
+              "posicion": 0,
+              "tipo": "NUMBER",
+              "direccion": "OUT",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MATERIA_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FECHA_HORA",
+              "posicion": 2,
+              "tipo": "TIMESTAMP WITH TIME ZONE",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "PKG_EXCEPCIONES",
+      "especificacion": "PACKAGE pkg_excepciones AUTHID DEFINER AS\n    PROCEDURE listar(p_busqueda VARCHAR2, p_salida OUT SYS_REFCURSOR);\n    PROCEDURE autorizar(p_id IN OUT NUMBER, p_nombre VARCHAR2, p_codigo VARCHAR2,\n        p_huella VARCHAR2, p_tipo VARCHAR2, p_final VARCHAR2, p_hash VARCHAR2,\n        p_categoria VARCHAR2, p_referencia VARCHAR2, p_dias NUMBER, p_version NUMBER);\n    PROCEDURE revocar(p_id NUMBER, p_version NUMBER, p_motivo VARCHAR2);\nEND pkg_excepciones;",
+      "rutinas": [
+        {
+          "nombre": "LISTAR",
+          "argumentos": [
+            {
+              "nombre": "P_BUSQUEDA",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_SALIDA",
+              "posicion": 2,
+              "tipo": "REF CURSOR",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "AUTORIZAR",
+          "argumentos": [
+            {
+              "nombre": "P_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN/OUT",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_NOMBRE",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CODIGO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HUELLA",
+              "posicion": 4,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_TIPO",
+              "posicion": 5,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FINAL",
+              "posicion": 6,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HASH",
+              "posicion": 7,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CATEGORIA",
+              "posicion": 8,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_REFERENCIA",
+              "posicion": 9,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_DIAS",
+              "posicion": 10,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 11,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "REVOCAR",
+          "argumentos": [
+            {
+              "nombre": "P_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "PKG_EXCEPCIONES_DOCENTES",
+      "especificacion": "PACKAGE pkg_excepciones_docentes AUTHID DEFINER AS\n    PROCEDURE listar(p_materia NUMBER,p_salida OUT SYS_REFCURSOR);\n    PROCEDURE autorizar(p_materia NUMBER,p_id NUMBER,p_huella VARCHAR2,p_tipo VARCHAR2,p_final VARCHAR2,\n        p_hash VARCHAR2,p_categoria VARCHAR2,p_referencia VARCHAR2,p_dias NUMBER,p_version NUMBER);\n    PROCEDURE revocar(p_materia NUMBER,p_id NUMBER,p_version NUMBER,p_motivo VARCHAR2);\nEND pkg_excepciones_docentes;",
+      "rutinas": [
+        {
+          "nombre": "LISTAR",
+          "argumentos": [
+            {
+              "nombre": "P_MATERIA",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_SALIDA",
+              "posicion": 2,
+              "tipo": "REF CURSOR",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "AUTORIZAR",
+          "argumentos": [
+            {
+              "nombre": "P_MATERIA",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ID",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HUELLA",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_TIPO",
+              "posicion": 4,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FINAL",
+              "posicion": 5,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HASH",
+              "posicion": 6,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_CATEGORIA",
+              "posicion": 7,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_REFERENCIA",
+              "posicion": 8,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_DIAS",
+              "posicion": 9,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 10,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "REVOCAR",
+          "argumentos": [
+            {
+              "nombre": "P_MATERIA",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ID",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 3,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 4,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "PKG_GESTION",
+      "especificacion": "PACKAGE pkg_gestion AS\n    PROCEDURE crear_materia(p_codigo VARCHAR2,p_nombre VARCHAR2,p_seccion VARCHAR2,p_id OUT NUMBER);\n    PROCEDURE matricular(p_estudiante NUMBER,p_materia NUMBER);\n    PROCEDURE retirar(p_estudiante NUMBER,p_materia NUMBER,p_motivo VARCHAR2);\n    PROCEDURE archivar_materia(p_materia NUMBER,p_motivo VARCHAR2);\n    PROCEDURE retirar_biometria(p_estudiante NUMBER,p_motivo VARCHAR2);\n    PROCEDURE archivar_estudiante(p_estudiante NUMBER,p_motivo VARCHAR2);\n    PROCEDURE archivar_profesor(p_profesor NUMBER,p_motivo VARCHAR2);\n    PROCEDURE registrar_estudiante(p_nombre VARCHAR2,p_huella VARCHAR2,p_tipo VARCHAR2,p_final VARCHAR2,\n        p_facial CLOB,p_voz CLOB,p_id OUT NUMBER);\n    PROCEDURE actualizar_documento(p_id NUMBER,p_huella VARCHAR2,p_tipo VARCHAR2,p_final VARCHAR2,p_version NUMBER);\nEND pkg_gestion;",
+      "rutinas": [
+        {
+          "nombre": "CREAR_MATERIA",
+          "argumentos": [
+            {
+              "nombre": "P_CODIGO",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_NOMBRE",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_SECCION",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ID",
+              "posicion": 4,
+              "tipo": "NUMBER",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "MATRICULAR",
+          "argumentos": [
+            {
+              "nombre": "P_ESTUDIANTE",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MATERIA",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "RETIRAR",
+          "argumentos": [
+            {
+              "nombre": "P_ESTUDIANTE",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MATERIA",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ARCHIVAR_MATERIA",
+          "argumentos": [
+            {
+              "nombre": "P_MATERIA",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "RETIRAR_BIOMETRIA",
+          "argumentos": [
+            {
+              "nombre": "P_ESTUDIANTE",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ARCHIVAR_ESTUDIANTE",
+          "argumentos": [
+            {
+              "nombre": "P_ESTUDIANTE",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ARCHIVAR_PROFESOR",
+          "argumentos": [
+            {
+              "nombre": "P_PROFESOR",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_MOTIVO",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "REGISTRAR_ESTUDIANTE",
+          "argumentos": [
+            {
+              "nombre": "P_NOMBRE",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HUELLA",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_TIPO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FINAL",
+              "posicion": 4,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FACIAL",
+              "posicion": 5,
+              "tipo": "CLOB",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VOZ",
+              "posicion": 6,
+              "tipo": "CLOB",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ID",
+              "posicion": 7,
+              "tipo": "NUMBER",
+              "direccion": "OUT",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "ACTUALIZAR_DOCUMENTO",
+          "argumentos": [
+            {
+              "nombre": "P_ID",
+              "posicion": 1,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HUELLA",
+              "posicion": 2,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_TIPO",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_FINAL",
+              "posicion": 4,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_VERSION",
+              "posicion": 5,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "nombre": "PKG_SESIONES",
+      "especificacion": "PACKAGE pkg_sesiones AUTHID DEFINER AS\n    PROCEDURE abrir(p_rol VARCHAR2,p_actor NUMBER,p_hash VARCHAR2);\n    PROCEDURE validar(p_rol VARCHAR2,p_actor NUMBER,p_hash VARCHAR2,p_renovar NUMBER DEFAULT 0);\n    PROCEDURE cerrar(p_rol VARCHAR2,p_actor NUMBER,p_hash VARCHAR2);\nEND pkg_sesiones;",
+      "rutinas": [
+        {
+          "nombre": "ABRIR",
+          "argumentos": [
+            {
+              "nombre": "P_ROL",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ACTOR",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HASH",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        },
+        {
+          "nombre": "VALIDAR",
+          "argumentos": [
+            {
+              "nombre": "P_ROL",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ACTOR",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HASH",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_RENOVAR",
+              "posicion": 4,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": true
+            }
+          ]
+        },
+        {
+          "nombre": "CERRAR",
+          "argumentos": [
+            {
+              "nombre": "P_ROL",
+              "posicion": 1,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_ACTOR",
+              "posicion": 2,
+              "tipo": "NUMBER",
+              "direccion": "IN",
+              "predeterminado": false
+            },
+            {
+              "nombre": "P_HASH",
+              "posicion": 3,
+              "tipo": "VARCHAR2",
+              "direccion": "IN",
+              "predeterminado": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "disparadores": [
+    {
+      "nombre": "TRG_ADMINISTRADORES_ACTUALIZADO",
+      "tabla": "ADMINISTRADORES",
+      "momento": "BEFORE EACH ROW",
+      "evento": "UPDATE",
+      "estado": "ENABLED",
+      "cuerpo": "BEGIN :NEW.actualizado_en:=SYSTIMESTAMP; END;"
+    },
+    {
+      "nombre": "TRG_ASISTENCIA_ACTIVA",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "momento": "BEFORE EACH ROW",
+      "evento": "INSERT",
+      "estado": "ENABLED",
+      "cuerpo": "DECLARE v_n NUMBER;\nBEGIN\n    SELECT COUNT(*) INTO v_n FROM estudiantes WHERE estudiante_id=:NEW.estudiante_id AND activo=1;\n    IF v_n<>1 THEN RAISE_APPLICATION_ERROR(-20087,'Estudiante inactivo.'); END IF;\n    SELECT COUNT(*) INTO v_n FROM materias m JOIN profesores p ON p.profesor_id=m.profesor_id\n    WHERE m.materia_id=:NEW.materia_id AND m.activo=1 AND p.activo=1;\n    IF v_n<>1 THEN RAISE_APPLICATION_ERROR(-20087,'Materia o profesor archivado.'); END IF;\nEND;"
+    },
+    {
+      "nombre": "TRG_ASISTENCIA_AUD",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "momento": "AFTER EACH ROW",
+      "evento": "UPDATE OR DELETE",
+      "estado": "ENABLED",
+      "cuerpo": "DECLARE\n    v_operacion VARCHAR2(10);\nBEGIN\n    IF DELETING THEN v_operacion:='DELETE';\n    ELSIF :OLD.presente<>:NEW.presente OR :OLD.fecha_hora<>:NEW.fecha_hora THEN v_operacion:='UPDATE';\n    ELSE RETURN; END IF;\n    INSERT INTO auditoria_asistencia(\n        operacion,asistencia_id,materia_anterior,estudiante_anterior,fecha_anterior,presente_anterior,\n        materia_nueva,estudiante_nuevo,fecha_nueva,presente_nuevo,clase_anterior,clase_nueva,\n        detectado_anterior,correccion_inicial,motivo_inicial,revisor_inicial,estado_anterior,\n        usuario_bd,actor_rol,actor_id,motivo,modulo,identificador_cliente)\n    VALUES(v_operacion,:OLD.asistencia_id,:OLD.materia_id,:OLD.estudiante_id,:OLD.fecha_hora,:OLD.presente,\n        :NEW.materia_id,:NEW.estudiante_id,:NEW.fecha_hora,:NEW.presente,:OLD.clase_id,:NEW.clase_id,\n        :OLD.presente_detectado,:OLD.corregido_manual,:OLD.motivo_correccion,:OLD.revisado_por,:OLD.estado_deteccion,\n        SYS_CONTEXT('USERENV','SESSION_USER'),pkg_auditoria.rol_actual,pkg_auditoria.actor_actual,\n        pkg_auditoria.motivo_actual,SYS_CONTEXT('USERENV','MODULE'),SYS_CONTEXT('USERENV','CLIENT_IDENTIFIER'));\nEND;"
+    },
+    {
+      "nombre": "TRG_ASISTENCIA_CLASE",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "momento": "BEFORE EACH ROW",
+      "evento": "INSERT OR UPDATE",
+      "estado": "ENABLED",
+      "cuerpo": "DECLARE\n    v_estado clases.estado%TYPE;\n    v_origen clases.origen%TYPE;\nBEGIN\n    IF INSERTING THEN\n        IF :NEW.clase_id IS NULL THEN\n            :NEW.clase_id:=pkg_clases.clase_legada(:NEW.materia_id,:NEW.fecha_hora);\n        END IF;\n        SELECT estado,origen INTO v_estado,v_origen FROM clases WHERE clase_id=:NEW.clase_id FOR UPDATE;\n        IF v_estado='CONFIRMADA' AND v_origen<>'LEGADO' THEN\n            RAISE_APPLICATION_ERROR(-20074,'La clase ya fue confirmada; no admite nuevos registros.');\n        END IF;\n        IF :NEW.estado_deteccion IS NULL THEN\n            IF :NEW.presente_detectado IS NULL THEN :NEW.presente_detectado:=:NEW.presente; END IF;\n            :NEW.estado_deteccion:=CASE :NEW.presente_detectado WHEN 1 THEN 'PRESENTE' ELSE 'AUSENTE' END;\n        END IF;\n        IF v_origen='LEGADO' THEN\n            UPDATE clases SET registros_confirmados=registros_confirmados+1 WHERE clase_id=:NEW.clase_id;\n        END IF;\n    ELSIF :NEW.clase_id<>:OLD.clase_id OR :NEW.materia_id<>:OLD.materia_id\n       OR :NEW.estudiante_id<>:OLD.estudiante_id OR NVL(:NEW.presente_detectado,-1)<>NVL(:OLD.presente_detectado,-1)\n       OR :NEW.estado_deteccion<>:OLD.estado_deteccion\n       OR :NEW.corregido_manual<>:OLD.corregido_manual\n       OR NVL(:NEW.motivo_correccion,CHR(0))<>NVL(:OLD.motivo_correccion,CHR(0))\n       OR NVL(:NEW.revisado_por,-1)<>NVL(:OLD.revisado_por,-1)\n       OR (:NEW.revisado_en IS NULL AND :OLD.revisado_en IS NOT NULL)\n       OR (:NEW.revisado_en IS NOT NULL AND :OLD.revisado_en IS NULL)\n       OR :NEW.revisado_en<>:OLD.revisado_en THEN\n        RAISE_APPLICATION_ERROR(-20079,'La identidad de clase y la revision inicial son inmutables. Corrija la presencia mediante el procedimiento auditable.');\n    END IF;\nEND;"
+    },
+    {
+      "nombre": "TRG_CLASES_IDENTIDAD",
+      "tabla": "CLASES",
+      "momento": "BEFORE EACH ROW",
+      "evento": "UPDATE",
+      "estado": "ENABLED",
+      "cuerpo": "BEGIN\n    IF :OLD.estado='CONFIRMADA' AND (UPDATING('PROPUESTA_CONFIRMADA')\n        OR (:OLD.origen<>'LEGADO' AND UPDATING('REGISTROS_CONFIRMADOS'))) THEN\n        RAISE_APPLICATION_ERROR(-20079,'La confirmacion original y su cantidad son inmutables.');\n    END IF;\n    IF :NEW.materia_id<>:OLD.materia_id OR :NEW.profesor_id<>:OLD.profesor_id\n       OR :NEW.fecha_hora<>:OLD.fecha_hora OR :NEW.lote_legado<>:OLD.lote_legado\n       OR (:OLD.estado='CONFIRMADA' AND (\n           :NEW.estado<>:OLD.estado OR :NEW.origen<>:OLD.origen\n           OR NVL(:NEW.clave_confirmacion,CHR(0))<>NVL(:OLD.clave_confirmacion,CHR(0))\n           OR :NEW.confirmado_en IS NULL OR :NEW.confirmado_en<>:OLD.confirmado_en)) THEN\n        RAISE_APPLICATION_ERROR(-20079,'No cambie la identidad ni reabra una clase confirmada.');\n    END IF;\nEND;"
+    },
+    {
+      "nombre": "TRG_ESTUDIANTES_ACTUALIZADO",
+      "tabla": "ESTUDIANTES",
+      "momento": "BEFORE EACH ROW",
+      "evento": "UPDATE",
+      "estado": "ENABLED",
+      "cuerpo": "BEGIN :NEW.actualizado_en:=SYSTIMESTAMP; :NEW.version_edicion:=:OLD.version_edicion+1; END;"
+    },
+    {
+      "nombre": "TRG_MATERIAS_ACTUALIZADO",
+      "tabla": "MATERIAS",
+      "momento": "BEFORE EACH ROW",
+      "evento": "UPDATE",
+      "estado": "ENABLED",
+      "cuerpo": "BEGIN :NEW.actualizado_en:=SYSTIMESTAMP; :NEW.version_edicion:=:OLD.version_edicion+1; END;"
+    },
+    {
+      "nombre": "TRG_MATRICULAS_HIST",
+      "tabla": "MATERIA_ESTUDIANTES",
+      "momento": "AFTER EACH ROW",
+      "evento": "INSERT OR DELETE",
+      "estado": "ENABLED",
+      "cuerpo": "BEGIN\n    IF INSERTING THEN\n        INSERT INTO historial_matriculas (\n            accion, materia_id, estudiante_id, matriculado_en,\n            usuario_bd, actor_rol, actor_id, motivo, modulo, identificador_cliente\n        ) VALUES (\n            'ALTA', :NEW.materia_id, :NEW.estudiante_id, :NEW.matriculado_en,\n            SYS_CONTEXT('USERENV', 'SESSION_USER'), pkg_auditoria.rol_actual,\n            pkg_auditoria.actor_actual, pkg_auditoria.motivo_actual,\n            SYS_CONTEXT('USERENV', 'MODULE'), SYS_CONTEXT('USERENV', 'CLIENT_IDENTIFIER')\n        );\n    ELSE\n        INSERT INTO historial_matriculas (\n            accion, materia_id, estudiante_id, matriculado_en,\n            usuario_bd, actor_rol, actor_id, motivo, modulo, identificador_cliente\n        ) VALUES (\n            'RETIRO', :OLD.materia_id, :OLD.estudiante_id, :OLD.matriculado_en,\n            SYS_CONTEXT('USERENV', 'SESSION_USER'), pkg_auditoria.rol_actual,\n            pkg_auditoria.actor_actual, pkg_auditoria.motivo_actual,\n            SYS_CONTEXT('USERENV', 'MODULE'), SYS_CONTEXT('USERENV', 'CLIENT_IDENTIFIER')\n        );\n    END IF;\nEND;"
+    },
+    {
+      "nombre": "TRG_MATRICULA_ACTIVA",
+      "tabla": "MATERIA_ESTUDIANTES",
+      "momento": "BEFORE EACH ROW",
+      "evento": "INSERT OR UPDATE",
+      "estado": "ENABLED",
+      "cuerpo": "DECLARE v_n NUMBER;\nBEGIN\n    SELECT COUNT(*) INTO v_n FROM estudiantes WHERE estudiante_id=:NEW.estudiante_id AND activo=1;\n    IF v_n<>1 THEN RAISE_APPLICATION_ERROR(-20087,'Estudiante inactivo o inexistente.'); END IF;\n    SELECT COUNT(*) INTO v_n FROM materias m JOIN profesores p ON p.profesor_id=m.profesor_id\n    WHERE m.materia_id=:NEW.materia_id AND m.activo=1 AND p.activo=1;\n    IF v_n<>1 THEN RAISE_APPLICATION_ERROR(-20087,'Materia o profesor inactivo.'); END IF;\nEND;"
+    },
+    {
+      "nombre": "TRG_PROFESORES_ACTUALIZADO",
+      "tabla": "PROFESORES",
+      "momento": "BEFORE EACH ROW",
+      "evento": "UPDATE",
+      "estado": "ENABLED",
+      "cuerpo": "BEGIN :NEW.actualizado_en:=SYSTIMESTAMP; :NEW.version_edicion:=:OLD.version_edicion+1; END;"
+    }
+  ],
+  "indices": [
+    {
+      "nombre": "PK_ADMINISTRADORES",
+      "tabla": "ADMINISTRADORES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_ADMINISTRADORES_USUARIO",
+      "tabla": "ADMINISTRADORES",
+      "unicidad": "UNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "IX_AUDASIST_REGISTRO",
+      "tabla": "AUDITORIA_ASISTENCIA",
+      "unicidad": "NONUNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_AUDITORIA_ASISTENCIA",
+      "tabla": "AUDITORIA_ASISTENCIA",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_CLASES",
+      "tabla": "CLASES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "SYS_IL0000153230C00010$$",
+      "tabla": "CLASES",
+      "unicidad": "UNIQUE",
+      "tipo": "LOB",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_CLASES_CONFIRMACION",
+      "tabla": "CLASES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_CLASES_INSTANTE",
+      "tabla": "CLASES",
+      "unicidad": "UNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_CLASES_MATERIA",
+      "tabla": "CLASES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_ESTUDIANTES",
+      "tabla": "ESTUDIANTES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "SYS_IL0000153165C00003$$",
+      "tabla": "ESTUDIANTES",
+      "unicidad": "UNIQUE",
+      "tipo": "LOB",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "SYS_IL0000153165C00004$$",
+      "tabla": "ESTUDIANTES",
+      "unicidad": "UNIQUE",
+      "tipo": "LOB",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_ESTUDIANTES_CODIGO",
+      "tabla": "ESTUDIANTES",
+      "unicidad": "UNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_EVENTOS_GESTION",
+      "tabla": "EVENTOS_GESTION",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "SYS_IL0000153260C00009$$",
+      "tabla": "EVENTOS_GESTION",
+      "unicidad": "UNIQUE",
+      "tipo": "LOB",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "SYS_IL0000153260C00010$$",
+      "tabla": "EVENTOS_GESTION",
+      "unicidad": "UNIQUE",
+      "tipo": "LOB",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "IX_HISTMAT_MATERIA_ESTUDIANTE",
+      "tabla": "HISTORIAL_MATRICULAS",
+      "unicidad": "NONUNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_HISTORIAL_MATRICULAS",
+      "tabla": "HISTORIAL_MATRICULAS",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_LIMITES_ACCESO",
+      "tabla": "LIMITES_ACCESO",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "IX_MATERIAS_PROFESOR",
+      "tabla": "MATERIAS",
+      "unicidad": "NONUNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_MATERIAS",
+      "tabla": "MATERIAS",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_MATERIAS_CODIGO",
+      "tabla": "MATERIAS",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_MATERIAS_CODIGO_CI",
+      "tabla": "MATERIAS",
+      "unicidad": "UNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "IX_ME_ESTUDIANTE",
+      "tabla": "MATERIA_ESTUDIANTES",
+      "unicidad": "NONUNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_MATERIA_ESTUDIANTES",
+      "tabla": "MATERIA_ESTUDIANTES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_PROFESORES",
+      "tabla": "PROFESORES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_PROFESORES_USUARIO",
+      "tabla": "PROFESORES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_PROFESORES_USUARIO_CI",
+      "tabla": "PROFESORES",
+      "unicidad": "UNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "IX_RA_ESTUDIANTE",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "unicidad": "NONUNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "IX_RA_FECHA",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "unicidad": "NONUNIQUE",
+      "tipo": "FUNCTION-BASED NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "IX_RA_MATERIA",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "unicidad": "NONUNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_REGISTROS_ASISTENCIA",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_RA_CLASE_ESTUDIANTE",
+      "tabla": "REGISTROS_ASISTENCIA",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_SESIONES_USUARIO",
+      "tabla": "SESIONES_USUARIO",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_VERIFICACION_EST",
+      "tabla": "VERIFICACION_ESTUDIANTES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "UQ_VERIFICACION_DOC",
+      "tabla": "VERIFICACION_ESTUDIANTES",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    },
+    {
+      "nombre": "PK_VERSIONES_ESQUEMA",
+      "tabla": "VERSIONES_ESQUEMA",
+      "unicidad": "UNIQUE",
+      "tipo": "NORMAL",
+      "estado": "VALID"
+    }
+  ],
+  "expresiones_indices": [
+    {
+      "indice": "IX_AUDASIST_REGISTRO",
+      "posicion": 2,
+      "expresion": "SYS_EXTRACT_UTC(\"OCURRIDO_EN\")"
+    },
+    {
+      "indice": "IX_HISTMAT_MATERIA_ESTUDIANTE",
+      "posicion": 3,
+      "expresion": "SYS_EXTRACT_UTC(\"OCURRIDO_EN\")"
+    },
+    {
+      "indice": "IX_RA_FECHA",
+      "posicion": 1,
+      "expresion": "SYS_EXTRACT_UTC(\"FECHA_HORA\")"
+    },
+    {
+      "indice": "UQ_ADMINISTRADORES_USUARIO",
+      "posicion": 1,
+      "expresion": "LOWER(TRIM(\"USUARIO\"))"
+    },
+    {
+      "indice": "UQ_CLASES_INSTANTE",
+      "posicion": 2,
+      "expresion": "SYS_EXTRACT_UTC(\"FECHA_HORA\")"
+    },
+    {
+      "indice": "UQ_ESTUDIANTES_CODIGO",
+      "posicion": 1,
+      "expresion": "UPPER(TRIM(\"CODIGO_INSTITUCIONAL\"))"
+    },
+    {
+      "indice": "UQ_MATERIAS_CODIGO_CI",
+      "posicion": 1,
+      "expresion": "UPPER(TRIM(\"CODIGO_MATERIA\"))"
+    },
+    {
+      "indice": "UQ_PROFESORES_USUARIO_CI",
+      "posicion": 1,
+      "expresion": "LOWER(TRIM(\"USUARIO\"))"
+    }
+  ],
+  "identidades": [
+    {
+      "tabla": "ADMINISTRADORES",
+      "columna": "ADMINISTRADOR_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "AUDITORIA_ASISTENCIA",
+      "columna": "AUDITORIA_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "CLASES",
+      "columna": "CLASE_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "ESTUDIANTES",
+      "columna": "ESTUDIANTE_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "EVENTOS_GESTION",
+      "columna": "EVENTO_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "HISTORIAL_MATRICULAS",
+      "columna": "HISTORIAL_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "MATERIAS",
+      "columna": "MATERIA_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "PROFESORES",
+      "columna": "PROFESOR_ID",
+      "generacion": "ALWAYS"
+    },
+    {
+      "tabla": "REGISTROS_ASISTENCIA",
+      "columna": "ASISTENCIA_ID",
+      "generacion": "ALWAYS"
+    }
+  ],
+  "fecha_guia": "2026-11-23T10:38:50.997353+00:00"
+}

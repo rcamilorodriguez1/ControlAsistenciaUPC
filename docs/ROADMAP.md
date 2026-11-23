@@ -1,12 +1,12 @@
 # Roadmap general de UPC | Aula
 
-Actualizado el 22/11/2026. Este archivo es el punto de entrada; cada rama conserva
+Actualizado el 23/11/2026. Este archivo es el punto de entrada; cada rama conserva
 sus tareas y evidencias. El [roadmap anterior](ROADMAP_HISTORICO.md) permanece como
 registro histórico, incluidos los pendientes de despliegue que siguen abiertos.
 
 | Rama | Alcance | Estado |
 | --- | --- | --- |
-| [Aprendizaje de base de datos](ROADMAP_APRENDIZAJE_BASE_DATOS.md) | Reinicio autorizado de ambos destinos, carga gradual y explicación de cada script | Reinicio terminado y guía inicial disponible; sin datos nuevos automáticos |
+| [Aprendizaje de base de datos](ROADMAP_APRENDIZAJE_BASE_DATOS.md) | Reinicio autorizado de ambos destinos, carga gradual y explicación de cada script | AB1 y AB2.1 terminados: reinicio y guía PDF ilustrada 011 de 84 páginas; estudio y carga gradual pendientes |
 | [Frontend y backend](ROADMAP_FRONT_BACK.md) | Selector de clases, créditos, perfiles, configuración y excepciones docentes | Implementado y probado; aceptación en Render pendiente |
 | [Base de datos y aporte académico](ROADMAP_BASE_DATOS.md) | Visualización, diccionario, conexión y goodwill | Entregables terminados; revisión académica del equipo pendiente |
 | [Memoria y presentación](ROADMAP_DOCUMENTACION_PRESENTACION.md) | PDF 1.2 y presentación comercial con identidad UPC | Terminados y revisados: 87 páginas y 20 diapositivas |
@@ -27,8 +27,9 @@ registro histórico, incluidos los pendientes de despliegue que siguen abiertos.
 
 - Solo Render para la aplicación; Oracle Autonomous para los datos. Vercel descartado.
 - Las pruebas de la página, cámara y reconocimiento quedan a cargo del usuario. Este PC no tiene cámara.
-- Para la presentación: [clave maestra académica temporal](PRUEBA_ACADEMICA.md), código
-  institucional y acceso a cualquier estudiante activo, con estado y auditoría propios.
+- Para la presentación: [clave maestra académica temporal](PRUEBA_ACADEMICA.md),
+  [documento registrado desde 011](DOCUMENTO_ESTUDIANTIL.md) y acceso a cualquier
+  estudiante activo durante su vigencia, con estado y auditoría propios.
 
 - El portal sirve para operar; el perfil presenta identidad y actividad académica.
 - El docente tendrá su agenda mensual y la configuración de su cuenta por separado.
@@ -39,6 +40,8 @@ registro histórico, incluidos los pendientes de despliegue que siguen abiertos.
 
 ## Entregables de esta revisión
 
+- [Guía ilustrada desde cero, esquema 011](GUIA_DIDACTICA_BASE_DATOS.md): 84 páginas,
+  14 tablas y 140 campos, vistas, paquetes, triggers, scripts y ejercicios.
 - [Perfil docente y configuración](PERFIL_DOCENTE.md) y [excepciones con entrega manual](EXCEPCIONES_BIOMETRICAS.md).
 - [Mapa interactivo de las 14 tablas](base_datos/index.html), con búsqueda y relaciones.
 - [Diccionario de 140 columnas](DICCIONARIO_DATOS.md), obtenido de Autonomous 009.

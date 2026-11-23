@@ -7,6 +7,7 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 
 | Necesidad | Documento |
 | --- | --- |
+| Aprender toda la base desde cero con dibujos y ejemplos | [Guía ilustrada 011, PDF de 84 páginas](UPC_Aula_Base_de_Datos_Desde_Cero.pdf) · [contenido y revisión](GUIA_DIDACTICA_BASE_DATOS.md) |
 | Empezar con datos vacíos y aprender cada script | [Guía de estudio](APRENDER_BASE_DATOS.md) · [roadmap de aprendizaje](ROADMAP_APRENDIZAJE_BASE_DATOS.md) |
 | Leer la memoria académica y técnica completa | [Documentación integral 1.2 en PDF](UPC_Aula_Documentacion_Integral.pdf) |
 | Presentar el producto a aliados o posibles inversionistas | [Presentación comercial y guion](PRESENTACION_COMERCIAL.md) |
@@ -68,14 +69,14 @@ Instrucción vigente del usuario, 22/11/2026; sustituye la espera de confirmaci�
   explícita de commit o push puede adelantar el paso. Si una comprobación falla, corregirla
   antes de publicar y registrar el bloqueo; no marcar un punto como completo sin su evidencia.
 
-Último lote preparado, contado desde `1391969`:
+Último lote preparado, contado desde `d4f7d42`:
 
 | Referencia | Estado |
 | --- | --- |
-| Base del lote | `1391969`, rama `main` |
-| Cambios del lote | Documento estudiantil 011; después, reinicio expresamente autorizado de datos en las dos bases y guía de estudio gradual |
-| Verificación | 155 pruebas del documento y cuatro del reinicio; 13 tablas vacías por base, 11 versiones conservadas, respaldos y preflight correctos |
-| Commit/push | Cierre de FB6.3 y AB1; el hash final queda en Git y el seguimiento privado. Las cuentas web deberán crearse de nuevo paso a paso |
+| Base del lote | `d4f7d42`, rama `main` |
+| Cambios del lote | Guía completa e ilustrada para estudiar Oracle 011, con catálogo de metadatos y generador reproducible |
+| Verificación | 84 páginas; cobertura de tablas/campos y objetos, 49 marcadores y 98 enlaces válidos; cero texto fuera de página o coincidencias privadas; copia del Escritorio idéntica |
+| Commit/push | Cierre de AB2.1; el hash final queda en Git y el seguimiento privado. El estudio y la carga de cuentas continúan paso a paso |
 
 Registrar el estado operativo del lote en `.local/publicacion/seguimiento.json`, con
 los hashes verificados y los contadores pendientes. Tras cada commit, reiniciar el
