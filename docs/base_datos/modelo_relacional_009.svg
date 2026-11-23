@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1110" viewBox="0 0 1800 1110">
+<rect width="1800" height="1110" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#173d2d}.nombre{font-size:21px;font-weight:bold}.campo{font-size:18px}.flecha{fill:none;stroke:#688c75;stroke-width:3}.nueva{stroke:#007337;stroke-width:4}</style>
+<text font-family="Arial" fill="#173d2d" x="40" y="42" font-size="29" font-weight="bold">UPC | Aula · Modelo relacional físico 009</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="77" font-size="18">14 tablas · 11 FK · campos guía · el diccionario contiene las 140 columnas</text>
+<defs><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#49765e"/></marker></defs>
+<path d="M175 285 L175 370" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="168,356 182,356 175,370" fill="#49765e"/>
+<path d="M175 520 L175 620" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="168,606 182,606 175,620" fill="#49765e"/>
+<path d="M310 430 C405 430 415 230 500 230" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="486,223 486,237 500,230" fill="#49765e"/>
+<path d="M1440 235 L1390 235 L1390 115 L945 115 L945 230 L920 230" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="934,223 934,237 920,230" fill="#49765e"/>
+<path d="M310 475 C420 475 410 657 500 657" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="486,650 486,664 500,657" fill="#49765e"/>
+<path d="M1450 300 L1380 340 L1020 340 L1020 665 L970 665" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="984,658 984,672 970,665" fill="#49765e"/>
+<path d="M310 706 L500 706" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="486,699 486,713 500,706" fill="#49765e"/>
+<path d="M1600 315 L1600 450" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="1593,436 1607,436 1600,450" fill="#49765e"/>
+<path d="M1180 285 L1180 400 L1350 400 L1350 450" fill="none" stroke="#688c75" stroke-width="3"/>
+<polygon points="1343,436 1357,436 1350,450" fill="#49765e"/>
+<path d="M175 155 L175 108 L1775 108 L1775 570 L1760 570" fill="none" stroke="#007337" stroke-width="4"/>
+<polygon points="1774,563 1774,577 1760,570" fill="#49765e"/>
+<path d="M310 500 L367 500 L367 820 L1500 820 L1500 715" fill="none" stroke="#007337" stroke-width="4"/>
+<polygon points="1493,729 1507,729 1500,715" fill="#49765e"/>
+<rect x="40" y="155" width="270" height="130" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="40" y="155" width="270" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="52" y="182">PROFESORES</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="222">profesor_id · PK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="247">usuario · UQ</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="272">nombre</text>
+<rect x="40" y="370" width="270" height="150" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="40" y="370" width="270" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="52" y="397">MATERIAS</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="437">materia_id · PK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="462">profesor_id · FK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="487">codigo_materia · UQ</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="512">seccion</text>
+<rect x="40" y="620" width="270" height="180" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="40" y="620" width="270" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="52" y="647">CLASES</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="687">clase_id · PK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="712">materia_id · FK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="737">fecha_hora</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="762">estado</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="53" y="787">UNIQUE materia/instante</text>
+<rect x="500" y="170" width="420" height="130" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="500" y="170" width="420" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="512" y="197">MATERIA_ESTUDIANTES</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="237">PK (materia_id, estudiante_id)</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="262">materia_id · FK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="287">estudiante_id · FK</text>
+<rect x="500" y="570" width="470" height="215" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="500" y="570" width="470" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="512" y="597">REGISTROS_ASISTENCIA</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="637">asistencia_id · PK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="662">estudiante_id · FK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="687">materia_id · FK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="712">FK (clase_id, materia_id)</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="737">UNIQUE (clase_id, estudiante_id)</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="513" y="762">deteccion · decision · motivo</text>
+<rect x="1440" y="155" width="320" height="160" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="1440" y="155" width="320" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="1452" y="182">ESTUDIANTES</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1453" y="222">estudiante_id · PK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1453" y="247">codigo_institucional · UQ</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1453" y="272">nombre</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1453" y="297">plantillas biométricas opcionales</text>
+<rect x="1030" y="155" width="300" height="130" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="1030" y="155" width="300" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="1042" y="182">ADMINISTRADORES</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1043" y="222">administrador_id · PK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1043" y="247">usuario</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1043" y="272">nombre</text>
+<rect x="1200" y="450" width="560" height="265" rx="6" fill="#eef5eb" stroke="#70917b" stroke-width="2"/>
+<rect x="1200" y="450" width="560" height="39" rx="6" fill="#d4e7d1"/>
+<text font-family="Arial" fill="#173d2d" font-size="21" font-weight="bold" x="1212" y="477">VERIFICACION_ESTUDIANTES</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="517">estudiante_id · PK / FK</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="542">autorizado_por · FK (administrador)</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="567">autorizado_docente_por · FK (009)</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="592">materia_autorizacion_id · FK (009)</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="617">clave_hash · documento_huella</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="642">vigencia · versión · estado</text>
+<text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="667">Administrador O docente+materia</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="866" font-size="20" font-weight="bold">Tablas sin FK físicas; sus referencias lógicas se explican en la guía</text>
+<rect x="40" y="895" width="277" height="94" rx="5" fill="#f3f6ef" stroke="#d4e1d3"/>
+<text font-family="Arial" fill="#173d2d" x="50" y="923" font-size="17" font-weight="bold">AUDITORIA_ASISTENCIA</text>
+<text font-family="Arial" fill="#173d2d" x="50" y="948" font-size="15">auditoria_id</text>
+<text font-family="Arial" fill="#173d2d" x="50" y="971" font-size="15">operacion</text>
+<rect x="333" y="895" width="277" height="94" rx="5" fill="#f3f6ef" stroke="#d4e1d3"/>
+<text font-family="Arial" fill="#173d2d" x="343" y="923" font-size="17" font-weight="bold">EVENTOS_GESTION</text>
+<text font-family="Arial" fill="#173d2d" x="343" y="948" font-size="15">evento_id</text>
+<text font-family="Arial" fill="#173d2d" x="343" y="971" font-size="15">entidad</text>
+<rect x="626" y="895" width="277" height="94" rx="5" fill="#f3f6ef" stroke="#d4e1d3"/>
+<text font-family="Arial" fill="#173d2d" x="636" y="923" font-size="17" font-weight="bold">HISTORIAL_MATRICULAS</text>
+<text font-family="Arial" fill="#173d2d" x="636" y="948" font-size="15">historial_id</text>
+<text font-family="Arial" fill="#173d2d" x="636" y="971" font-size="15">accion</text>
+<rect x="919" y="895" width="277" height="94" rx="5" fill="#f3f6ef" stroke="#d4e1d3"/>
+<text font-family="Arial" fill="#173d2d" x="929" y="923" font-size="17" font-weight="bold">LIMITES_ACCESO</text>
+<text font-family="Arial" fill="#173d2d" x="929" y="948" font-size="15">clave</text>
+<text font-family="Arial" fill="#173d2d" x="929" y="971" font-size="15">intentos</text>
+<rect x="1212" y="895" width="277" height="94" rx="5" fill="#f3f6ef" stroke="#d4e1d3"/>
+<text font-family="Arial" fill="#173d2d" x="1222" y="923" font-size="17" font-weight="bold">SESIONES_USUARIO</text>
+<text font-family="Arial" fill="#173d2d" x="1222" y="948" font-size="15">rol</text>
+<text font-family="Arial" fill="#173d2d" x="1222" y="971" font-size="15">actor_id</text>
+<rect x="1505" y="895" width="277" height="94" rx="5" fill="#f3f6ef" stroke="#d4e1d3"/>
+<text font-family="Arial" fill="#173d2d" x="1515" y="923" font-size="17" font-weight="bold">VERSIONES_ESQUEMA</text>
+<text font-family="Arial" fill="#173d2d" x="1515" y="948" font-size="15">version</text>
+<text font-family="Arial" fill="#173d2d" x="1515" y="971" font-size="15">descripcion</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="1034" font-size="18">Flecha: padre → tabla que contiene la FK. Verificación: como máximo una fila por alumno.</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="1064" font-size="18">Verde intenso: relaciones añadidas en 009. La aprobación activa exige administrador o docente con materia, con exclusión mutua.</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="1093" font-size="16">Fuente: catálogo de metadatos de Autonomous 009 · sin filas de personas ni credenciales.</text></svg>

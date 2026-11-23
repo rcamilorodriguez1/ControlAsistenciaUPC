@@ -32,21 +32,23 @@ def rgb(valor):
 
 class Presentacion:
     """Todos los objetos del PPTX son editables; el PDF usa las mismas coordenadas."""
-    def __init__(self, fuentes):
+    def __init__(self, fuentes, *, salida=DOCS, nombre='UPC_Aula_Presentacion_Comercial',
+                 titulo='UPC | Aula — Presentación comercial', trabajo=WORK):
         for variante, archivo in [('', 'arial.ttf'), ('Bold', 'arialbd.ttf'), ('Italic', 'ariali.ttf')]:
             pdfmetrics.registerFont(TTFont(FONT+variante, str(fuentes/archivo)))
-        DOCS.mkdir(exist_ok=True)
-        WORK.mkdir(parents=True, exist_ok=True)
+        self.salida, self.nombre, self.trabajo = Path(salida), nombre, Path(trabajo)
+        self.salida.mkdir(parents=True, exist_ok=True)
+        self.trabajo.mkdir(parents=True, exist_ok=True)
         self.ppt = Presentation()
         self.ppt.slide_width, self.ppt.slide_height = Pt(W), Pt(H)
-        self.ppt.core_properties.title = 'UPC | Aula — Presentación comercial'
+        self.ppt.core_properties.title = titulo
         self.ppt.core_properties.subject = 'Propuesta de piloto y desarrollo comercial. Proyecto académico, edición 1.2.'
         self.ppt.core_properties.author = 'Rafael Camilo Rodriguez Ayala; Harold Steven Torres Diaz; Oscar William Rivero Ordoñez'
         self.ppt.core_properties.last_modified_by = 'Equipo UPC | Aula'
         self.ppt.core_properties.language = 'es-CO'
         self.ppt.core_properties.created = datetime.now(timezone.utc)
         self.ppt.core_properties.modified = datetime.now(timezone.utc)
-        self.pdf = canvas.Canvas(str(DOCS/'UPC_Aula_Presentacion_Comercial.pdf'), pagesize=(W,H), pageCompression=1)
+        self.pdf = canvas.Canvas(str(self.salida/(self.nombre+'.pdf')), pagesize=(W,H), pageCompression=1)
         self.pdf.setTitle(self.ppt.core_properties.title)
         self.pdf.setAuthor(self.ppt.core_properties.author)
         self.pdf.setSubject(self.ppt.core_properties.subject)
@@ -160,7 +162,7 @@ class Presentacion:
 
     def finish(self):
         self.pdf.save()
-        self.ppt.save(DOCS/'UPC_Aula_Presentacion_Comercial.pptx')
+        self.ppt.save(self.salida/(self.nombre+'.pptx'))
         errores=[]
         for n,s in enumerate(self.ppt.slides,1):
             for shape in s.shapes:
@@ -169,8 +171,8 @@ class Presentacion:
         reporte=dict(diapositivas=self.num,formato='16:9',fuente='Arial',paleta_principal=VERDE,
             logosimbolo='Imagen original del manual, proporción conservada',objetos_fuera_de_limites=errores,
             datos_financieros_inventados=False,textos=self.textos)
-        (WORK/'validacion.json').write_text(json.dumps(reporte,ensure_ascii=False,indent=2),encoding='utf-8')
-        (WORK/'notas.json').write_text(json.dumps(self.notas,ensure_ascii=False,indent=2),encoding='utf-8')
+        (self.trabajo/'validacion.json').write_text(json.dumps(reporte,ensure_ascii=False,indent=2),encoding='utf-8')
+        (self.trabajo/'notas.json').write_text(json.dumps(self.notas,ensure_ascii=False,indent=2),encoding='utf-8')
         if errores:raise ValueError(errores)
         print(json.dumps({k:v for k,v in reporte.items() if k!='textos'},ensure_ascii=False))
 

@@ -9,6 +9,7 @@ verificación del proyecto. El registro resumido de entregas está en [CAMBIOS.m
 | --- | --- |
 | Leer la memoria académica y técnica completa | [Documentación integral 1.2 en PDF](UPC_Aula_Documentacion_Integral.pdf) |
 | Presentar el producto a aliados o posibles inversionistas | [Presentación comercial y guion](PRESENTACION_COMERCIAL.md) |
+| Llevar todo a la exposición de Base de Datos | [Paquete del Escritorio y orden de exposición](PAQUETE_PRESENTACION_BASE_DATOS.md) |
 | Explorar las pantallas y sus recorridos por rol | [Mockup navegable](mockup/index.html) · [Alcance](mockup/README.md) |
 | Consultar los cambios realizados | [Registro de cambios](CAMBIOS.md) |
 | Consultar el plan general y sus ramas | [General](ROADMAP.md), [frontend/backend](ROADMAP_FRONT_BACK.md), [base de datos](ROADMAP_BASE_DATOS.md) |

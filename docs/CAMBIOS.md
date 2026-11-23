@@ -1,5 +1,24 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Paquete del Escritorio para exponer Base de Datos
+
+- Presentación principal de 21 diapositivas con notas, enfocada en problemática,
+  objetivos, modelo relacional, integridad, SQL, PL/SQL, transacciones, conexión y aporte
+  a Ingeniería de Sistemas. La presentación comercial anterior se conserva como apoyo.
+- Se generan guía de defensa de 8 páginas, diccionario independiente de 30 páginas y
+  modelo físico 009 en PDF A3, SVG, PNG y Mermaid: 14 tablas, 140 columnas y 11 FK.
+- DDL actual exportado mediante metadatos de Autonomous en transacción de solo lectura:
+  14 tablas, 11 FK, 11 índices adicionales y 11 vistas, sin filas ni credenciales.
+- Se añaden dos guiones para exponer. Sus 23 SELECT se compilaron en Autonomous sin
+  ejecutarlos. Instalación/migraciones originales se conservan en una carpeta aparte.
+- Preparador del paquete: copias organizadas, índice HTML offline, fuente publicado
+  expandido y ZIP, manifiesto SHA-256 y ZIP portable. Conserva originales y rechaza
+  destinos existentes; excluye secretos y entornos privados.
+- Comprobaciones: páginas/cajas de texto, 140 columnas, 14 tablas del modelo, DDL,
+  notas de diapositivas y ausencia de secretos. Las pruebas de página/cámara siguen
+  a cargo del usuario. Evidencias privadas en .local/paquete_presentacion/.
+
+
 ## 22/11/2026 — Presentación comercial profesional con identidad UPC
 
 - Se entrega una presentación de 20 diapositivas en PowerPoint editable con notas y

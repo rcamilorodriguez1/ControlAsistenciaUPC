@@ -8,6 +8,7 @@ Depende del [roadmap general](ROADMAP.md). Petición del 22/11/2026.
 | DP2 | Presentación comercial profesional con identidad UPC, editable y en PDF | Terminada: 20 diapositivas, notas y objetos editables |
 | DP3 | Revisar maquetación, fuentes de las cifras, logotipo y ausencia de secretos | Aprobado: 154 enlaces locales, 140 columnas y cero secretos detectados |
 | DP4 | Registrar los cambios, realizar commit y push | Se cierra con la publicación de este lote; Git y el seguimiento privado registran el hash |
+| DP5 | Reunir en el Escritorio el material para Base de Datos y una presentación enfocada en la asignatura | Material generado; copia y verificación del paquete al cerrar el lote |
 
 La presentación comunica producto y propuesta de piloto. Los datos comerciales no
 medidos se identifican como hipótesis. El usuario conserva la prueba de la página y
