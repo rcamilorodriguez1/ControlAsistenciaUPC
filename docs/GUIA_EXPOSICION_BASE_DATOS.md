@@ -77,6 +77,14 @@ MATERIA_ESTUDIANTES, CLASES y REGISTROS_ASISTENCIA.
 El modelo de la carpeta muestra claves y campos guía. El diccionario contiene todas
 las columnas. El archivo DDL 009 sirve para importar la estructura en Data Modeler.
 
+**Cómo contar las 14 en el dibujo:** el bloque principal reúne ocho tablas conectadas
+por 11 FK: ADMINISTRADORES, PROFESORES, ESTUDIANTES, MATERIAS, MATERIA_ESTUDIANTES,
+CLASES, REGISTROS_ASISTENCIA y VERIFICACION_ESTUDIANTES. En la franja inferior aparecen
+las otras seis: AUDITORIA_ASISTENCIA, EVENTOS_GESTION, HISTORIAL_MATRICULAS,
+LIMITES_ACCESO, SESIONES_USUARIO y VERSIONES_ESQUEMA. También pertenecen al modelo;
+no tienen FK físicas declaradas. Eso no significa que carezcan de PK o de referencias
+lógicas. La diapositiva del núcleo académico es una vista parcial de seis tablas.
+
 ## 6. Cómo explicar la normalización
 
 La identidad del estudiante, la materia y el docente se conservan en tablas distintas.
@@ -215,6 +223,7 @@ otro integración, evidencia y valor. Adaptarlo a la intervención de cada integ
 
 | Pregunta | Respuesta breve |
 | --- | --- |
+| ¿Por qué se ven ocho tablas conectadas si hay catorce? | Ocho forman el bloque conectado por FK; las otras seis son tablas de soporte sin FK físicas y aparecen abajo. Todas forman parte del esquema. |
 | ¿Por qué una tabla de clases? | Para identificar el horario y confirmar una única toma, independiente de cuántas fotos se analicen. |
 | ¿Cómo resuelven N:M? | Con MATERIA_ESTUDIANTES y su PK materia_id + estudiante_id. |
 | ¿Por qué FK compuesta? | Impide asociar un resultado con una clase que pertenece a otra materia. |

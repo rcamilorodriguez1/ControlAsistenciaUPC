@@ -1,6 +1,7 @@
 """Presentación para la asignatura Base de Datos, reutilizando la identidad UPC."""
 from pathlib import Path
 import argparse
+import json
 import os
 from generar_presentacion import Presentacion, DOCS, ROOT, VERDE, BOSQUE, BLANCO, MENTA, PAPEL, TINTA, GRIS, LINEA
 
@@ -32,19 +33,29 @@ def generar(fuentes, salida=DOCS):
     for y,t,c,oscuro in [(273,'Navegador','Docente · estudiante · administración',False),(338,'Render / Python','Interfaz · servicios · driver y pool',True),(403,'Oracle Autonomous','Tablas · reglas · transacciones · historia',False)]:
         d.rect(50,y,860,54,BOSQUE if oscuro else PAPEL,radio=4);d.text(67,y+14,330,29,t,21,BLANCO if oscuro else TINTA,bold=True);d.text(415,y+18,473,27,c,15,MENTA if oscuro else GRIS)
 
-    d.new('Catorce tablas\ncon responsabilidades distintas.','04 · Modelo de dominio','DICCIONARIO_DATOS · catálogo 009',notas=
-        'Agrupar ayuda a entender las 14 tablas. Cuentas: tres. Organización académica y resultados: cuatro. Historia: tres. Seguridad: tres. Versiones: una. Son funciones diferentes; las columnas detalladas están en el diccionario de 140 campos.')
-    grupos=[('Cuentas','Profesores · estudiantes · administradores'),('Actividad académica','Materias · matrículas · clases · resultados'),('Historia','Auditoría · historial de matrículas · eventos'),('Seguridad y evolución','Límites · sesiones · verificación · versiones')]
-    for i,(t,c) in enumerate(grupos):
-        x=50+(i%2)*440;y=269+(i//2)*108;d.rect(x,y,420,96,PAPEL,radio=4);d.text(x+16,y+13,386,29,t,21,VERDE,bold=True);d.text(x+16,y+52,386,40,c,14,GRIS)
+    d.new('Catorce tablas en total:\nocho conectadas y seis de soporte.','04 · Inventario completo','DICCIONARIO_DATOS · catálogo 009',notas=
+        'Las ocho tablas del bloque principal están conectadas mediante once FK físicas. Las otras seis también son tablas reales del modelo: conservan auditoría, eventos, matrículas históricas, límites, sesiones y versiones. No tener FK no significa carecer de PK ni de referencias lógicas; estas últimas se validan en los flujos y no se dibujan como relaciones físicas. El modelo A3 incluye los dos grupos.')
+    catalogo=json.loads((DOCS/'base_datos/catalogo.json').read_text(encoding='utf-8'))
+    conectadas=set()
+    for tabla in catalogo['tablas']:
+        for restriccion in tabla['restricciones']:
+            if restriccion['tipo']=='R':
+                conectadas.update((tabla['nombre'],restriccion['referencia']))
+    grupos=[('8 tablas conectadas por FK',[t['nombre'] for t in catalogo['tablas'] if t['nombre'] in conectadas]),
+            ('6 tablas sin FK físicas',[t['nombre'] for t in catalogo['tablas'] if t['nombre'] not in conectadas])]
+    for i,(titulo,nombres) in enumerate(grupos):
+        x=50+i*440;d.rect(x,269,420,205,PAPEL,radio=4)
+        d.text(x+16,282,386,29,titulo,20,VERDE,bold=True)
+        d.text(x+16,321,386,148,'\n'.join(nombres),14,GRIS,interlineado=18)
+    d.text(50,480,860,18,'Las 14 pertenecen al modelo. Una referencia lógica no equivale a una FK declarada.',12,GRIS)
 
-    d.new('El núcleo relaciona personas,\nmaterias, clases y resultados.','05 · Modelo relacional','Modelo 009 · relaciones físicas',notas=
-        'Este esquema resume el núcleo. El archivo A3 de la carpeta contiene las 14 tablas y las once FK físicas. La matrícula resuelve N:M y la asistencia referencia una clase concreta. Las referencias históricas sin FK se explican aparte y no se inventan como líneas físicas.')
+    d.new('Seis tablas resumen\nel núcleo académico.','05 · Vista parcial del modelo','Modelo 009 · núcleo académico',notas=
+        'Esta diapositiva es una vista parcial de seis tablas académicas, no el modelo completo. Administradores y verificación completan el bloque de ocho conectado por FK. Las otras seis tablas de soporte aparecen en el inventario anterior y en la franja inferior del modelo A3. El esquema completo tiene catorce tablas y once FK físicas.')
     nodos=[(50,274,'PROFESORES'),(50,385,'MATERIAS'),(347,274,'MATRÍCULA'),(644,274,'ESTUDIANTES'),(347,385,'CLASES'),(644,385,'RESULTADOS')]
     for x,y,t in nodos:
         d.rect(x,y,265,69,BOSQUE if t=='RESULTADOS' else PAPEL,radio=4);d.text(x+12,y+24,241,26,t,17,BLANCO if t=='RESULTADOS' else TINTA,bold=True)
     for x1,y1,x2,y2 in [(182,343,182,385),(315,419,347,419),(330,419,330,309),(330,309,347,309),(612,309,644,309),(612,419,644,419),(776,343,776,385)]:d.line(x1,y1,x2,y2,VERDE,2)
-    d.text(50,468,860,19,'Diagrama de contexto; ver el modelo físico A3 para el detalle de las 11 FK.',13,GRIS)
+    d.text(50,468,860,19,'Vista parcial: 6 de 14 tablas. El modelo físico A3 incluye las 14 tablas y las 11 FK.',13,GRIS)
 
     d.new('Una relación N:M\nse convierte en una tabla.','06 · Cardinalidad y claves','MATERIA_ESTUDIANTES',notas=
         'Un alumno puede matricularse en varias materias; una materia puede tener varios alumnos. La tabla intermedia contiene materia_id y estudiante_id como PK compuesta y ambas columnas como FK. No repite nombre de estudiante ni descripción de materia.')

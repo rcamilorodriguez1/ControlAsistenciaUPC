@@ -2,7 +2,8 @@
 <rect width="1800" height="1110" fill="white"/>
 <style>text{font-family:Arial,sans-serif;fill:#173d2d}.nombre{font-size:21px;font-weight:bold}.campo{font-size:18px}.flecha{fill:none;stroke:#688c75;stroke-width:3}.nueva{stroke:#007337;stroke-width:4}</style>
 <text font-family="Arial" fill="#173d2d" x="40" y="42" font-size="29" font-weight="bold">UPC | Aula · Modelo relacional físico 009</text>
-<text font-family="Arial" fill="#173d2d" x="40" y="77" font-size="18">14 tablas · 11 FK · campos guía · el diccionario contiene las 140 columnas</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="77" font-size="18">14 tablas = 8 conectadas por 11 FK + 6 sin FK físicas · el diccionario contiene las 140 columnas</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="100" font-size="18" font-weight="bold">BLOQUE PRINCIPAL · 8 TABLAS CONECTADAS POR FK</text>
 <defs><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#49765e"/></marker></defs>
 <path d="M175 285 L175 370" fill="none" stroke="#688c75" stroke-width="3"/>
 <polygon points="168,356 182,356 175,370" fill="#49765e"/>
@@ -85,7 +86,7 @@
 <text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="617">clave_hash · documento_huella</text>
 <text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="642">vigencia · versión · estado</text>
 <text font-family="Arial" fill="#173d2d" font-size="18" x="1213" y="667">Administrador O docente+materia</text>
-<text font-family="Arial" fill="#173d2d" x="40" y="866" font-size="20" font-weight="bold">Tablas sin FK físicas; sus referencias lógicas se explican en la guía</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="866" font-size="20" font-weight="bold">SOPORTE · 6 TABLAS DEL MISMO MODELO SIN FK FÍSICAS</text>
 <rect x="40" y="895" width="277" height="94" rx="5" fill="#f3f6ef" stroke="#d4e1d3"/>
 <text font-family="Arial" fill="#173d2d" x="50" y="923" font-size="17" font-weight="bold">AUDITORIA_ASISTENCIA</text>
 <text font-family="Arial" fill="#173d2d" x="50" y="948" font-size="15">auditoria_id</text>
@@ -110,6 +111,7 @@
 <text font-family="Arial" fill="#173d2d" x="1515" y="923" font-size="17" font-weight="bold">VERSIONES_ESQUEMA</text>
 <text font-family="Arial" fill="#173d2d" x="1515" y="948" font-size="15">version</text>
 <text font-family="Arial" fill="#173d2d" x="1515" y="971" font-size="15">descripcion</text>
-<text font-family="Arial" fill="#173d2d" x="40" y="1034" font-size="18">Flecha: padre → tabla que contiene la FK. Verificación: como máximo una fila por alumno.</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="1019" font-size="17">Estas seis también forman parte de las 14 tablas. Sin FK no significa sin clave primaria ni sin referencias lógicas.</text>
+<text font-family="Arial" fill="#173d2d" x="40" y="1045" font-size="18">Flecha: padre → tabla que contiene la FK. Verificación: como máximo una fila por alumno.</text>
 <text font-family="Arial" fill="#173d2d" x="40" y="1064" font-size="18">Verde intenso: relaciones añadidas en 009. La aprobación activa exige administrador o docente con materia, con exclusión mutua.</text>
 <text font-family="Arial" fill="#173d2d" x="40" y="1093" font-size="16">Fuente: catálogo de metadatos de Autonomous 009 · sin filas de personas ni credenciales.</text></svg>

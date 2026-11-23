@@ -26,6 +26,10 @@ restricciones, JOIN, vistas, paquetes, triggers, transacciones, auditoría y con
 El guion relaciona estas decisiones con Ingeniería de Sistemas y aporta preguntas
 para ensayar la defensa. El valor comercial se explica como cierre del caso de uso.
 
+El inventario de la presentación enumera las 14 tablas. El modelo A3 distingue ocho
+conectadas por FK y seis de soporte sin FK físicas; ambos grupos pertenecen al esquema.
+La diapositiva del núcleo académico muestra una vista parcial de seis tablas.
+
 ## Consulta y conexión
 
 PDF, imágenes, guía y catálogo funcionan sin internet. La web y las consultas reales

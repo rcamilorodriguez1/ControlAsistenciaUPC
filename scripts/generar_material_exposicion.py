@@ -106,7 +106,8 @@ def modelo_relacional():
        '<rect width="1800" height="1110" fill="white"/>',
        '<style>text{font-family:Arial,sans-serif;fill:#173d2d}.nombre{font-size:21px;font-weight:bold}.campo{font-size:18px}.flecha{fill:none;stroke:#688c75;stroke-width:3}.nueva{stroke:#007337;stroke-width:4}</style>',
        '<text x="40" y="42" font-size="29" font-weight="bold">UPC | Aula · Modelo relacional físico 009</text>',
-       '<text x="40" y="77" font-size="18">14 tablas · 11 FK · campos guía · el diccionario contiene las 140 columnas</text>',
+       '<text x="40" y="77" font-size="18">14 tablas = 8 conectadas por 11 FK + 6 sin FK físicas · el diccionario contiene las 140 columnas</text>',
+       '<text x="40" y="100" font-size="18" font-weight="bold">BLOQUE PRINCIPAL · 8 TABLAS CONECTADAS POR FK</text>',
        '<defs><marker id="a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#49765e"/></marker></defs>']
     relaciones=[('M175 285 L175 370',False),('M175 520 L175 620',False),
         ('M310 430 C405 430 415 230 500 230',False),
@@ -140,7 +141,7 @@ def modelo_relacional():
             f'<rect x="{x}" y="{y}" width="{ancho}" height="39" rx="6" fill="#d4e7d1"/>',
             f'<text class="nombre" x="{x+12}" y="{y+27}">{escape(nombre)}</text>']
         for n,campo in enumerate(campos):s.append(f'<text class="campo" x="{x+13}" y="{y+67+n*25}">{escape(campo)}</text>')
-    s.append('<text x="40" y="866" font-size="20" font-weight="bold">Tablas sin FK físicas; sus referencias lógicas se explican en la guía</text>')
+    s.append('<text x="40" y="866" font-size="20" font-weight="bold">SOPORTE · 6 TABLAS DEL MISMO MODELO SIN FK FÍSICAS</text>')
     independientes=[n for n in tablas if n not in {t[0] for t in nodos}]
     for i,nombre in enumerate(independientes):
         x=40+i*293
@@ -148,7 +149,8 @@ def modelo_relacional():
         s.append(f'<text x="{x+10}" y="923" font-size="17" font-weight="bold">{escape(nombre)}</text>')
         campos=tablas[nombre]['columnas'][:2]
         for j,columna in enumerate(campos):s.append(f'<text x="{x+10}" y="{948+j*23}" font-size="15">{escape(columna["nombre"].lower())}</text>')
-    s.extend(['<text x="40" y="1034" font-size="18">Flecha: padre → tabla que contiene la FK. Verificación: como máximo una fila por alumno.</text>',
+    s.extend(['<text x="40" y="1019" font-size="17">Estas seis también forman parte de las 14 tablas. Sin FK no significa sin clave primaria ni sin referencias lógicas.</text>',
+        '<text x="40" y="1045" font-size="18">Flecha: padre → tabla que contiene la FK. Verificación: como máximo una fila por alumno.</text>',
         '<text x="40" y="1064" font-size="18">Verde intenso: relaciones añadidas en 009. La aprobación activa exige administrador o docente con materia, con exclusión mutua.</text>',
         '<text x="40" y="1093" font-size="16">Fuente: catálogo de metadatos de Autonomous 009 · sin filas de personas ni credenciales.</text></svg>'])
     contenido='\n'.join(s).replace('class="nombre"','font-size="21" font-weight="bold"').replace('class="campo"','font-size="18"')

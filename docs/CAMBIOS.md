@@ -1,5 +1,16 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Aclaración de las 14 tablas en el material de exposición
+
+- El inventario de la presentación enumera las ocho tablas conectadas por FK y las
+  seis de soporte sin FK físicas. El total sigue siendo 14; el esquema no cambia.
+- El modelo A3 rotula ambos bloques y aclara que no tener FK no implica carecer de
+  PK ni de referencias lógicas. La diapositiva académica se identifica como vista
+  parcial de seis tablas para evitar confundirla con el modelo completo.
+- La guía añade la explicación del conteo y una respuesta para la defensa. Se
+  regeneran PDF, PowerPoint, guía y modelo, y se actualizan la copia del Escritorio
+  y su ZIP con comprobación de manifiesto y conservación de archivos del usuario.
+
 ## 22/11/2026 — Paquete del Escritorio para exponer Base de Datos
 
 - Presentación principal de 21 diapositivas con notas, enfocada en problemática,
