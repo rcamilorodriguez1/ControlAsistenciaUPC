@@ -1,5 +1,19 @@
 # Registro de cambios de UPC | Aula
 
+## 22/11/2026 — Memoria integral 1.2 actualizada a Oracle 009
+
+- Se revisa el PDF 1.1 (76 páginas) y se genera la edición 1.2 (87 páginas), con Oracle
+  009, Render, separación de cuentas, perfiles/agenda docente, configuración y excepciones
+  de entrega manual. Créditos nominales completos y evidencia/aceptación diferenciadas.
+- La guía funcional Oracle se actualiza y el diccionario vigente pasa al anexo B:
+  las 14 tablas, 140 columnas y restricciones de Autonomous 009, sin repetir otra lista
+  histórica de columnas. Se mantienen las consultas de estudio y la procedencia de cada evidencia.
+- Se revisan tablas apaisadas, márgenes, índices numerados y metadatos. Resultado:
+  104 enlaces, 168 marcadores, cobertura de las 140 columnas y cero texto fuera de página.
+- Generación y revisión documental con archivos locales, sin Oracle ni prueba de la
+  página/cámara. La contraseña común de pruebas y las demás claves permanecen privadas.
+  Evidencia: .local/memoria_pdf/validacion.json y .local/presentacion/validacion_final.json.
+
 ## 22/11/2026 — Archivo privado de clave estudiantil para pruebas
 
 - Se crea `.local/ALTA_ESTUDIANTE.md`, equivalente al de alta docente, con una clave

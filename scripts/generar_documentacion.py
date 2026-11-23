@@ -27,6 +27,8 @@ HTML = DOCS / 'UPC_Aula_Documentacion_Integral.html'
 WORK = ROOT / '.local/memoria_pdf'
 WORK.mkdir(parents=True, exist_ok=True)
 REPO = 'https://github.com/rcamilorodriguez1/ControlAsistenciaUPC/blob/main/'
+EDICION = '1.2'
+FECHA_EDICION = '22 de noviembre de 2026'
 
 
 def slug(value: str, sep: str = '-') -> str:
@@ -65,7 +67,7 @@ def architecture():
         (10, 'Portales · docente / estudiante / administración', 'Navegador HTTPS · interfaz y navegación compartidas'),
         (86, 'Servicios y control de identidad', 'Sesión · permisos · revisión · validación de muestras'),
         (162, 'Persistencia y transacciones', 'Repositorios Python · pool python-oracledb · contexto de auditoría'),
-        (238, 'Oracle · esquema 001–008', 'Tablas / restricciones · paquetes PL/SQL · disparadores · vistas')]:
+        (238, 'Oracle · esquema 001–009', '14 tablas · 140 columnas · 11 FK · 8 paquetes · 10 triggers')]:
         svg += box(10, y, 700, 60, title, sub, y == 238)
         if y < 238:
             svg += path(f'M360,{y+60} L360,{y+76}')
@@ -89,26 +91,28 @@ def flow():
 
 
 def cloud():
-    svg = svg_start(720, 312, 'Arquitectura prevista del despliegue cloud; servidor pendiente')
+    svg = svg_start(720, 312, 'Arquitectura elegida: Render y Oracle Autonomous')
     for y, title, sub in [
         (8, 'Navegador · otros equipos y dispositivos', 'Dominio público · HTTPS / WebSocket'),
-        (86, 'VM OCI · Docker / Caddy', 'Proxy 80/443 → Streamlit privado en 8501'),
+        (86, 'Render · Docker / Streamlit', 'Aplicación completa · HTTPS / WebSocket · secretos separados'),
         (164, 'Aplicación Python', 'Servicios · modelos CPU · pool Oracle / TCPS'),
-        (242, 'Autonomous UPCAULA · esquema 001–008', 'Base instalada; contenedor y publicación aún pendientes')]:
+        (242, 'Autonomous UPCAula · esquema 001–009', 'TLS / ACL · propietario, runtime y cuenta técnica restringida')]:
         svg += box(10, y, 700, 62, title, sub, y == 242)
         if y < 242:
             svg += path(f'M360,{y+62} L360,{y+78}')
-    return figure(svg + '</svg>', 'Figura 5. Arquitectura cloud preparada. La VM y el despliegue público no están completados.', 'architecture')
+    return figure(svg + '</svg>', 'Figura 5. Render aloja la aplicación y Autonomous conserva los datos. La comprobación del último despliegue y de la página corresponde al usuario.', 'architecture')
 
 
 def er():
-    svg = svg_start(930, 610, 'Nueve claves foráneas físicas del esquema Oracle')
+    svg = svg_start(930, 610, 'Once claves foráneas físicas del esquema Oracle 009')
     # Todas las flechas parten del padre hacia la tabla que contiene la FK.
     for d in ['M130,98 L130,195', 'M240,224 L355,224',
               'M800,98 L800,133 L465,133 L465,195',
               'M130,267 L130,390', 'M240,246 L285,246 L285,410 L355,410',
               'M690,62 L640,62 L640,443 L575,443',
-              'M240,439 L355,439', 'M800,98 L800,195', 'M800,390 L800,267']:
+              'M240,439 L355,439', 'M800,98 L800,195', 'M800,390 L800,267',
+              'M240,62 L315,62 L315,167 L725,167 L725,195',
+              'M240,247 C570,320 600,245 690,245']:
         svg += path(d)
     nodes = [(20, 26, 'Profesores', 'PROFESORES'), (20, 195, 'Materias', 'MATERIAS'),
              (20, 390, 'Clases', 'CLASES'), (690, 26, 'Estudiantes', 'ESTUDIANTES'),
@@ -119,15 +123,22 @@ def er():
     for x, y, title, sub in nodes:
         svg += box(x, y, 220, 72, title, sub, title == 'Resultados')
     svg += '''<text x="20" y="510" font-size="17" fill="#123e2b">Flecha: tabla padre → tabla con FK. Cada flecha representa una restricción física.</text>
-    <text x="20" y="537" font-size="15" fill="#4c6055">Verificación: como máximo una fila por estudiante; el autorizador es opcional.</text>
+    <text x="20" y="537" font-size="15" fill="#4c6055">Verificación: aprobador administrativo o docente con materia, con exclusión mutua.</text>
     <text x="20" y="562" font-size="15" fill="#4c6055">Clases → Resultados utiliza la FK compuesta (clase_id, materia_id).</text>
     <text x="20" y="587" font-size="15" fill="#4c6055">Historias, eventos, límites, sesiones y versiones conservan referencias sin FK según el caso.</text></svg>'''
-    return figure(svg, 'Figura 3. Relaciones físicas verificadas: nueve FK entre ocho tablas; las seis tablas restantes no añaden FK. El anexo detalla columnas, cardinalidad y reglas de borrado.')
+    return figure(svg, 'Figura 3. Once FK entre ocho tablas. 009 añade profesor y materia de autorización; las seis tablas restantes no añaden FK. El anexo B contiene las columnas y restricciones vigentes.')
 
 
 def screenshot():
-    src = data_asset('static/img/documentacion/portada-upc-aula.png', 'image/png')
-    return f'<figure class="screenshot"><img src="{src}" alt="Portada local de UPC Aula con identidad institucional y acceso por rol"><figcaption>Figura 4. Portada local sin sesión iniciada. Los créditos nominales del pie permanecen provisionales.</figcaption></figure>'
+    svg = svg_start(720, 240, 'Diferencia entre portal, perfil y configuración')
+    for x, titulo, lineas in [
+        (5, 'Portal', ['Operaciones del rol', 'Materias y matrícula', 'Asistencia y excepciones']),
+        (245, 'Perfil', ['Identidad y actividad', 'Historial del estudiante', 'Agenda del docente']),
+        (485, 'Configuración', ['Cuenta del docente', 'Archivo con motivo', 'Conservación del historial'])]:
+        svg += box(x, 12, 230, 58, titulo, '', titulo == 'Perfil')
+        for n, texto in enumerate(lineas):
+            svg += f'<text x="{x+12}" y="{108+n*38}" font-size="14" fill="#304f3b">{html.escape(texto)}</text>'
+    return figure(svg+'</svg>', 'Figura 4. Organización funcional actual. Diagrama explicativo, sin capturas de personas ni ensayo de la página.')
 
 
 def render_md(value, prefix):
@@ -147,6 +158,8 @@ def rewrite_links(value, db_ids):
             return match.group(0)
         if 'BASE_DE_DATOS.md' in url:
             return 'href="#anexo-a"'
+        if 'DICCIONARIO_DATOS.md' in url:
+            return 'href="#anexo-b"'
         if url.startswith('../'):
             target = url[3:]
         else:
@@ -170,13 +183,18 @@ def make_html():
         main = main.replace(f'<!-- FIGURA_{marker} -->', content)
     main_html, main_toc = render_md(main, 'cap-')
     db = (DOCS / 'BASE_DE_DATOS.md').read_text(encoding='utf-8')
+    db = db.split('## 13. Diccionario vigente')[0]
+    db = db.replace('## Fuentes y alcance de la revisión', '### Fuentes y alcance de la revisión')
     db = re.sub(r'^# .*\n', '', db, count=1)
     db = re.sub(r'^## Índice\s*\n.*?(?=^## 1\.)', '', db, count=1, flags=re.S | re.M)
     db = re.sub(r'```mermaid\n.*?```', er().replace('Figura 3.', 'Figura A.1.'), db, flags=re.S)
     # Los nombres y números originales se conservan dentro de su anexo.
     db_html, db_toc = render_md(db, 'db-')
+    diccionario = (DOCS / 'DICCIONARIO_DATOS.md').read_text(encoding='utf-8')
+    diccionario = re.sub(r'^# .*\n', '', diccionario, count=1)
+    dic_html, dic_toc = render_md(diccionario, 'dic-')
     db_ids = {slug(item['name']): item['id'] for item in db_toc}
-    main_html, db_html = [rewrite_links(value, db_ids) for value in [main_html, db_html]]
+    main_html, db_html, dic_html = [rewrite_links(value, db_ids) for value in [main_html, db_html, dic_html]]
     _, main_sections = split_sections(main_html)
     intro, db_sections = split_sections(db_html)
     content = ''
@@ -187,7 +205,7 @@ def make_html():
         if re.match(r'<h2[^>]*>5\.', part):
             part = re.sub(r'(<h3[^>]*>5\.2 .*?</ul>)', r'<div class="keep">\1</div>', part, flags=re.S)
         content += f'<section class="chapter{compact}">{part}</section>'
-    content += '<section class="appendix-cover" id="anexo-a"><p class="eyebrow">ANEXO A · REFERENCIA TÉCNICA</p><h1>Base de datos<br>y programación PL/SQL.</h1><p class="lead">Funcionamiento, relaciones, reglas, consultas y diccionario completo del esquema Oracle.</p><div class="rule"></div>' + intro + '<div class="key-facts"><div><b>14</b><span>tablas</span></div><div><b>9</b><span>claves foráneas</span></div><div><b>10</b><span>disparadores</span></div><div><b>7</b><span>paquetes PL/SQL</span></div></div><p class="small">Fuente: docs/BASE_DE_DATOS.md. Inventario contrastado el 18 de noviembre de 2026 en modo de solo lectura.</p></section>'
+    content += '<section class="appendix-cover" id="anexo-a"><p class="eyebrow">ANEXO A · REFERENCIA TÉCNICA</p><h1>Base de datos<br>y programación PL/SQL.</h1><p class="lead">Funcionamiento, relaciones, reglas y consultas del esquema Oracle 009.</p><div class="rule"></div>' + intro + '<div class="key-facts"><div><b>14</b><span>tablas</span></div><div><b>11</b><span>claves foráneas</span></div><div><b>10</b><span>disparadores</span></div><div><b>8</b><span>paquetes PL/SQL</span></div></div><p class="small">Fuente funcional: docs/BASE_DE_DATOS.md. Metadatos vigentes: catálogo de Autonomous del 22/11/2026. El diccionario completo aparece en el anexo B.</p></section>'
     for part in db_sections:
         wide = bool(re.match(r'<h2[^>]*>1[34]\.', part))
         # Las tablas extensas de seis columnas se presentan en páginas A4 apaisadas.
@@ -196,10 +214,22 @@ def make_html():
         if re.match(r'<h2[^>]*>4\.', part):
             part = re.sub(r'(<h3[^>]*>4\.13 .*?$)', r'<div class="keep">\1</div>', part, flags=re.S)
         content += f'<section class="chapter appendix {"landscape" if wide else ""}{compact}">{part}</section>'
+    dic_intro, dic_sections = split_sections(dic_html)
+    content += '<section class="appendix-cover" id="anexo-b"><p class="eyebrow">ANEXO B · DICCIONARIO VIGENTE</p><h1>140 columnas.<br>Una referencia verificable.</h1><p class="lead">Tipos, nulabilidad, identidades, valores predeterminados, claves y restricciones de las 14 tablas.</p><div class="rule"></div>' + dic_intro + '<p class="small">La procedencia de los tipos y restricciones es Oracle Autonomous 009. Las descripciones funcionales se mantienen en la plantilla del proyecto.</p></section>'
+    for part in dic_sections:
+        def distribuir_tabla(match):
+            tabla = match.group(0)
+            columnas = len(re.findall(r'<th(?:\s[^>]*)?>', tabla.split('</thead>')[0]))
+            anchos = [22, 17, 9, 8, 7, 13, 24] if columnas == 7 else [23, 62, 15]
+            grupo = '<colgroup>' + ''.join(f'<col style="width:{ancho}%">' for ancho in anchos) + '</colgroup>'
+            return tabla.replace('<table>', '<table>'+grupo, 1)
+        part = re.sub(r'<table>.*?</table>', distribuir_tabla, part, flags=re.S)
+        content += f'<section class="chapter appendix landscape dictionary">{part}</section>'
     toc_main = ''.join(f'<li><a href="#{item["id"]}"><span>{html.escape(item["name"])}</span><span class="toc-page" data-target="{item["id"]}"></span></a></li>' for item in main_toc)
     toc_db = ''.join(f'<li><a href="#{item["id"]}"><span>{html.escape(item["name"])}</span><span class="toc-page" data-target="{item["id"]}"></span></a></li>' for item in db_toc)
+    toc_dic = ''.join(f'<li><a href="#{item["id"]}"><span>{html.escape(item["name"])}</span><span class="toc-page" data-target="{item["id"]}"></span></a></li>' for item in dic_toc)
     logo = data_asset('static/img/upc/logo-horizontal-manual.jpg', 'image/jpeg')
-    return '''<!doctype html><html lang="es"><head><meta charset="utf-8"><title>UPC | Aula — Documentación integral del proyecto</title><meta name="description" content="Memoria académica y técnica de UPC Aula. Edición 1.1, 21 de noviembre de 2026."><style>
+    return '''<!doctype html><html lang="es"><head><meta charset="utf-8"><title>UPC | Aula — Documentación integral del proyecto</title><meta name="description" content="Memoria académica y técnica de UPC Aula. Edición 1.2, 22 de noviembre de 2026."><style>
     @page {size:A4; margin:20mm 18mm 20mm 20mm;}
     @page landscape {size:A4 landscape; margin:20mm 18mm 20mm 20mm;}
     *{box-sizing:border-box;} html{font-size:10.3pt;} body{margin:0;color:#263b30;background:white;font-family:Arial,Helvetica,sans-serif;line-height:1.43;}
@@ -226,6 +256,10 @@ def make_html():
     .landscape th,.landscape td{padding:2.2mm 2.5mm;}
     .landscape table th:first-child{min-width:37mm;}
     .landscape table th:nth-child(2){min-width:30mm;}
+    .dictionary table{font-size:8.3pt;line-height:1.35;table-layout:fixed;}
+    .dictionary th,.dictionary td{padding:1.8mm 2mm;}
+    .dictionary table:first-of-type th:last-child{min-width:58mm;}
+    .dictionary h2{font-size:20pt;}
     .cover{break-after:page;min-height:250mm;position:relative;display:flex;flex-direction:column;}
     .cover-logo{width:78mm;height:auto;margin:0 0 12mm;}
     .eyebrow{font-size:9pt;letter-spacing:1.25pt;font-weight:700;color:#007337;margin:0 0 6mm;}
@@ -236,7 +270,7 @@ def make_html():
     .cover-bottom{margin-top:auto;padding-top:12mm;}
     .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:5mm 9mm;border-top:1px solid #baccc0;padding-top:6mm;font-size:9.5pt;}
     .meta-grid span{display:block;color:#637768;font-size:8pt;letter-spacing:.7pt;text-transform:uppercase;margin-bottom:1.5mm;}
-    .motto{font-family:Georgia,serif;font-style:italic;font-size:13pt;color:#3f6b4b;margin:7mm 0 0;}
+    .motto{font-family:Arial,Helvetica,sans-serif;font-style:italic;font-size:13pt;color:#3f6b4b;margin:7mm 0 0;}
     .small{font-size:8.5pt;color:#5b6e60;line-height:1.5;}
     .toc{break-before:page;break-after:page;} .toc h2{margin-bottom:4mm;}
     .toc h3{font-size:10.5pt;margin-top:5mm;}
@@ -252,10 +286,11 @@ def make_html():
     <p class="eyebrow">PROYECTO ACADÉMICO · DOCUMENTACIÓN INTEGRAL</p><h1>UPC | Aula</h1>
     <p class="subtitle">Gestión y seguimiento<br>académico.</p><div class="rule"></div>
     <p class="lead">Planteamiento, objetivos, arquitectura, flujos funcionales y referencia de la base de datos.</p>
-    <div class="cover-bottom"><div class="meta-grid"><div><span>Universidad</span>Universidad Popular del Cesar</div><div><span>Contexto académico</span>Ingeniería de Sistemas · Base de Datos</div><div><span>Edición documental</span>1.1 · 21 de noviembre de 2026</div><div><span>Estado técnico de referencia</span>Oracle · versiones 001–008</div></div>
+    <div class="cover-bottom"><div class="meta-grid"><div><span>Universidad</span>Universidad Popular del Cesar</div><div><span>Contexto académico</span>Ingeniería de Sistemas · Base de Datos</div><div><span>Edición documental</span>1.2 · 22 de noviembre de 2026</div><div><span>Estado técnico de referencia</span>Oracle · versiones 001–009</div><div><span>Equipo</span>Rafael Camilo Rodriguez Ayala<br>Harold Steven Torres Diaz<br>Oscar William Rivero Ordoñez</div><div><span>Docente</span>Amilkat Sierra Romano</div></div>
     <p class="motto">Educación y Futuro</p><p class="small" style="margin-top:5mm">Memoria del proyecto en desarrollo. Los estados implementado, verificado y aceptado se documentan por separado. Sin credenciales ni registros personales.</p></div></section>
-    <section class="toc"><p class="eyebrow">GUÍA DE LECTURA</p><h2>Contenido</h2><p>Memoria principal</p><ol>{toc_main}</ol><h3><a href="#anexo-a"><span>Anexo A · Base de datos y programación PL/SQL</span><span class="toc-page" data-target="anexo-a"></span></a></h3><p class="small">Incluye tablas, relaciones, disparadores, paquetes y consultas de estudio.</p></section>
-    <section class="toc"><p class="eyebrow">REFERENCIA DEL ESQUEMA</p><h2>Contenido del anexo A</h2><ol>{toc_db}</ol><p class="small" style="margin-top:6mm">Las secciones 13 y 14 del anexo utilizan páginas A4 apaisadas para facilitar la lectura del diccionario y las restricciones.</p></section>
+    <section class="toc"><p class="eyebrow">GUÍA DE LECTURA</p><h2>Contenido</h2><p>Memoria principal</p><ol>{toc_main}<li><a href="#anexo-a"><span>Anexo A · Base de datos y PL/SQL</span><span class="toc-page" data-target="anexo-a"></span></a></li><li><a href="#anexo-b"><span>Anexo B · Diccionario vigente</span><span class="toc-page" data-target="anexo-b"></span></a></li></ol><p class="small">La evidencia técnica y la aceptación del usuario se distinguen en toda la memoria.</p></section>
+    <section class="toc"><p class="eyebrow">REFERENCIA DEL ESQUEMA</p><h2>Contenido del anexo A</h2><ol>{toc_db}</ol><p class="small" style="margin-top:6mm">Reglas, relaciones físicas, ocho paquetes y consultas de estudio.</p></section>
+    <section class="toc"><p class="eyebrow">DICCIONARIO VIGENTE</p><h2>Contenido del anexo B</h2><ol>{toc_dic}</ol><p class="small" style="margin-top:6mm">Tablas A4 apaisadas. Metadatos de Autonomous 009; no contiene registros de personas.</p></section>
     {content}</body></html>'''
 
 
@@ -295,7 +330,7 @@ def inspect_pdf(path):
                 if link.get('page', -1) >= 0:
                     toc_targets[(i, round(link['from'].y0, 1))] = link['page'] + 1
     all_text = '\n'.join(p.get_text() for p in doc)
-    for token in ['Planteamiento del programa', 'Objetivos', 'Q42.', 'TRG_ASISTENCIA_AUD', 'VERIFICACION_ESTUDIANTES', 'Identidades']:
+    for token in ['Planteamiento del programa', 'Objetivos', 'Q42.', 'TRG_ASISTENCIA_AUD', 'VERIFICACION_ESTUDIANTES', 'AUTORIZADO_DOCENTE_POR']:
         if token not in all_text:
             failures.append('Contenido no encontrado: ' + token)
     for token in ['C:\\Users\\', 'file:///', 'BEGIN PRIVATE KEY', 'BEGIN RSA PRIVATE KEY', 'BEGIN CERTIFICATE']:
@@ -344,7 +379,7 @@ def main():
                 time.sleep(.1)
             cdp.call('Runtime.evaluate', {'expression':'document.fonts.ready.then(()=>true)', 'awaitPromise':True})
             cdp.call('Emulation.setEmulatedMedia', {'media':'print'})
-            header = '<div style="font-family:Arial;font-size:8px;width:100%;margin:0 18mm 0 20mm;display:flex;justify-content:space-between;color:#65776b;border-bottom:1px solid #dbe4de;padding-bottom:5px"><span>UPC | AULA · DOCUMENTACIÓN INTEGRAL</span><span>EDICIÓN 1.1 · NOVIEMBRE 2026</span></div>'
+            header = '<div style="font-family:Arial;font-size:8px;width:100%;margin:0 18mm 0 20mm;display:flex;justify-content:space-between;color:#65776b;border-bottom:1px solid #dbe4de;padding-bottom:5px"><span>UPC | AULA · DOCUMENTACIÓN INTEGRAL</span><span>EDICIÓN 1.2 · NOVIEMBRE 2026</span></div>'
             footer = '<div style="font-family:Arial;font-size:8px;width:100%;margin:0 18mm 0 20mm;display:flex;justify-content:space-between;color:#65776b;border-top:1px solid #dbe4de;padding-top:5px"><span>Universidad Popular del Cesar · Proyecto académico</span><span>Página <span class="pageNumber"></span> de <span class="totalPages"></span></span></div>'
             settings = {'printBackground':True, 'preferCSSPageSize':True, 'displayHeaderFooter':True, 'headerTemplate':header, 'footerTemplate':footer, 'generateTaggedPDF':True, 'generateDocumentOutline':True}
             result = cdp.call('Page.printToPDF', settings)
@@ -352,7 +387,9 @@ def main():
             # Leer destinos de los enlaces para numerar el índice sin estimar alturas.
             doc = pymupdf.open(OUT)
             numbers = []
-            for page_index in (1, 2):
+            comienzo = next(pagina for nivel, titulo, pagina in doc.get_toc()
+                            if re.match(r'^1\.\s+Resumen ejecutivo', titulo)) - 1
+            for page_index in range(1, comienzo):
                 links = [x for x in doc[page_index].get_links() if x.get('page', -1) >= 0]
                 links.sort(key=lambda x: (round(x['from'].y0), x['from'].x0))
                 for link in links:
@@ -361,7 +398,10 @@ def main():
             doc.close()
             nmain = len(re.findall(r'<span class="toc-page" data-target="cap-', HTML.read_text(encoding='utf-8')))
             ndb = len(re.findall(r'<span class="toc-page" data-target="db-', HTML.read_text(encoding='utf-8')))
-            if len(numbers) == nmain + ndb + 1:
+            ndic = len(re.findall(r'<span class="toc-page" data-target="dic-', HTML.read_text(encoding='utf-8')))
+            if len(numbers) != nmain + ndb + ndic + 2:
+                raise RuntimeError('No se pudieron resolver todos los destinos del índice.')
+            if numbers:
                 js = 'Array.from(document.querySelectorAll(".toc-page")).forEach((el,i)=>{el.textContent='+json.dumps(numbers)+'[i]})'
                 cdp.call('Runtime.evaluate', {'expression':js})
                 rendered = cdp.call('Runtime.evaluate', {'expression':'document.documentElement.outerHTML','returnByValue':True})['result']['value']
@@ -374,24 +414,30 @@ def main():
         except subprocess.TimeoutExpired:
             process.kill()
     doc, report = inspect_pdf(OUT)
-    outline = [[1, 'Portada · UPC | Aula', 1], [1, 'Contenido', 2], [1, 'Contenido del anexo A', 3]]
+    outline = [[1, 'Portada · UPC | Aula', 1]]
     appendix = False
-    for level, title, page in doc.get_toc()[4:]:
+    for level, title, page in doc.get_toc():
+        if title.strip() == 'UPC | Aula':
+            continue
+        if title.startswith('Contenido'):
+            outline.append([1, title, page])
+            continue
         if level == 1:
             appendix = True
-            outline.append([1, 'Anexo A · Base de datos y programación PL/SQL', page])
+            nombre = 'Anexo B · Diccionario vigente' if title.startswith('140 columnas') else 'Anexo A · Base de datos y programación PL/SQL'
+            outline.append([1, nombre, page])
         else:
             outline.append([level if appendix else level-1, title, page])
     doc.set_toc(outline)
     report['marcadores'] = len(outline)
-    doc.set_metadata({'title':'UPC | Aula — Documentación integral del proyecto', 'author':'Proyecto UPC | Aula', 'subject':'Memoria académica y técnica. Edición 1.1. Esquema Oracle 001–008. Autonomous y despliegue en preparación.', 'keywords':'UPC, Aula, Oracle, PL/SQL, arquitectura, asistencia, documentación, Docker, Autonomous', 'creator':'UPC | Aula — plantilla editorial institucional', 'producer':'Chromium / PyMuPDF'})
+    doc.set_metadata({'title':'UPC | Aula — Documentación integral del proyecto', 'author':'Rafael Camilo Rodriguez Ayala; Harold Steven Torres Diaz; Oscar William Rivero Ordoñez', 'subject':'Memoria académica y técnica. Edición 1.2. Oracle 001–009, Render, perfiles y excepciones docentes.', 'keywords':'UPC, Aula, Oracle, PL/SQL, arquitectura, asistencia, documentación, Docker, Autonomous', 'creator':'UPC | Aula — plantilla editorial institucional', 'producer':'Chromium / PyMuPDF'})
     doc.saveIncr()
     report['bytes'] = OUT.stat().st_size
     # Muestras de lectura: portada, índice, arquitectura, consultas y tablas apaisadas.
     samples = {0, 1, 2}
     for i, page in enumerate(doc):
         txt = page.get_text()
-        if any(key in txt for key in ['5. Arquitectura y organización', 'Q01. Esquema', '13. Diccionario completo', '14. Restricciones e índices']):
+        if any(key in txt for key in ['5. Arquitectura y organización', 'Q01. Esquema', '140 columnas.', 'AUTORIZADO_DOCENTE_POR']):
             samples.add(i)
     for i in sorted(samples):
         doc[i].get_pixmap(matrix=pymupdf.Matrix(1.25,1.25)).save(WORK/f'pagina_{i+1:03}.png')

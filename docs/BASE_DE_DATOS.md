@@ -1,42 +1,16 @@
 # Base de datos de UPC | Aula: funcionamiento y consulta
 
-> **Estado vigente, 22/11/2026:** Oracle local y Autonomous están en **001–009**:
-> 14 tablas, 11 vistas, 10 triggers y 8 paquetes compilados. El diccionario vigente
-> está en [DICCIONARIO_DATOS.md](DICCIONARIO_DATOS.md), contrastado con Autonomous;
-> la [visualización interactiva](base_datos/index.html) no contiene datos de personas.
-> [Cómo se conecta](CONEXION_BASE_DATOS.md) explica Render, pools, TLS y cuentas técnicas.
-> Los inventarios y el diccionario 001–008 que siguen conservan la captura histórica
-> local del 18/11; el cambio posterior se explica aquí y en la guía de excepciones.
+Estado vigente al **22 de noviembre de 2026**: Oracle local y Autonomous UPCAula
+en versiones **001–009**, con 14 tablas, 140 columnas, 11 FK, 11 vistas, 10 triggers
+y 8 paquetes compilados. El catálogo actual procede del diccionario de Autonomous;
+la guía funcional y las consultas se mantienen desde la revisión del 18/11.
 
-### Ampliación 009
+El [diccionario vigente](DICCIONARIO_DATOS.md) y el [catálogo interactivo](base_datos/index.html)
+son la referencia de columnas y restricciones. La [conexión](CONEXION_BASE_DATOS.md)
+explica la separación entre Render y Oracle y sus cuentas técnicas.
 
-`VERIFICACION_ESTUDIANTES` tiene ahora 18 columnas: se añaden
-`autorizado_docente_por → PROFESORES` y `materia_autorizacion_id → MATERIAS`.
-La aprobación activa exige administrador o docente con materia, con exclusión mutua.
-Las aprobaciones administrativas previas permanecen válidas.
-
-`PKG_EXCEPCIONES_DOCENTES` incorpora listar, autorizar y revocar para un docente activo,
-su materia y alumnos matriculados. Solo el aprobador docente puede renovar/revocar su
-excepción; Administración puede sustituirla. El paquete se concede a la conexión
-administrativa limitada, sin DML directo. Se conservan los 53 permisos del runtime.
-La clave se entrega manualmente; la propuesta anterior de correo queda sustituida.
-
-
-Consulta estructural realizada el **18 de noviembre de 2026** sobre el esquema
-`UPC_ASISTENCIA`, servicio/PDB `XEPDB1`, versiones **001–008**.
-
-Este documento describe la implementación existente. Se contrastaron los scripts del repositorio,
-el acceso desde Python y el diccionario real de Oracle mediante una transacción `READ ONLY`.
-No se ejecutaron migraciones, laboratorios, inserciones, actualizaciones ni borrados para prepararlo.
-No se incluyen filas de usuarios, contraseñas, hashes reales ni muestras biométricas.
-
-**Actualización documental del 21 de noviembre de 2026:** Autonomous UPCAULA ya tiene
-las versiones 001–008 instaladas, TLS y acceso administrativo limitado verificados;
-14 tablas, 11 vistas, 10 disparadores y siete paquetes con sus cuerpos válidos.
-El diccionario detallado de columnas, restricciones e índices de esta guía conserva su
-procedencia de la consulta local del 18/11; no se presenta como un nuevo inventario cloud.
-La aplicación mantiene por ahora su conexión local. El catálogo SQL y el despliegue se
-describen abajo y en [DESPLIEGUE.md](DESPLIEGUE.md). No se cambió la base para esta actualización.
+No se incluyen filas de personas, contraseñas ni plantillas. Las consultas de estudio
+se explican como material técnico; imprimir esta guía no ejecuta escrituras ni migraciones.
 
 ## Índice
 
@@ -47,13 +21,13 @@ describen abajo y en [DESPLIEGUE.md](DESPLIEGUE.md). No se cambió la base para 
 5. [Integridad, estados e identificadores](#5-integridad-estados-e-identificadores)
 6. [Las once vistas](#6-las-once-vistas)
 7. [Los diez disparadores actuales](#7-los-diez-disparadores-actuales)
-8. [Los siete paquetes PL/SQL](#8-los-siete-paquetes-plsql)
+8. [Los ocho paquetes PL/SQL](#8-los-ocho-paquetes-plsql)
 9. [Los flujos completos](#9-los-flujos-completos)
 10. [Catálogo de consultas de solo lectura](#10-catálogo-de-consultas-de-solo-lectura)
 11. [Dónde encontrar las consultas del programa](#11-dónde-encontrar-las-consultas-del-programa)
 12. [Visualización en SQL Developer](#12-visualización-en-sql-developer)
-13. [Diccionario completo de columnas](#13-diccionario-completo-de-columnas)
-14. [Restricciones e índices consultados](#14-restricciones-e-índices-consultados)
+13. [Diccionario vigente de columnas](#13-diccionario-vigente-de-columnas)
+14. [Restricciones, índices e identidades](#14-restricciones-índices-e-identidades)
 
 ## 1. Dónde está guardada la base
 
@@ -61,13 +35,14 @@ Hay que distinguir **datos activos**, **scripts de construcción** y **copia de 
 
 | Elemento | Ubicación | Qué contiene |
 | --- | --- | --- |
-| Datos de la aplicación local | Servidor Oracle XE; esquema `UPC_ASISTENCIA` dentro de `XEPDB1` | Las filas y objetos del entorno local al que sigue conectada la aplicación. |
-| Esquema cloud instalado | Autonomous UPCAULA; esquema `UPC_ASISTENCIA` | Versiones 001–008 y objetos verificados; no implica que se hayan trasladado las filas locales. |
+| Datos de la aplicación local | Servidor Oracle XE; esquema `UPC_ASISTENCIA` dentro de `XEPDB1` | Las filas y objetos del entorno de desarrollo local. Render utiliza Autonomous. |
+| Esquema cloud instalado | Autonomous UPCAULA; esquema `UPC_ASISTENCIA` | Versiones 001–009 y objetos verificados; no implica que se hayan trasladado las filas locales. |
 | Entrada de instalación | [oracle_scripts.sql](../oracle_scripts.sql) | Llama al instalador versionado. No es una copia de los datos. |
-| Instalador | [sql/instalar.sql](../sql/instalar.sql) | Ordena estructura inicial y migraciones 002–008. |
+| Instalador | [sql/instalar.sql](../sql/instalar.sql) | Ordena estructura inicial y migraciones 002–009. |
 | Tablas iniciales | [sql/01_tablas.sql](../sql/01_tablas.sql) | Solo las seis tablas de 001; por sí solo no representa la base actual. |
-| Evolución del esquema | [sql/migraciones/](../sql/migraciones/) | Cambios que completan la estructura hasta 008. |
-| Modelo consolidado generado en esta revisión | `exports/modelo_008.sql` | DDL de las 14 tablas, 9 FK, 11 índices adicionales y 11 vistas; sin filas de usuarios. Preparado para importar en Data Modeler. |
+| Evolución del esquema | [sql/migraciones/](../sql/migraciones/) | Cambios que completan la estructura hasta 009. |
+| Catálogo vigente | [Catálogo interactivo](base_datos/index.html) y [diccionario](DICCIONARIO_DATOS.md) | 14 tablas, 140 columnas y 11 FK, sin filas de personas. |
+| Modelo histórico | `exports/modelo_008.sql` | Captura DDL anterior a 009; no incluye las dos FK de aprobación docente. |
 | Exportador general existente | [sql/06_exportar_ddl.sql](../sql/06_exportar_ddl.sql) | Puede generar `exports/esquema_ddl.sql`, incluyendo también paquetes y disparadores. |
 | Catálogo de consultas | [sql/consultas/](../sql/consultas/README.md) | SQL que carga la aplicación; no instala la base ni contiene filas. |
 | Configuración de conexión | [src/base_datos/configuracion.py](../src/base_datos/configuracion.py) y [transporte.py](../src/base_datos/transporte.py) | Pool y opciones TCP local o TLS/mTLS; no almacenan las tablas ni las filas. |
@@ -81,7 +56,7 @@ La ruta física exacta de este equipo no se verificó con la cuenta del esquema.
 [Oracle: tablespaces y archivos de datos](https://docs.oracle.com/en/database/oracle/oracle-database/18/ntdbi/identifying-tablespaces-and-data-files.html).
 
 **Para estudiar la base:** leer este documento y los scripts. **Para dibujarla:** consultar el
-diccionario existente o importar `exports/modelo_008.sql`. **Para instalar una base nueva:**
+diccionario vigente o abrir el catálogo interactivo. El modelo_008 se conserva solo como referencia histórica. **Para instalar una base nueva:**
 seguir [INSTALACION.md](INSTALACION.md); el instalador no debe ejecutarse sobre la base existente
 para obtener un diagrama.
 
@@ -94,13 +69,13 @@ modelo visual ni sustituye los archivos de instalación.
 | Objeto | Cantidad |
 | --- | ---: |
 | Tablas | 14 |
-| Columnas visibles de tablas | 138 |
-| Claves foráneas | 9 |
+| Columnas visibles de tablas | 140 |
+| Claves foráneas | 11 |
 | Vistas | 11 |
-| Paquetes / cuerpos PL/SQL | 7 / 7 |
-| Rutinas públicas declaradas en los paquetes | 35 |
+| Paquetes / cuerpos PL/SQL | 8 / 8 |
+| Rutinas públicas declaradas en los paquetes | 38 |
 | Disparadores | 10, todos habilitados |
-| Índices, incluidos los internos | 37 |
+| Índices, incluidos los internos | 37, inventario de referencia local; 009 no añade índices |
 | Secuencias de identidades | 9 |
 | Objetos inválidos / errores de compilación | 0 / 0 |
 
@@ -117,7 +92,8 @@ Navegador HTTPS → Streamlit → servicios de aplicación → repositorios Pyth
 1. [src/configuracion.py](../src/configuracion.py) resuelve variables directas del proceso,
    archivos de texto `KEY_FILE`, secretos de Streamlit y valores predeterminados, en ese orden.
 2. `src/base_datos/configuracion.py` usa python-oracledb en modo thin y un pool. La configuración
-   habitual del proyecto es `localhost:1521/XEPDB1`; la contraseña no tiene valor predeterminado.
+   local es `localhost:1521/XEPDB1`; Render utiliza un DSN TCPS de Autonomous. La contraseña
+   no tiene valor predeterminado.
 3. [bd.py](../src/base_datos/bd.py) toma una conexión, limpia el contexto anterior, valida la
    sesión web y establece el actor de auditoría antes de las operaciones protegidas.
 4. Los repositorios cargan el SQL desde `sql/consultas/` mediante el lector compartido,
@@ -153,12 +129,14 @@ erDiagram
     CLASES ||--o{ REGISTROS_ASISTENCIA : agrupa
     ESTUDIANTES ||--o| VERIFICACION_ESTUDIANTES : tiene
     ADMINISTRADORES |o--o{ VERIFICACION_ESTUDIANTES : autoriza
+    PROFESORES |o--o{ VERIFICACION_ESTUDIANTES : autoriza_docente
+    MATERIAS |o--o{ VERIFICACION_ESTUDIANTES : origen_autorizacion
 ```
 
 El diagrama representa las FK reales. Las seis tablas restantes no tienen FK: control de versiones,
 historiales, eventos de gestión, límites de acceso y sesiones. Sus referencias se explican abajo.
 
-### Las nueve claves foráneas
+### Las once claves foráneas
 
 | Restricción | Origen → destino | Al borrar físicamente el padre |
 | --- | --- | --- |
@@ -171,6 +149,8 @@ historiales, eventos de gestión, límites de acceso y sesiones. Sus referencias
 | `FK_RA_CLASE_MATERIA` | `(registros_asistencia.clase_id, materia_id) → clases(clase_id, materia_id)` | Cascada; además impide asociar un registro con una clase de otra materia. |
 | `FK_VERIFICACION_EST` | `verificacion_estudiantes.estudiante_id → estudiantes.estudiante_id` | Cascada. |
 | `FK_VERIFICACION_ADMIN` | `verificacion_estudiantes.autorizado_por → administradores.administrador_id` | Sin cascada: una referencia existente impide eliminar al aprobador. |
+| `FK_VERIFICACION_DOCENTE` | `verificacion_estudiantes.autorizado_docente_por → profesores.profesor_id` | Sin cascada; conserva al aprobador docente. |
+| `FK_VERIFICACION_MATERIA` | `verificacion_estudiantes.materia_autorizacion_id → materias.materia_id` | Sin cascada; conserva el origen de autorización. |
 
 **Relaciones lógicas sin FK:** `clases.profesor_id` conserva al responsable de la clase;
 `revisado_por` y los actores de auditoría identifican personas según su rol. Los IDs de historial
@@ -328,8 +308,10 @@ que ya se haya completado un acceso. Revocarlo conserva el último resultado his
 inhabilita nuevas entradas y sesiones anteriores. La política facial actual acredita 1/1;
 una excepción acredita 0 factores biométricos y se identifica expresamente como tal.
 
-La propuesta histórica de entrega mediante correo, similar a `ALTA_DOCENTE`, estaba
-**anotada como pendiente**: no describe una funcionalidad implementada.
+En 009 la autorización puede proceder de Administración o de un docente con materia,
+con exclusión mutua. El docente solo autoriza alumnos matriculados en sus materias
+activas y gestiona sus propias aprobaciones. Administración puede sustituir una
+autorización docente. Se entrega manualmente la contraseña; el correo fue descartado.
 
 ### 4.14 VERSIONES_ESQUEMA
 
@@ -377,7 +359,8 @@ otra propuesta para la misma clase se rechaza.
   La identidad y los filtros se aplican desde servicios/paquetes; no hay una política VPD documentada aquí.
 - El contexto de auditoría declara actor/motivo; por sí solo no autentica a quien conoce la contraseña Oracle.
 - La conexión administrativa limitada tiene EXECUTE a paquetes y SELECT a tres vistas de historial,
-  no edición directa de las tablas de negocio. La separación del propietario para los otros roles sigue pendiente.
+  no edición directa de las tablas de negocio. El runtime cloud UPC_AULA_APP tiene
+  53 permisos; la separación del propietario está verificada.
 - La auditoría está protegida por los flujos/permisos de la aplicación; el propietario del esquema conserva
   facultades superiores. No es un registro inmutable frente a un DBA.
 - Algunas reglas, como dimensiones de vectores y fortaleza/formato de credenciales, también dependen de Python.
@@ -454,7 +437,7 @@ Fuentes vigentes: [31_versiones_edicion.sql](../sql/31_versiones_edicion.sql),
 [24_politicas_gestion.sql](../sql/24_politicas_gestion.sql).
 La definición de asistencia de `10_disparadores.sql` fue reemplazada posteriormente por la de `19_integridad_estados.sql`.
 
-## 8. Los siete paquetes PL/SQL
+## 8. Los ocho paquetes PL/SQL
 
 Un paquete reúne una especificación pública y un cuerpo. Los auxiliares privados del cuerpo
 validan datos, actores y versiones. Las llamadas siguientes se describen para entender el programa;
@@ -549,7 +532,8 @@ de apertura, por lo que llamar al paquete no describe todo el flujo de autentica
 
 ### PKG_EXCEPCIONES
 
-Fuente: [34_paquete_excepciones.sql](../sql/34_paquete_excepciones.sql).
+Fuente vigente: [37_paquete_excepciones_009.sql](../sql/37_paquete_excepciones_009.sql).
+La versión histórica 008 se conserva en 34_paquete_excepciones.sql.
 
 | Rutina | Efecto |
 | --- | --- |
@@ -559,6 +543,20 @@ Fuente: [34_paquete_excepciones.sql](../sql/34_paquete_excepciones.sql).
 
 No expone una rutina para fingir una validación facial correcta. El servicio de identidad
 comprueba credenciales/pruebas, registra el acceso y confirma el estado desde el backend.
+
+### PKG_EXCEPCIONES_DOCENTES
+
+Fuente: [38_paquete_excepciones_docentes.sql](../sql/38_paquete_excepciones_docentes.sql).
+
+| Rutina | Efecto |
+| --- | --- |
+| `listar` | Lista alumnos activos matriculados en una materia propia; devuelve vigencia, versión y posibilidad de gestionar. |
+| `autorizar` | Comprueba contexto, propiedad, matrícula, versión y aprobador; guarda hash/HMAC, vigencia y autoría docente. |
+| `revocar` | Comprueba autoría y versión; retira el hash, incrementa versión y revoca la sesión previa. |
+
+Se concede EXECUTE a la conexión técnica restringida, no al runtime ordinario. La
+sesión docente real se valida antes de establecer contexto PROFESOR. Las rutinas no
+hacen COMMIT interno y no pueden fingir una validación facial.
 
 ## 9. Los flujos completos
 
@@ -576,7 +574,9 @@ comprueba credenciales/pruebas, registra el acceso y confirma el estado desde el
 | Confirmar clase | Propuesta completa → validación de matrícula/estados → registros → CLASES CONFIRMADA → COMMIT conjunto. |
 | Corregir después | Profesor propietario + motivo → UPDATE presente → TRG_ASISTENCIA_AUD. |
 | Retirar/archivar | Paquete de gestión → cambio de actividad o relación → historial/eventos según la acción. |
-| Perfil y calendario | JOIN de estudiante, matrículas, materias y resultados de clases confirmadas → agregados/calendario en Python. |
+| Perfil estudiantil | Estudiante autenticado + matrículas/resultados confirmados → acumulados y calendario histórico. |
+| Perfil docente | Docente autenticado + materias propias/clases → agenda mensual y próximas sesiones. |
+| Autorización docente | Sesión validada → conexión técnica restringida con contexto PROFESOR → matrícula/autoría/versión → credencial y evento. |
 | Administración y exportación | Sesión administrativa validada → paquetes/vistas limitados → preparación CSV con evento de gestión. |
 | Salir o cambiar dispositivo | Token revocado/reemplazado en SESIONES_USUARIO → las operaciones posteriores vuelven a validar. |
 
@@ -977,7 +977,7 @@ estudio con transacción de solo lectura y cerrar esa transacción después de c
 
 ## 11. Dónde encontrar las consultas del programa
 
-Desde el 21/11 las sentencias de nueve módulos están en `sql/consultas/`: 88 consultas
+La extracción del 21/11 trasladó las sentencias de nueve módulos a `sql/consultas/`: 88 consultas
 únicas y dos plantillas de identificadores, extraídas de 104 apariciones originales.
 [consultas.py](../src/base_datos/consultas.py) valida rutas, mantiene caché y limita las
 plantillas a identificadores Oracle permitidos. Los módulos siguientes conservan la
@@ -1042,7 +1042,8 @@ independientes deben añadirse aparte. Referencia:
 ### B. Desde el archivo de estructura preparado
 
 `exports/modelo_008.sql` se generó en esta revisión leyendo `DBMS_METADATA`; no se ejecutaron
-sus definiciones. Contiene las tablas, FK, índices adicionales y vistas actuales. En la opción
+sus definiciones. Contiene las tablas, FK, índices adicionales y vistas del estado 008;
+las dos relaciones de aprobación docente se incorporan en 009. En la opción
 **Import → DDL File** del Data Modeler, seleccionar ese archivo, elegir Oracle y generar el
 modelo relacional. Los nombres exactos de menús pueden variar con la edición instalada.
 
@@ -1056,379 +1057,46 @@ automáticamente en la interfaz de SQL Developer; el archivo queda disponible pa
 Ese archivo representa 001, con seis tablas. Los scripts posteriores tienen bloques PL/SQL
 dinámicos, comprobaciones y evolución del esquema que un importador de DDL no tiene por qué
 interpretar como si ejecutara toda la instalación. El diccionario real y el DDL consolidado
-reflejan mejor la versión 008.
+permiten inspeccionar cada versión; el catálogo vigente representa 009.
 
 ### Vistas y diagramas son cosas diferentes
 
 El modelo relacional dibuja tablas y sus FK. Una SQL VIEW es una consulta almacenada sobre
 tablas. Dibujar todas las tablas no crea una vista por tabla ni muestra relaciones que solo
-existen como referencias lógicas. Los diez triggers y siete paquetes se inspeccionan en los
+existen como referencias lógicas. Los diez triggers y ocho paquetes se inspeccionan en los
 nodos correspondientes de la conexión o en su SQL fuente; no todos se representan como cajas
 de entidad en el diagrama.
 
 ## Fuentes y alcance de la revisión
 
-Fuentes del proyecto: diccionario de Oracle consultado con la cuenta del esquema, scripts 001–008,
-repositorios Python y guías existentes. Evidencia estructural local: `.local/documentacion_bd/inventario.json`.
-El modelo generado queda en `exports/`, excluido de Git como los demás archivos de exportación.
-La documentación de flujos del resto del programa está organizada en [docs/README.md](README.md).
+Las fuentes son los scripts 001–009, repositorios Python y el catálogo de metadatos
+del 22/11 en docs/base_datos/catalogo.json. Las consultas Q01–Q42 conservan su función
+didáctica; no ejecutarlas indiscriminadamente sobre datos personales. Las sentencias
+con bloqueos y los ejemplos de escritura requieren su contexto autorizado.
 
-El servidor de pruebas se inicia con el mecanismo HTTPS existente. Las comprobaciones de esta
-revisión no ejecutan las pruebas Oracle que crean fixtures, aunque luego utilicen rollback.
-La consulta no certifica otros equipos ni sustituye el ensayo funcional con personas reales.
+El esquema local y Autonomous 009 se verificaron sin errores de compilación. La
+revisión documental usa la evidencia guardada; no activa la cámara ni vuelve a
+comprobar la página. El usuario realiza los ensayos funcionales en Render.
 
-Validación documental: 43 SELECT comprobados con filtro externo `WHERE 1=0`, 122 enlaces locales
-revisados y cobertura de las 14 tablas, 11 vistas, 7 paquetes y 10 triggers consultados.
-Resultado local: `.local/documentacion_bd/validacion.json`; cero errores de compilación u
-objetos inválidos. El localhost HTTPS respondió `200 ok` durante la revisión.
+## 13. Diccionario vigente de columnas
 
-<!-- DICCIONARIO_GENERADO -->
+El [diccionario completo](DICCIONARIO_DATOS.md) contiene las **140 columnas de las
+14 tablas**, tipos, nulabilidad, identidad, valores predeterminados y significados.
+Se incorpora íntegro como anexo B del PDF 1.2, para evitar mantener una segunda
+lista de columnas desactualizada en esta guía.
 
-## 13. Diccionario completo de columnas
+## 14. Restricciones, índices e identidades
 
-Incluye las **138 columnas visibles de las 14 tablas**. PK: clave primaria; FK: clave foránea;
-ID: identidad generada por Oracle; virtual: calculada. Las columnas internas de índices no son campos de la aplicación.
-Los valores predeterminados mostrados son expresiones del esquema, no valores de usuarios.
+Las once FK se explican en el apartado 3. Todas las PK, UNIQUE y CHECK del catálogo
+se detallan junto a cada tabla en el [diccionario](DICCIONARIO_DATOS.md). La
+restricción CK_VERIFICACION_APROBADA admite administrador o docente con materia,
+nunca ambos, cuando la excepción está activa.
 
-### ADMINISTRADORES
+El inventario local de referencia contiene 37 índices, incluidos los internos, y
+nueve secuencias de identidad. 009 añade dos columnas/FK y un paquete; no añade
+índices ni secuencias. Las identidades se generan por Oracle y son globales por
+tabla; no equivalen a un contador de pendientes por docente o materia.
 
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `administrador_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada de la cuenta administrativa de la aplicación. |
-| `usuario` | `VARCHAR2(100 CHAR)` | No |  |  | Identificador de acceso; la aplicación lo normaliza. |
-| `nombre` | `VARCHAR2(200 CHAR)` | No |  |  | Nombre legible de la persona o materia. |
-| `contrasena` | `VARCHAR2(255 CHAR)` | No |  |  | Hash bcrypt; no permite consultar la contraseña en texto. |
-| `activo` | `NUMBER(1)` | No |  | 1 | 1: cuenta/materia activa; 0: archivada o deshabilitada. |
-| `creado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación de la fila. |
-| `actualizado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante actualizado automáticamente por su trigger al hacer UPDATE. |
-
-### AUDITORIA_ASISTENCIA
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `auditoria_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada del evento de auditoría. |
-| `operacion` | `VARCHAR2(10 CHAR)` | No |  |  | UPDATE relevante o DELETE; no registra el INSERT inicial. |
-| `asistencia_id` | `NUMBER` | No |  |  | ID histórico del registro afectado; se conserva sin FK. |
-| `materia_anterior` | `NUMBER` | No |  |  | Materia antes de la operación. |
-| `estudiante_anterior` | `NUMBER` | No |  |  | Estudiante antes de la operación. |
-| `fecha_anterior` | `TIMESTAMP(6) WITH TIME ZONE` | No |  |  | Fecha de análisis anterior. |
-| `presente_anterior` | `NUMBER(1)` | No |  |  | Decisión de asistencia anterior. |
-| `materia_nueva` | `NUMBER` | Sí |  |  | Materia después de la operación; nula en una baja. |
-| `estudiante_nuevo` | `NUMBER` | Sí |  |  | Estudiante después de la operación; nulo en una baja. |
-| `fecha_nueva` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Fecha de análisis posterior; nula en una baja. |
-| `presente_nuevo` | `NUMBER(1)` | Sí |  |  | Decisión posterior; nula en una baja. |
-| `ocurrido_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación del evento histórico. |
-| `usuario_bd` | `VARCHAR2(128 CHAR)` | No |  |  | Usuario técnico Oracle que ejecutó la operación, distinto del actor de la aplicación. |
-| `actor_rol` | `VARCHAR2(20 CHAR)` | No |  |  | Rol declarado para la acción; puede incluir SISTEMA o NO_IDENTIFICADO en los historiales. |
-| `actor_id` | `NUMBER` | Sí |  |  | Identificador del actor, interpretado según el rol; no es una FK polimórfica. |
-| `motivo` | `VARCHAR2(500 CHAR)` | Sí |  |  | Justificación de la acción; debe excluir contraseñas y detalles médicos. |
-| `modulo` | `VARCHAR2(64 CHAR)` | Sí |  |  | Módulo técnico informado por la sesión Oracle. |
-| `identificador_cliente` | `VARCHAR2(64 CHAR)` | Sí |  |  | Identificador técnico de cliente de la sesión Oracle. |
-| `clase_anterior` | `NUMBER` | Sí |  |  | Clase anterior, conservada como dato histórico. |
-| `clase_nueva` | `NUMBER` | Sí |  |  | Clase después de la operación; nula en una baja. |
-| `detectado_anterior` | `NUMBER(1)` | Sí |  |  | Detección inicial conservada al producirse el cambio/baja. |
-| `correccion_inicial` | `NUMBER(1)` | Sí |  |  | Bandera de revisión inicial del registro afectado. |
-| `motivo_inicial` | `VARCHAR2(500 CHAR)` | Sí |  |  | Motivo de la revisión inicial, distinto del motivo del cambio posterior. |
-| `revisor_inicial` | `NUMBER` | Sí |  |  | Docente que realizó la revisión inicial. |
-| `estado_anterior` | `VARCHAR2(20 CHAR)` | Sí |  |  | Estado de detección original del registro afectado. |
-
-### CLASES
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `clase_id` | `NUMBER` | No | PK, UNIQUE, ID | Identidad Oracle | PK generada para una sesión académica. |
-| `materia_id` | `NUMBER` | No | FK, UNIQUE |  | FK a materias; interviene en la unicidad del horario. |
-| `profesor_id` | `NUMBER` | No |  |  | Responsable al crear la clase, protegido como instantánea; no tiene FK propia. |
-| `fecha_hora` | `TIMESTAMP(6) WITH TIME ZONE` | No |  |  | Inicio de la clase con zona horaria; fecha que utiliza el calendario. |
-| `instante_utc` | `TIMESTAMP(6)` | Sí | UNIQUE, virtual | SYS_EXTRACT_UTC(fecha_hora) | Columna virtual SYS_EXTRACT_UTC(fecha_hora), usada en la unicidad. |
-| `lote_legado` | `NUMBER` | No | UNIQUE | 0 | 0 en el flujo nuevo; permite preservar ocurrencias históricas adicionales. |
-| `estado` | `VARCHAR2(12 CHAR)` | No |  | 'BORRADOR' | BORRADOR o CONFIRMADA. |
-| `origen` | `VARCHAR2(12 CHAR)` | No |  | 'PENDIENTE' | PENDIENTE, FACIAL, VOZ o LEGADO. |
-| `clave_confirmacion` | `VARCHAR2(32 CHAR)` | Sí | UNIQUE |  | Clave hexadecimal de propuesta (32 caracteres) para reconocer reintentos. |
-| `propuesta_confirmada` | `CLOB` | Sí |  |  | JSON canónico de los resultados confirmados; no contiene vectores. |
-| `registros_confirmados` | `NUMBER` | No |  | 0 | Cantidad al confirmar; inmutable para clases normales ya confirmadas. |
-| `creado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación de la fila. |
-| `confirmado_en` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Instante en que quedó confirmada; nulo en borrador. |
-
-### ESTUDIANTES
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `estudiante_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada por Oracle para la cuenta estudiantil. |
-| `nombre` | `VARCHAR2(200 CHAR)` | No |  |  | Nombre legible de la persona o materia. |
-| `embedding_facial` | `CLOB` | Sí |  |  | Plantilla facial serializada como JSON; Python valida 128 dimensiones. Puede faltar. |
-| `embedding_voz` | `CLOB` | Sí |  |  | Plantilla de hablante serializada como JSON; Python valida 256 dimensiones. Opcional. |
-| `creado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación de la fila. |
-| `actualizado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante actualizado automáticamente por su trigger al hacer UPDATE. |
-| `activo` | `NUMBER(1)` | No |  | 1 | 1: cuenta/materia activa; 0: archivada o deshabilitada. |
-| `codigo_institucional` | `VARCHAR2(50 CHAR)` | Sí |  |  | Código institucional único normalizado; no es el documento de identidad. |
-| `version_edicion` | `NUMBER` | No |  | 0 | Contador de edición que incrementa el trigger; detecta formularios obsoletos. |
-
-### EVENTOS_GESTION
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `evento_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada de la bitácora general. |
-| `entidad` | `VARCHAR2(20 CHAR)` | No |  |  | Tipo de objeto afectado: cuenta, materia, auditoría o verificación. |
-| `entidad_id` | `NUMBER` | No |  |  | ID interpretado según entidad; 0 puede representar identidad todavía desconocida. |
-| `accion` | `VARCHAR2(30 CHAR)` | No |  |  | Nombre de la operación registrada por el paquete/servicio. |
-| `motivo` | `VARCHAR2(500 CHAR)` | No |  |  | Justificación de la acción; debe excluir contraseñas y detalles médicos. |
-| `actor_rol` | `VARCHAR2(20 CHAR)` | No |  |  | Rol declarado para la acción; puede incluir SISTEMA o NO_IDENTIFICADO en los historiales. |
-| `actor_id` | `NUMBER` | Sí |  |  | Identificador del actor, interpretado según el rol; no es una FK polimórfica. |
-| `ocurrido_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación del evento histórico. |
-| `valores_anteriores` | `CLOB` | Sí |  |  | JSON opcional con campos seleccionados antes de editar. |
-| `valores_nuevos` | `CLOB` | Sí |  |  | JSON opcional con campos seleccionados después de editar. |
-
-### HISTORIAL_MATRICULAS
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `historial_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada del evento de matrícula. |
-| `accion` | `VARCHAR2(10 CHAR)` | No |  |  | ALTA o RETIRO. |
-| `materia_id` | `NUMBER` | No |  |  | Materia de la matrícula histórica; sin FK. |
-| `estudiante_id` | `NUMBER` | No |  |  | Estudiante de la matrícula histórica; sin FK. |
-| `matriculado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  |  | Fecha de alta de esa relación de matrícula. |
-| `ocurrido_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación del evento histórico. |
-| `usuario_bd` | `VARCHAR2(128 CHAR)` | No |  |  | Usuario técnico Oracle que ejecutó la operación, distinto del actor de la aplicación. |
-| `actor_rol` | `VARCHAR2(20 CHAR)` | No |  |  | Rol declarado para la acción; puede incluir SISTEMA o NO_IDENTIFICADO en los historiales. |
-| `actor_id` | `NUMBER` | Sí |  |  | Identificador del actor, interpretado según el rol; no es una FK polimórfica. |
-| `motivo` | `VARCHAR2(500 CHAR)` | Sí |  |  | Justificación de la acción; debe excluir contraseñas y detalles médicos. |
-| `modulo` | `VARCHAR2(64 CHAR)` | Sí |  |  | Módulo técnico informado por la sesión Oracle. |
-| `identificador_cliente` | `VARCHAR2(64 CHAR)` | Sí |  |  | Identificador técnico de cliente de la sesión Oracle. |
-
-### LIMITES_ACCESO
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `clave` | `VARCHAR2(64 CHAR)` | No | PK |  | PK: huella del identificador/ámbito de acceso, no la contraseña. |
-| `intentos` | `NUMBER` | No |  | 0 | Número de fallos en la ventana vigente. |
-| `ventana_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Inicio de la ventana de recuento. |
-| `bloqueado_hasta` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Fin del bloqueo; nulo si no se impuso. |
-
-### MATERIA_ESTUDIANTES
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `materia_id` | `NUMBER` | No | FK, PK |  | Parte de la PK compuesta y FK a materias. |
-| `estudiante_id` | `NUMBER` | No | FK, PK |  | Parte de la PK compuesta y FK a estudiantes. |
-| `matriculado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Fecha de alta de esa relación de matrícula. |
-
-### MATERIAS
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `materia_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada por Oracle para la materia/sección. |
-| `codigo_materia` | `VARCHAR2(50 CHAR)` | No | UNIQUE |  | Código único de la materia/sección, normalizado por la aplicación. |
-| `nombre` | `VARCHAR2(200 CHAR)` | No |  |  | Nombre legible de la persona o materia. |
-| `seccion` | `VARCHAR2(100 CHAR)` | Sí |  |  | Nombre o código descriptivo del grupo; no referencia otra tabla de grupos. |
-| `profesor_id` | `NUMBER` | No | FK |  | FK al profesor responsable de la materia. |
-| `creado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación de la fila. |
-| `actualizado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante actualizado automáticamente por su trigger al hacer UPDATE. |
-| `activo` | `NUMBER(1)` | No |  | 1 | 1: cuenta/materia activa; 0: archivada o deshabilitada. |
-| `version_edicion` | `NUMBER` | No |  | 0 | Contador de edición que incrementa el trigger; detecta formularios obsoletos. |
-
-### PROFESORES
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `profesor_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada por Oracle para la cuenta docente. |
-| `usuario` | `VARCHAR2(100 CHAR)` | No | UNIQUE |  | Identificador de acceso; la aplicación lo normaliza. |
-| `contrasena` | `VARCHAR2(255 CHAR)` | No |  |  | Hash bcrypt; no permite consultar la contraseña en texto. |
-| `nombre` | `VARCHAR2(200 CHAR)` | No |  |  | Nombre legible de la persona o materia. |
-| `creado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de creación de la fila. |
-| `actualizado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante actualizado automáticamente por su trigger al hacer UPDATE. |
-| `activo` | `NUMBER(1)` | No |  | 1 | 1: cuenta/materia activa; 0: archivada o deshabilitada. |
-| `version_edicion` | `NUMBER` | No |  | 0 | Contador de edición que incrementa el trigger; detecta formularios obsoletos. |
-
-### REGISTROS_ASISTENCIA
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `asistencia_id` | `NUMBER` | No | PK, ID | Identidad Oracle | PK generada del resultado individual. |
-| `materia_id` | `NUMBER` | No | FK |  | Identificador de la materia/sección. |
-| `estudiante_id` | `NUMBER` | No | FK, UNIQUE |  | Identificador del estudiante. |
-| `fecha_hora` | `TIMESTAMP(6) WITH TIME ZONE` | No |  |  | Fecha/hora del análisis, distinta de la fecha de clase. |
-| `presente` | `NUMBER(1)` | No |  | 0 | Decisión final: 1 asistió, 0 no asistió. |
-| `clase_id` | `NUMBER` | No | FK, UNIQUE |  | Clase del resultado; participa en la FK compuesta clase/materia y en la unicidad por estudiante. |
-| `presente_detectado` | `NUMBER(1)` | Sí |  |  | Detección inicial 1/0; nulo para SIN_MUESTRA. |
-| `corregido_manual` | `NUMBER(1)` | No |  | 0 | Indica revisión manual inicial, no cualquier corrección posterior. |
-| `motivo_correccion` | `VARCHAR2(500 CHAR)` | Sí |  |  | Motivo de la revisión manual antes de confirmar. |
-| `revisado_por` | `NUMBER` | Sí |  |  | Docente de esa revisión inicial; referencia lógica sin FK. |
-| `revisado_en` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Instante de la revisión manual inicial. |
-| `estado_deteccion` | `VARCHAR2(20 CHAR)` | No |  |  | PRESENTE, AUSENTE o SIN_MUESTRA; se conserva tras corregir la presencia. |
-
-### SESIONES_USUARIO
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `rol` | `VARCHAR2(20 CHAR)` | No | PK |  | Parte de PK: PROFESOR, ESTUDIANTE o ADMINISTRADOR. |
-| `actor_id` | `NUMBER` | No | PK |  | Parte de PK: ID de la cuenta dentro de su rol; referencia lógica. |
-| `token_hash` | `VARCHAR2(64 CHAR)` | No |  |  | SHA-256 hexadecimal del token de sesión, nunca su valor original. |
-| `creada_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  |  | Inicio de la sesión que ocupa actualmente la fila. |
-| `actividad_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  |  | Última actividad validada para calcular inactividad. |
-| `expira_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  |  | Vencimiento absoluto de la sesión (ocho horas en la política actual). |
-| `revocada_en` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Instante de revocación; nulo mientras no se haya revocado explícitamente. |
-
-### VERIFICACION_ESTUDIANTES
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `estudiante_id` | `NUMBER` | No | FK, PK |  | PK compartida y FK a estudiantes: como máximo una fila por estudiante. |
-| `documento_huella` | `VARCHAR2(64 CHAR)` | Sí | UNIQUE |  | HMAC-SHA-256 de tipo/número normalizado; único cuando existe. |
-| `tipo_documento` | `VARCHAR2(2 CHAR)` | Sí |  |  | CC, TI, CE o PA. |
-| `documento_final` | `VARCHAR2(4 CHAR)` | Sí |  |  | Últimos cuatro caracteres para mostrar el documento enmascarado. |
-| `clave_hash` | `VARCHAR2(255 CHAR)` | Sí |  |  | Bcrypt de la contraseña alternativa; se retira al revocar. |
-| `excepcion_activa` | `NUMBER(1)` | No |  | 0 | 1 habilita el permiso sujeto a vigencia/cuenta; 0 lo deshabilita. |
-| `categoria` | `VARCHAR2(20 CHAR)` | Sí |  |  | FISICA, MEDICA, TECNICA o ADMINISTRATIVA; no es un diagnóstico. |
-| `referencia` | `VARCHAR2(100 CHAR)` | Sí |  |  | Referencia administrativa del expediente de autorización. |
-| `autorizado_por` | `NUMBER` | Sí | FK |  | FK al administrador que aprobó o renovó. |
-| `autorizado_en` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Fecha de aprobación/renovación. |
-| `expira_en` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Fin de la autorización; la interfaz exige vigencia de 1 a 365 días. |
-| `estado_verificacion` | `VARCHAR2(25 CHAR)` | No |  | 'PENDIENTE' | Resultado del último acceso confirmado: PENDIENTE, BIOMETRICA_COMPLETA o EXCEPCIONAL. |
-| `verificado_en` | `TIMESTAMP(6) WITH TIME ZONE` | Sí |  |  | Instante de esa verificación; nulo si está PENDIENTE. |
-| `factores_verificados` | `NUMBER(2)` | No |  | 0 | Cantidad de factores biométricos comprobados en ese acceso. |
-| `factores_requeridos` | `NUMBER(2)` | No |  | 1 | Cantidad mínima de factores de la política registrada para ese acceso. |
-| `version_credencial` | `NUMBER` | No |  | 0 | Contador para concurrencia e invalidación de pruebas/credenciales anteriores. |
-
-### VERSIONES_ESQUEMA
-
-| Columna | Tipo | Admite NULL | Clave / generación | Valor predeterminado | Significado |
-| --- | --- | --- | --- | --- | --- |
-| `version` | `VARCHAR2(20 BYTE)` | No | PK |  | PK textual de la migración, por ejemplo 008. |
-| `descripcion` | `VARCHAR2(200 BYTE)` | No |  |  | Resumen de la versión instalada. |
-| `aplicado_en` | `TIMESTAMP(6) WITH TIME ZONE` | No |  | SYSTIMESTAMP | Instante de aplicación de la migración. |
-
-## 14. Restricciones e índices consultados
-
-### Restricciones con nombre del proyecto
-
-Las reglas NOT NULL autogeneradas se reflejan en la columna «Admite NULL» del diccionario.
-Las nueve FK se explican en el apartado 3; aquí se enumeran las PK, UNIQUE y CHECK nombradas.
-
-| Tabla | Restricción | Regla |
-| --- | --- | --- |
-| `ADMINISTRADORES` | `CK_ADMINISTRADORES_ACTIVO` | activo IN (0,1) |
-| `ADMINISTRADORES` | `PK_ADMINISTRADORES` | PRIMARY KEY (administrador_id) |
-| `AUDITORIA_ASISTENCIA` | `CK_AUDASIST_ANT` | presente_anterior IN (0, 1) |
-| `AUDITORIA_ASISTENCIA` | `CK_AUDASIST_NUEVO` | presente_nuevo IN (0, 1) |
-| `AUDITORIA_ASISTENCIA` | `CK_AUDASIST_OPERACION` | operacion IN ('UPDATE', 'DELETE') |
-| `AUDITORIA_ASISTENCIA` | `CK_AUDASIST_ROL` | actor_rol IN ('PROFESOR','ESTUDIANTE','ADMINISTRADOR','SISTEMA','NO_IDENTIFICADO') |
-| `AUDITORIA_ASISTENCIA` | `PK_AUDITORIA_ASISTENCIA` | PRIMARY KEY (auditoria_id) |
-| `CLASES` | `CK_CLASES_CANTIDAD` | registros_confirmados>=0 AND registros_confirmados=TRUNC(registros_confirmados) |
-| `CLASES` | `CK_CLASES_CONFIRMADA` | (estado='BORRADOR' AND origen='PENDIENTE' AND clave_confirmacion IS NULL AND propuesta_confirmada IS NULL AND confirmado_en IS NULL) OR (estado='CONFIRMADA' AND origen='LEGADO' AND clave_confirmacion IS NULL AND confirmado_en IS NOT NULL) OR (estado='CONFIRMADA' AND origen IN ('FACIAL','VOZ') AND LENGTH(clave_confirmacion)=32 AND clave_confirmacion IS NOT NULL AND propuesta_confirmada IS NOT NULL AND confirmado_en IS NOT NULL) |
-| `CLASES` | `CK_CLASES_ESTADO` | estado IN ('BORRADOR','CONFIRMADA') |
-| `CLASES` | `CK_CLASES_JSON` | propuesta_confirmada IS JSON |
-| `CLASES` | `CK_CLASES_LOTE` | lote_legado>=0 AND lote_legado=TRUNC(lote_legado) AND (lote_legado=0 OR origen='LEGADO') |
-| `CLASES` | `CK_CLASES_ORIGEN` | origen IN ('PENDIENTE','FACIAL','VOZ','LEGADO') |
-| `CLASES` | `PK_CLASES` | PRIMARY KEY (clase_id) |
-| `CLASES` | `UQ_CLASES_CONFIRMACION` | UNIQUE (clave_confirmacion) |
-| `CLASES` | `UQ_CLASES_INSTANTE` | UNIQUE (materia_id, instante_utc, lote_legado) |
-| `CLASES` | `UQ_CLASES_MATERIA` | UNIQUE (clase_id, materia_id) |
-| `ESTUDIANTES` | `CK_ESTUDIANTES_ACTIVO` | activo IN (0,1) |
-| `ESTUDIANTES` | `CK_ESTUDIANTES_CODIGO` | codigo_institucional IS NULL OR REGEXP_LIKE(codigo_institucional,'^[A-Z0-9][A-Z0-9_.-]{0,49}$') |
-| `ESTUDIANTES` | `CK_ESTUDIANTES_FACIAL_JSON` | embedding_facial IS JSON |
-| `ESTUDIANTES` | `CK_ESTUDIANTES_VOZ_JSON` | embedding_voz IS JSON |
-| `ESTUDIANTES` | `PK_ESTUDIANTES` | PRIMARY KEY (estudiante_id) |
-| `EVENTOS_GESTION` | `CK_EVENTOS_ANTES_JSON` | valores_anteriores IS JSON |
-| `EVENTOS_GESTION` | `CK_EVENTOS_DESPUES_JSON` | valores_nuevos IS JSON |
-| `EVENTOS_GESTION` | `PK_EVENTOS_GESTION` | PRIMARY KEY (evento_id) |
-| `HISTORIAL_MATRICULAS` | `CK_HISTMAT_ACCION` | accion IN ('ALTA', 'RETIRO') |
-| `HISTORIAL_MATRICULAS` | `CK_HISTMAT_ROL` | actor_rol IN ('PROFESOR','ESTUDIANTE','ADMINISTRADOR','SISTEMA','NO_IDENTIFICADO') |
-| `HISTORIAL_MATRICULAS` | `PK_HISTORIAL_MATRICULAS` | PRIMARY KEY (historial_id) |
-| `LIMITES_ACCESO` | `CK_LIMITES_INTENTOS` | intentos>=0 AND intentos=TRUNC(intentos) |
-| `LIMITES_ACCESO` | `PK_LIMITES_ACCESO` | PRIMARY KEY (clave) |
-| `MATERIA_ESTUDIANTES` | `PK_MATERIA_ESTUDIANTES` | PRIMARY KEY (materia_id, estudiante_id) |
-| `MATERIAS` | `CK_MATERIAS_ACTIVO` | activo IN (0,1) |
-| `MATERIAS` | `PK_MATERIAS` | PRIMARY KEY (materia_id) |
-| `MATERIAS` | `UQ_MATERIAS_CODIGO` | UNIQUE (codigo_materia) |
-| `PROFESORES` | `CK_PROFESORES_ACTIVO` | activo IN (0,1) |
-| `PROFESORES` | `PK_PROFESORES` | PRIMARY KEY (profesor_id) |
-| `PROFESORES` | `UQ_PROFESORES_USUARIO` | UNIQUE (usuario) |
-| `REGISTROS_ASISTENCIA` | `CK_ASISTENCIA_PRESENTE` | presente IN (0, 1) |
-| `REGISTROS_ASISTENCIA` | `CK_RA_CORREGIDO` | corregido_manual IN (0,1) |
-| `REGISTROS_ASISTENCIA` | `CK_RA_DETECCION_COHERENTE` | (estado_deteccion='SIN_MUESTRA' AND presente_detectado IS NULL AND corregido_manual=1) OR (estado_deteccion='PRESENTE' AND presente_detectado IS NOT NULL AND presente_detectado=1) OR (estado_deteccion='AUSENTE' AND presente_detectado IS NOT NULL AND presente_detectado=0) |
-| `REGISTROS_ASISTENCIA` | `CK_RA_DETECTADO` | presente_detectado IN (0,1) |
-| `REGISTROS_ASISTENCIA` | `CK_RA_ESTADO_DETECCION` | estado_deteccion IN ('PRESENTE','AUSENTE','SIN_MUESTRA') |
-| `REGISTROS_ASISTENCIA` | `CK_RA_REVISION` | (corregido_manual=0 AND motivo_correccion IS NULL AND revisado_por IS NULL AND revisado_en IS NULL) OR (corregido_manual=1 AND TRIM(motivo_correccion) IS NOT NULL AND revisado_por IS NOT NULL AND revisado_en IS NOT NULL) |
-| `REGISTROS_ASISTENCIA` | `PK_REGISTROS_ASISTENCIA` | PRIMARY KEY (asistencia_id) |
-| `REGISTROS_ASISTENCIA` | `UQ_RA_CLASE_ESTUDIANTE` | UNIQUE (clase_id, estudiante_id) |
-| `SESIONES_USUARIO` | `CK_SESIONES_ACTOR` | actor_id>0 AND actor_id=TRUNC(actor_id) |
-| `SESIONES_USUARIO` | `CK_SESIONES_FECHAS` | expira_en>creada_en AND actividad_en>=creada_en |
-| `SESIONES_USUARIO` | `CK_SESIONES_HASH` | REGEXP_LIKE(token_hash,'^[a-f0-9]{64}$','c') |
-| `SESIONES_USUARIO` | `CK_SESIONES_ROL` | rol IN ('PROFESOR','ESTUDIANTE','ADMINISTRADOR') |
-| `SESIONES_USUARIO` | `PK_SESIONES_USUARIO` | PRIMARY KEY (rol, actor_id) |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_ACTIVA` | excepcion_activa IN (0,1) |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_APROBADA` | excepcion_activa=0 OR (documento_huella IS NOT NULL AND tipo_documento IS NOT NULL AND documento_final IS NOT NULL AND clave_hash IS NOT NULL AND categoria IS NOT NULL AND referencia IS NOT NULL AND autorizado_por IS NOT NULL AND autorizado_en IS NOT NULL) |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_CATEGORIA` | categoria IN ('FISICA','MEDICA','TECNICA','ADMINISTRATIVA') |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_ESTADO` | estado_verificacion IN ('PENDIENTE','BIOMETRICA_COMPLETA','EXCEPCIONAL') |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_FACTORES` | factores_verificados BETWEEN 0 AND 3 AND factores_requeridos BETWEEN 1 AND 3 |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_HUELLA` | REGEXP_LIKE(documento_huella,'^[a-f0-9]{64}$','c') |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_RESULTADO` | (estado_verificacion='PENDIENTE' AND verificado_en IS NULL AND factores_verificados=0) OR (estado_verificacion='EXCEPCIONAL' AND verificado_en IS NOT NULL AND factores_verificados=0) OR (estado_verificacion='BIOMETRICA_COMPLETA' AND verificado_en IS NOT NULL AND factores_verificados>=factores_requeridos) |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_TIPO` | tipo_documento IN ('CC','TI','CE','PA') |
-| `VERIFICACION_ESTUDIANTES` | `CK_VERIFICACION_VERSION` | version_credencial>=0 AND version_credencial=TRUNC(version_credencial) |
-| `VERIFICACION_ESTUDIANTES` | `PK_VERIFICACION_EST` | PRIMARY KEY (estudiante_id) |
-| `VERIFICACION_ESTUDIANTES` | `UQ_VERIFICACION_DOC` | UNIQUE (documento_huella) |
-| `VERSIONES_ESQUEMA` | `PK_VERSIONES_ESQUEMA` | PRIMARY KEY (version) |
-
-### Los 37 índices
-
-Los de PK/UNIQUE respaldan sus restricciones. Los adicionales aceleran búsquedas o normalizan
-la unicidad de usuarios/códigos. Los LOB son internos de Oracle para CLOB; no son índices biométricos.
-Los nombres `SYS_*` pueden cambiar en otra instalación. `DESC` y columnas ocultas pueden aparecer
-como expresiones funcionales en el diccionario aunque el índice sea una optimización de fecha.
-
-| Índice | Tabla | Unicidad | Columnas / expresión | Función estructural |
-| --- | --- | --- | --- | --- |
-| `PK_ADMINISTRADORES` | `ADMINISTRADORES` | UNIQUE | ADMINISTRADOR_ID | Índice de clave primaria |
-| `UQ_ADMINISTRADORES_USUARIO` | `ADMINISTRADORES` | UNIQUE | LOWER(TRIM("USUARIO")) | Adicional de búsqueda o unicidad normalizada |
-| `IX_AUDASIST_REGISTRO` | `AUDITORIA_ASISTENCIA` | NONUNIQUE | ASISTENCIA_ID, SYS_EXTRACT_UTC("OCURRIDO_EN") | Adicional de búsqueda o unicidad normalizada |
-| `PK_AUDITORIA_ASISTENCIA` | `AUDITORIA_ASISTENCIA` | UNIQUE | AUDITORIA_ID | Índice de clave primaria |
-| `PK_CLASES` | `CLASES` | UNIQUE | CLASE_ID | Índice de clave primaria |
-| `SYS_IL0000075521C00010$$` | `CLASES` | UNIQUE | LOB interno | Interno para CLOB |
-| `UQ_CLASES_CONFIRMACION` | `CLASES` | UNIQUE | CLAVE_CONFIRMACION | Índice de restricción UNIQUE |
-| `UQ_CLASES_INSTANTE` | `CLASES` | UNIQUE | MATERIA_ID, SYS_EXTRACT_UTC("FECHA_HORA"), LOTE_LEGADO | Índice de restricción UNIQUE |
-| `UQ_CLASES_MATERIA` | `CLASES` | UNIQUE | CLASE_ID, MATERIA_ID | Índice de restricción UNIQUE |
-| `PK_ESTUDIANTES` | `ESTUDIANTES` | UNIQUE | ESTUDIANTE_ID | Índice de clave primaria |
-| `SYS_IL0000075271C00003$$` | `ESTUDIANTES` | UNIQUE | LOB interno | Interno para CLOB |
-| `SYS_IL0000075271C00004$$` | `ESTUDIANTES` | UNIQUE | LOB interno | Interno para CLOB |
-| `UQ_ESTUDIANTES_CODIGO` | `ESTUDIANTES` | UNIQUE | UPPER(TRIM("CODIGO_INSTITUCIONAL")) | Adicional de búsqueda o unicidad normalizada |
-| `PK_EVENTOS_GESTION` | `EVENTOS_GESTION` | UNIQUE | EVENTO_ID | Índice de clave primaria |
-| `SYS_IL0000075561C00009$$` | `EVENTOS_GESTION` | UNIQUE | LOB interno | Interno para CLOB |
-| `SYS_IL0000075561C00010$$` | `EVENTOS_GESTION` | UNIQUE | LOB interno | Interno para CLOB |
-| `IX_HISTMAT_MATERIA_ESTUDIANTE` | `HISTORIAL_MATRICULAS` | NONUNIQUE | MATERIA_ID, ESTUDIANTE_ID, SYS_EXTRACT_UTC("OCURRIDO_EN") | Adicional de búsqueda o unicidad normalizada |
-| `PK_HISTORIAL_MATRICULAS` | `HISTORIAL_MATRICULAS` | UNIQUE | HISTORIAL_ID | Índice de clave primaria |
-| `PK_LIMITES_ACCESO` | `LIMITES_ACCESO` | UNIQUE | CLAVE | Índice de clave primaria |
-| `IX_ME_ESTUDIANTE` | `MATERIA_ESTUDIANTES` | NONUNIQUE | ESTUDIANTE_ID | Adicional de búsqueda o unicidad normalizada |
-| `PK_MATERIA_ESTUDIANTES` | `MATERIA_ESTUDIANTES` | UNIQUE | MATERIA_ID, ESTUDIANTE_ID | Índice de clave primaria |
-| `IX_MATERIAS_PROFESOR` | `MATERIAS` | NONUNIQUE | PROFESOR_ID | Adicional de búsqueda o unicidad normalizada |
-| `PK_MATERIAS` | `MATERIAS` | UNIQUE | MATERIA_ID | Índice de clave primaria |
-| `UQ_MATERIAS_CODIGO` | `MATERIAS` | UNIQUE | CODIGO_MATERIA | Índice de restricción UNIQUE |
-| `UQ_MATERIAS_CODIGO_CI` | `MATERIAS` | UNIQUE | UPPER(TRIM("CODIGO_MATERIA")) | Adicional de búsqueda o unicidad normalizada |
-| `PK_PROFESORES` | `PROFESORES` | UNIQUE | PROFESOR_ID | Índice de clave primaria |
-| `UQ_PROFESORES_USUARIO` | `PROFESORES` | UNIQUE | USUARIO | Índice de restricción UNIQUE |
-| `UQ_PROFESORES_USUARIO_CI` | `PROFESORES` | UNIQUE | LOWER(TRIM("USUARIO")) | Adicional de búsqueda o unicidad normalizada |
-| `IX_RA_ESTUDIANTE` | `REGISTROS_ASISTENCIA` | NONUNIQUE | ESTUDIANTE_ID | Adicional de búsqueda o unicidad normalizada |
-| `IX_RA_FECHA` | `REGISTROS_ASISTENCIA` | NONUNIQUE | SYS_EXTRACT_UTC("FECHA_HORA") | Adicional de búsqueda o unicidad normalizada |
-| `IX_RA_MATERIA` | `REGISTROS_ASISTENCIA` | NONUNIQUE | MATERIA_ID | Adicional de búsqueda o unicidad normalizada |
-| `PK_REGISTROS_ASISTENCIA` | `REGISTROS_ASISTENCIA` | UNIQUE | ASISTENCIA_ID | Índice de clave primaria |
-| `UQ_RA_CLASE_ESTUDIANTE` | `REGISTROS_ASISTENCIA` | UNIQUE | CLASE_ID, ESTUDIANTE_ID | Índice de restricción UNIQUE |
-| `PK_SESIONES_USUARIO` | `SESIONES_USUARIO` | UNIQUE | ROL, ACTOR_ID | Índice de clave primaria |
-| `PK_VERIFICACION_EST` | `VERIFICACION_ESTUDIANTES` | UNIQUE | ESTUDIANTE_ID | Índice de clave primaria |
-| `UQ_VERIFICACION_DOC` | `VERIFICACION_ESTUDIANTES` | UNIQUE | DOCUMENTO_HUELLA | Índice de restricción UNIQUE |
-| `PK_VERSIONES_ESQUEMA` | `VERSIONES_ESQUEMA` | UNIQUE | VERSION | Índice de clave primaria |
-
-### Identidades
-
-Las nueve secuencias internas corresponden a las PK numéricas generadas. No necesitan otra tabla de contadores.
-
-| Tabla | Columna de identidad | Generación |
-| --- | --- | --- |
-| `ADMINISTRADORES` | `ADMINISTRADOR_ID` | ALWAYS |
-| `AUDITORIA_ASISTENCIA` | `AUDITORIA_ID` | ALWAYS |
-| `CLASES` | `CLASE_ID` | ALWAYS |
-| `ESTUDIANTES` | `ESTUDIANTE_ID` | ALWAYS |
-| `EVENTOS_GESTION` | `EVENTO_ID` | ALWAYS |
-| `HISTORIAL_MATRICULAS` | `HISTORIAL_ID` | ALWAYS |
-| `MATERIAS` | `MATERIA_ID` | ALWAYS |
-| `PROFESORES` | `PROFESOR_ID` | ALWAYS |
-| `REGISTROS_ASISTENCIA` | `ASISTENCIA_ID` | ALWAYS |
+El [catálogo interactivo](base_datos/index.html) permite explorar las relaciones sin
+credenciales. SQL Developer permite inspeccionar además índices, disparadores y
+paquetes desde una conexión autorizada, sin reconstruir la base.
